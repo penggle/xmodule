@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.penglecode</groupId>
+		<artifactId>xmodule-examples-springcloud-consul</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>xmodule-examples-springcloud-consul-service-api</artifactId>
+	<name>xmodule-examples-springcloud-consul-service-api</name>
+	<description>基于feign的声明式API服务接口</description>
+
+	<dependencies>
+		<!-- xmodule-common-cloud -->
+		<dependency>
+			<groupId>com.penglecode</groupId>
+			<artifactId>xmodule-common-cloud</artifactId>
+			<version>${xmodule.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>xmodule-examples-springcloud-consul-service-api</finalName>
+	</build>
+</project>

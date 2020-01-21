@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.penglecode</groupId>
+		<artifactId>xmodule</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>xmodule-common-base</artifactId>
+	<name>xmodule-common-base</name>
+	<description>基础模块，包括基础数据模型、全局常量、全局异常、基础辅助类等</description>
+
+	<build>
+		<finalName>xmodule-common-base</finalName>
+	</build>
+
+</project>

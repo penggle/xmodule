@@ -1,0 +1,6 @@
+spring:
+    #SpringCloud应用配置
+    cloud:
+        inetutils:
+            preferredNetworks: 
+                - 172.16

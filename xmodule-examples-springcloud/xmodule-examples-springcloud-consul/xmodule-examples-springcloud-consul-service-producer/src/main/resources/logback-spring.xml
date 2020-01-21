@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	debug="true" 	启动时输出配置加载信息
+	scan="true" 	默认每分钟自动扫描
+	scanPeriod="30 seconds" 	设置每30秒自动扫描,若没有指定具体单位则以milliseconds为标准(单位:milliseconds, seconds, minutes or hours)
+-->
+<configuration scan="true" scanPeriod="120 seconds">
+
+    <!--日志文件名-->
+    <springProperty scope="context" name="logFile" source="logging.file.name" defaultValue="xmodule-examples-springcloud-consul-service-producer"/>
+    <!--日志文件路径-->
+    <springProperty scope="context" name="logPath" source="logging.file.path" defaultValue="${java.io.tmpdir}"/>
+
+    <timestamp key="byDay" datePattern="yyyyMMdd"/>
+
+    <!--appender 模块-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] [%class.%method\(%file:%line\)] - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${logPath}/${logFile}_log_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+			<maxFileSize>100MB</maxFileSize> 
+            <totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] [%class.%method\(%file:%line\)] - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.apache.commons" level="ERROR"/>
+	<logger name="org.apache.http" level="ERROR"/>
+	<logger name="org.apache.ibatis" level="INFO"/>
+	<logger name="org.mybatis.spring" level="INFO"/>
+	<logger name="org.springframework" level="INFO"/>
+	<logger name="org.springframework.web.HttpLogging" level="TRACE"/>
+	<logger name="org.springframework.security.web.access.ExceptionTranslationFilter" level="INFO"/>
+	<logger name="org.springframework.cloud.consul" level="INFO"/>
+	<logger name="com.alibaba.druid" level="INFO"/>
+	<logger name="druid.sql" level="INFO"/>
+	
+	<logger name="com.penglecode.xmodule" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>
