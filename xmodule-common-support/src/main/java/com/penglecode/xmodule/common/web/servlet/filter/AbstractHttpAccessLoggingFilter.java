@@ -66,7 +66,7 @@ public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilt
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHttpAccessLoggingFilter.class);
 	
-	private static final ExecutorService httpAccessLogHandlerExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new NamedThreadFactory("HTTP-REQUEST-LOGGING-EXECUTE-WORKER-"));
+	private static final ExecutorService httpAccessLogHandlerExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new NamedThreadFactory("HTTP-REQUEST-LOGGER"));
 	
 	private static final String DEFAULT_LOG_TITLE = "用户访问日志";
 	

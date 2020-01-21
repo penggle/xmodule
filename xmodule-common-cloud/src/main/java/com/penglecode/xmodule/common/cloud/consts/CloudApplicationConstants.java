@@ -15,8 +15,8 @@ public class CloudApplicationConstants {
 	public static final Constant<String> SPRING_CLOUD_BUS_ID = new SpringEnvConstant<String>("spring.cloud.bus.id") {};
 	
 	/**
-	 * Bus总线事件发布默认的线程池
+	 * 事件发布默认的线程池
 	 */
-	public static final Executor DEFAULT_BUS_EVENT_PUBLISH_EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4, new NamedThreadFactory("DEFAULT-EXECUTOR-"));
+	public static final Executor DEFAULT_EVENT_PUBLISH_EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4, new NamedThreadFactory("DEFAULT-EVENT-PUBLISHER"));
 	
 }

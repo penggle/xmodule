@@ -39,5 +39,10 @@ public abstract class GeneralConfigSyncRemoteBusEvent extends RemoteApplicationE
 	public void setActionType(SyncActionType actionType) {
 		this.actionType = actionType;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " [actionType=" + actionType + ", originService=" + getOriginService() + ", destinationService=" + getDestinationService() + "]";
+	}
 	
 }
