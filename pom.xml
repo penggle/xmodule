@@ -206,5 +206,6 @@
 		<module>xmodule-examples-springboot</module>
 		<module>xmodule-examples-webflux</module>
 		<module>xmodule-examples-springcloud</module>
+		<module>xmodule-examples-foundation</module>
 	</modules>
 </project>
