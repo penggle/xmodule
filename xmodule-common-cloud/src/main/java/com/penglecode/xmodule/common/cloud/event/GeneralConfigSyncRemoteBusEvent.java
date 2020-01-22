@@ -1,4 +1,4 @@
-package com.penglecode.xmodule.common.cloud.synchronizer;
+package com.penglecode.xmodule.common.cloud.event;
 
 import org.springframework.cloud.bus.event.RemoteApplicationEvent;
 

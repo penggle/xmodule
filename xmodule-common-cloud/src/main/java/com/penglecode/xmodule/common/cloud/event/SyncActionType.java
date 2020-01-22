@@ -1,4 +1,4 @@
-package com.penglecode.xmodule.common.cloud.synchronizer;
+package com.penglecode.xmodule.common.cloud.event;
 
 /**
  * 同步动作类型
