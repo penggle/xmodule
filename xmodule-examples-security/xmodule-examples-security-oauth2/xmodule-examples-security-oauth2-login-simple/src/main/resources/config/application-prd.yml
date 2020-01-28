@@ -1,0 +1,44 @@
+#keycloak配置
+keycloak-admin:
+    server-url: http://127.0.0.1:8080/auth
+    username: admin
+    password: 123456
+
+spring:
+    datasource:
+        #默认数据源配置
+        default: 
+            username: root
+            password: 123456
+            url: jdbc:mysql://127.0.0.1:3306/xmodule?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+            
+    #OAuth2客户端配置
+    security:
+        oauth2:
+            client:
+                registration:
+                    google:
+                        client-id: 346565968716-3khn1u4d8t8oqf3qpv529ijsu69bb18a.apps.googleusercontent.com
+                        client-secret: RiAk3SDJOw2DdafL11Voafpn
+                        redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+                    github:
+                        client-id: 397128902793511883bc
+                        client-secret: 9f14448d6907612970172ab3529f4397e75381e6
+                        redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+                    #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    keycloak:
+                        realm: spring-security-oauth2
+                        client-id: simple-oauth2-login
+                        client-secret: 229d034f1b154d27aa1a4cb5c78fde26
+                        redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+                        authorization-grant-type: authorization_code
+                        scope: openid, profile, email, address, phone
+                        client-name: keycloak
+                provider:
+                    #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    keycloak:
+                        authorization-uri: ${keycloak-admin.server-url}/realms/${spring.security.oauth2.client.registration.keycloak.realm}/protocol/openid-connect/auth
+                        token-uri: ${keycloak-admin.server-url}/realms/${spring.security.oauth2.client.registration.keycloak.realm}/protocol/openid-connect/token
+                        user-info-uri: ${keycloak-admin.server-url}/realms/${spring.security.oauth2.client.registration.keycloak.realm}/protocol/openid-connect/userinfo
+                        jwk-set-uri: ${keycloak-admin.server-url}/realms/${spring.security.oauth2.client.registration.keycloak.realm}/protocol/openid-connect/certs
+                        user-name-attribute: preferred_username

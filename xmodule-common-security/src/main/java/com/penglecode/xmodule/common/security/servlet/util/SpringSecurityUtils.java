@@ -1,13 +1,20 @@
 package com.penglecode.xmodule.common.security.servlet.util;
 
+import java.lang.reflect.Method;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+
+import com.penglecode.xmodule.common.util.ReflectionUtils;
+import com.penglecode.xmodule.common.util.SpringUtils;
 
 /**
  * spring-security工具类
@@ -15,8 +22,47 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
  * @author 	pengpeng
  * @date	2019年1月16日 下午2:38:43
  */
+@SuppressWarnings("unchecked")
 public class SpringSecurityUtils {
 
+	private static final Object mutex = new Object();
+	
+	private static volatile HttpSecurity primaryHttpSecurity;
+	
+	/**
+	 * 获取SpringSecurity的配置bean
+	 * 例如：
+	 * @Primary
+	 * @Configuration
+	 * @EnableWebSecurity
+	 * public class XxxSecurityConfiguration extends WebSecurityConfigurerAdapter {
+	 * 		...
+	 * }
+	 * 
+	 * @return
+	 */
+	public static WebSecurityConfigurerAdapter getPrimarySecurityConfigurer() {
+		return SpringUtils.getBean(WebSecurityConfigurerAdapter.class);
+	}
+	
+	/**
+	 * 获取SpringSecurity的HttpSecurity配置
+	 * @return
+	 */
+	public static HttpSecurity getPrimaryHttpSecurity() {
+		WebSecurityConfigurerAdapter primarySecurityConfigurer = getPrimarySecurityConfigurer();
+		if(primaryHttpSecurity == null) {
+			synchronized (mutex) {
+				if(primaryHttpSecurity == null) {
+					Method method = ReflectionUtils.findMethod(WebSecurityConfigurerAdapter.class, "getHttp");
+					method.setAccessible(true);
+					primaryHttpSecurity = (HttpSecurity) ReflectionUtils.invokeMethod(method, primarySecurityConfigurer);
+				}
+			}
+		}
+		return primaryHttpSecurity;
+	}
+	
 	/**
 	 * 获取认证(登录)异常
 	 * @param request
@@ -35,6 +81,15 @@ public class SpringSecurityUtils {
 			}
 		}
 		return exception;
+	}
+	
+	/**
+	 * 获取当前登录证明(Authentication)
+	 * @param <T>
+	 * @return
+	 */
+	public static <T extends Authentication> T getAuthentication() {
+		return (T) SecurityContextHolder.getContext().getAuthentication();
 	}
 	
 	/**

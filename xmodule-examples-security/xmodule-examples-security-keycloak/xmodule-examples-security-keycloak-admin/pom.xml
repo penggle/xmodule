@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.penglecode</groupId>
+		<artifactId>xmodule-examples-security-keycloak</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>xmodule-examples-security-keycloak-admin</artifactId>
+	<name>xmodule-examples-security-keycloak-admin</name>
+	<description>Keycloak管理示例</description>
+	
+	<dependencies>
+		<!-- xmodule-common-keycloak -->
+		<dependency>
+			<groupId>com.penglecode</groupId>
+			<artifactId>xmodule-common-keycloak</artifactId>
+			<version>${xmodule.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>xmodule-examples-security-keycloak-admin</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-datasource</id>
+						<phase>install</phase>
+						<goals>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<address>subsystem=datasources</address>
+							<resources>
+								<resource>
+									<address>data-source=java:jboss/datasources/UpmsKeycloakDS</address>
+									<properties>
+										<jta>false</jta>
+										<name>UpmsKeycloakDS</name>
+										<jndi-name>java:jboss/datasources/UpmsKeycloakDS</jndi-name>
+										<driver-name>mysql</driver-name>
+										<enabled>true</enabled>
+										<use-java-context>true</use-java-context>
+										<use-ccm>true</use-ccm>
+										<connection-url>jdbc:mysql://172.16.18.174:3306/keycloak-upms?useSSL=false&amp;serverTimezone=GMT%2B8&amp;characterEncoding=UTF-8</connection-url>
+										<user-name>root</user-name>
+										<password>123456</password>
+										<flush-strategy>IdleConnections</flush-strategy>
+										<initial-pool-size>5</initial-pool-size>
+										<min-pool-size>5</min-pool-size>
+										<max-pool-size>200</max-pool-size>
+										<check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
+										<background-validation>true</background-validation>
+										<background-validation-millis>60000</background-validation-millis>
+									</properties>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

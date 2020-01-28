@@ -74,4 +74,14 @@ public class CollectionUtils {
 		return isEmpty(collection) ? defaultValue : collection;
 	}
 	
+	/**
+	 * <p>如果map为null/empty则返回defaultValue否则原值返回</p>
+	 * @param map
+	 * @param defaultValue
+	 * @return
+	 */
+	public static <K,V> Map<K,V> defaultIfEmpty(Map<K,V> map, Map<K,V> defaultValue) {
+		return isEmpty(map) ? defaultValue : map;
+	}
+	
 }

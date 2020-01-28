@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.penglecode</groupId>
+		<artifactId>xmodule</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>xmodule-common-keycloak</artifactId>
+	<name>xmodule-common-keycloak</name>
+	<description>Keycloak与SpringBoot、SpringSecurity集成</description>
+
+	<properties>
+		<keycloak.version>8.0.1</keycloak.version>
+		<wildfly.version>14.0.1.Final</wildfly.version>
+	</properties>
+	
+	<dependencies>
+		<!-- xmodule-common-security -->
+		<dependency>
+			<groupId>com.penglecode</groupId>
+			<artifactId>xmodule-common-security</artifactId>
+			<version>${xmodule.version}</version>
+		</dependency>
+	
+		<!-- keycloak-admin-client -->
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-admin-client</artifactId>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- keycloak-admin-client -->
+			<dependency>
+				<groupId>org.keycloak</groupId>
+				<artifactId>keycloak-admin-client</artifactId>
+				<version>${keycloak.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.keycloak.bom</groupId>
+				<artifactId>keycloak-spi-bom</artifactId>
+				<version>${keycloak.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.wildfly.bom</groupId>
+				<artifactId>wildfly-javaee8</artifactId>
+				<version>${wildfly.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<finalName>xmodule-common-keycloak</finalName>
+		<pluginManagement>
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>2.0.2.Final</version>
+				<configuration>
+					<skip>false</skip>
+					<force>true</force>
+					<hostname>172.16.18.174</hostname>
+					<port>9990</port>
+					<!-- 执行${KC_HOME}/bin/add-user.bat|sh，选择a) Management User (mgmt-users.properties) 
+						... -->
+					<username>madmin</username>
+					<password>madmin123</password>
+				</configuration>
+			</plugin>
+		</pluginManagement>
+	</build>
+
+</project>
