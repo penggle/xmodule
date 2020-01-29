@@ -1,0 +1,63 @@
+version: '3.3' 
+  
+services:
+  hydra-migrate:
+    image: oryd/hydra:v1.2.1
+    environment:
+      - TZ=Asia/Shanghai
+      - DSN=mysql://root:123456@tcp(mysql:3306)/hydra?max_conns=20&max_idle_conns=4&charset=utf8
+    command:
+      migrate sql -e --yes
+    restart: on-failure
+    networks:
+      - dev
+
+  hydra:
+    image: oryd/hydra:v1.2.2
+    container_name: hydra
+    hostname: hydra
+    ports:
+      - 4444:4444
+      - 4445:4445
+      - 5555:5555
+    environment:
+      - TZ=Asia/Shanghai
+      - STRATEGIES_ACCESS_TOKEN=jwt
+      - TTL_ID_TOKEN=7200s
+      - TTL_ACCESS_TOKEN=7200s
+      - TTL_REFRESH_TOKEN=168h
+      - OIDC_SUBJECT_IDENTIFIERS_ENABLED=public
+      - SERVE_PUBLIC_CORS_ENABLED=true
+      - SERVE_PUBLIC_CORS_ALLOWED_METHODS=POST,GET,PUT,DELETE
+      - SERVE_ADMIN_CORS_ENABLED=true
+      - SERVE_ADMIN_CORS_ALLOWED_METHODS=POST,GET,PUT,DELETE
+      - DSN=mysql://root:123456@tcp(mysql:3306)/hydra?max_conns=20&max_idle_conns=4&charset=utf8
+      - SECRETS_SYSTEM=e10adc3949ba59abbe56e057f20f883e
+      - URLS_SELF_ISSUER=http://192.168.137.110:4444
+      - URLS_CONSENT=http://127.0.0.1:3000/consent
+      - URLS_LOGIN=http://127.0.0.1:3000/login
+      - URLS_LOGOUT=http://127.0.0.1:3000/logout
+    command:
+      serve all --dangerous-force-http
+    restart: unless-stopped
+    networks:
+      - dev
+    depends_on:
+      - hydra-migrate
+      
+  hydra-login-consent-node:
+    image: oryd/hydra-login-consent-node:v1.1.1
+    container_name: hydra-login-consent-node
+    hostname: hydra-login-consent-node
+    ports:
+      - 3000:3000
+    environment:
+      - TZ=Asia/Shanghai
+      - HYDRA_ADMIN_URL=http://hydra:4445
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    restart: unless-stopped
+    networks:
+      - dev
+networks:
+  dev:
+    external: true

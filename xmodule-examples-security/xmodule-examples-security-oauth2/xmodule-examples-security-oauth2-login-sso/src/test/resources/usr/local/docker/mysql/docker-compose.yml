@@ -1,0 +1,26 @@
+version: '3.3' 
+  
+services:
+      
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    hostname: mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=dev
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=123456
+    volumes:
+      - ./data:/var/lib/mysql
+      - ./logs:/var/log/mysql
+      - ./conf/my.cnf:/etc/my.cnf
+    networks:
+      - dev
+networks:
+  dev:
+    external: true
