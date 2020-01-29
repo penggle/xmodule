@@ -3,3 +3,4 @@
 .classpath
 target/
 logPath_IS_UNDEFINED
+*.log
