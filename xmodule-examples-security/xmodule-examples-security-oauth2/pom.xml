@@ -17,5 +17,6 @@
 	</build>
 	<modules>
 		<module>xmodule-examples-security-oauth2-login-simple</module>
+		<module>xmodule-examples-security-oauth2-hydra-login</module>
 	</modules>
 </project>

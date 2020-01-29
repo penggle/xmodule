@@ -15,7 +15,7 @@ context:
 
 #Servlet容器配置
 server:
-    port: 8081
+    port: 3000
     servlet:
         context-path: /
         application-display-name: ${spring.application.name}
@@ -46,7 +46,7 @@ info:
 #SpringBoot应用的名称
 spring:
     application:
-        name: xmodule-examples-security-oauth2-login-simple
+        name: xmodule-examples-security-oauth2-hydra-login
     #被排除的自动配置
     autoconfigure:
         exclude:

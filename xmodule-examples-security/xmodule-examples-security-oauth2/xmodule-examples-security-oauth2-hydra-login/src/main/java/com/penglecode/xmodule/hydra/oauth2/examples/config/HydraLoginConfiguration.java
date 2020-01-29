@@ -1,4 +1,4 @@
-package com.penglecode.xmodule.security.oauth2.examples.config;
+package com.penglecode.xmodule.hydra.oauth2.examples.config;
 
 import java.time.Duration;
 
@@ -13,20 +13,8 @@ import sh.ory.hydra.ApiClient;
 import sh.ory.hydra.api.AdminApi;
 
 @Configuration
-public class OAuth2LoginConfiguration extends AbstractSpringConfiguration {
+public class HydraLoginConfiguration extends AbstractSpringConfiguration {
 
-	@Bean
-	@ConfigurationProperties(prefix="spring.security.oauth2.client.registration.keycloak")
-	public KeycloakOAuth2LoginConfigProperties keycloakOAuth2LoginConfig() {
-		return new KeycloakOAuth2LoginConfigProperties();
-	}
-	
-	@Bean
-	@ConfigurationProperties(prefix="spring.security.oauth2.client.registration.hydra")
-	public HydraOAuth2LoginConfigProperties hydraOAuth2LoginConfig() {
-		return new HydraOAuth2LoginConfigProperties();
-	}
-	
 	@Bean
 	@ConfigurationProperties(prefix="hydra")
 	public HydraConfigProperties hydraConfigProperties() {

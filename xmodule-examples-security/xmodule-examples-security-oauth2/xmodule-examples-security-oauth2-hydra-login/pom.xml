@@ -1,28 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.penglecode</groupId>
-		<artifactId>xmodule-examples-security-oauth2</artifactId>
-		<version>1.0.0</version>
-	</parent>
-	<artifactId>xmodule-examples-security-oauth2-login-simple</artifactId>
-	<name>xmodule-examples-security-oauth2-login-simple</name>
-	<description>基于spring-security5的oauth2Login()的SSO单点登录(Google,Github等)示例</description>
-
-	<dependencies>
-		<!-- xmodule-common-oauth2 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.penglecode</groupId>
+    <artifactId>xmodule-examples-security-oauth2</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <artifactId>xmodule-examples-security-oauth2-hydra-login</artifactId>
+  <name>xmodule-examples-security-oauth2-hydra-login</name>
+  <description>基于Ory/Hydra的OAuth2用户登录与同意Provider</description>
+  
+  <dependencies>
+		<!-- xmodule-common-security -->
 		<dependency>
 			<groupId>com.penglecode</groupId>
-			<artifactId>xmodule-common-oauth2</artifactId>
-			<version>${xmodule.version}</version>
-		</dependency>
-		
-		<!-- xmodule-common-keycloak -->
-		<dependency>
-			<groupId>com.penglecode</groupId>
-			<artifactId>xmodule-common-keycloak</artifactId>
+			<artifactId>xmodule-common-security</artifactId>
 			<version>${xmodule.version}</version>
 		</dependency>
 		
@@ -70,7 +61,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>xmodule-examples-security-oauth2-login-simple</finalName>
+		<finalName>xmodule-examples-security-oauth2-hydra-login</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

@@ -3,6 +3,10 @@ keycloak-admin:
     server-url: http://127.0.0.1:8080/auth
     username: admin
     password: 123456
+#ory/hydra配置
+hydra:
+    public-api-url: http://192.168.137.110:4444
+    admin-api-url: http://192.168.137.110:4445
 
 spring:
     datasource:
@@ -34,6 +38,13 @@ spring:
                         authorization-grant-type: authorization_code
                         scope: openid, profile, email, address, phone
                         client-name: keycloak
+                    hydra:
+                        client-id: simple-oauth2-login
+                        client-secret: 229d034f1b154d27aa1a4cb5c78fde26
+                        redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+                        authorization-grant-type: authorization_code
+                        scope: openid, profile, email, address, phone
+                        client-name: Hydra
                 provider:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
                     keycloak:
@@ -42,3 +53,9 @@ spring:
                         user-info-uri: ${keycloak-admin.server-url}/realms/${spring.security.oauth2.client.registration.keycloak.realm}/protocol/openid-connect/userinfo
                         jwk-set-uri: ${keycloak-admin.server-url}/realms/${spring.security.oauth2.client.registration.keycloak.realm}/protocol/openid-connect/certs
                         user-name-attribute: preferred_username
+                    hydra:
+                        authorization-uri: ${hydra.public-api-url}/oauth2/auth
+                        token-uri: ${hydra.public-api-url}/oauth2/token
+                        user-info-uri: ${hydra.public-api-url}/userinfo
+                        jwk-set-uri: ${hydra.public-api-url}/.well-known/jwks.json
+                        user-name-attribute: sub
