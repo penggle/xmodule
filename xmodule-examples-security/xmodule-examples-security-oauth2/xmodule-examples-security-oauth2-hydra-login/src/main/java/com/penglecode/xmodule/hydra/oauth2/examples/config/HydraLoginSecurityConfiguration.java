@@ -29,7 +29,7 @@ public class HydraLoginSecurityConfiguration extends WebSecurityConfigurerAdapte
 				.antMatchers("/login").permitAll()
          		.anyRequest().authenticated()
          	.and()
-         		.formLogin().loginPage("/login").failureForwardUrl("/login/failure").defaultSuccessUrl("/login/success")
+         		.formLogin().loginPage("/login").failureForwardUrl("/login/failure").successForwardUrl("/login/success")
          	.and()
          		.logout().logoutUrl("/logout").logoutSuccessHandler(new HydraLogoutSuccessHandler("/logout/success")).invalidateHttpSession(true)
          	.and()

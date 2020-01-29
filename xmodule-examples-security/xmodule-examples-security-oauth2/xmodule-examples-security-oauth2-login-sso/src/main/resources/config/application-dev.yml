@@ -58,4 +58,4 @@ spring:
                         token-uri: ${hydra.public-api-url}/oauth2/token
                         user-info-uri: ${hydra.public-api-url}/userinfo
                         jwk-set-uri: ${hydra.public-api-url}/.well-known/jwks.json
-                        user-name-attribute: sub
+                        user-name-attribute: username

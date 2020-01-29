@@ -26,6 +26,7 @@ public class OAuth2LoginSecurityConfiguration extends WebSecurityConfigurerAdapt
 		http.antMatcher("/**")
 			.authorizeRequests()
 				.antMatchers("/api/keycloak/init").permitAll()
+				.antMatchers("/api/hydra/init").permitAll()
 				.antMatchers("/login").permitAll()
          		.anyRequest().authenticated()
          	.and()

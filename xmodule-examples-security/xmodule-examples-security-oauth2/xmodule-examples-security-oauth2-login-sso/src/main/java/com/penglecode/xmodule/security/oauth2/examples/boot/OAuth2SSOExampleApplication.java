@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.penglecode.xmodule.BasePackage;
 
 @SpringBootApplication(scanBasePackageClasses=BasePackage.class)
-public class SimpleOAuth2LoginExampleApplication {
+public class OAuth2SSOExampleApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SimpleOAuth2LoginExampleApplication.class, args);
+		SpringApplication.run(OAuth2SSOExampleApplication.class, args);
 	}
 	
 }

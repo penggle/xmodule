@@ -21,6 +21,8 @@ server:
         application-display-name: ${spring.application.name}
         session:
             timeout: 7200
+            cookie:
+                name: hlSESSIONID
 
 #SpringBoot应用监控模块
 management:

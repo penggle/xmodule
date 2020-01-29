@@ -1,4 +1,4 @@
-# xmodule-examples-security-oauth2-login: 基于Spring-Security的OAuth2Login示例
+# xmodule-examples-security-oauth2-login-sso: 基于Spring-Security的OAuth2Login示例
 
 ## SpringSecurity官方[参考示例](https://github.com/spring-projects/spring-security/tree/5.2.1.RELEASE/samples/boot/oauth2login)
 
@@ -26,6 +26,8 @@
 - 获取Google的OAuth2客户端凭证：[Google API Console](https://console.developers.google.com/) - "Credentials"这一节中获取clientId与clientSecret。
 - 获取Github的OAuth2客户端凭证：[Register a new OAuth application](https://github.com/settings/applications/new)
 - 关于keycloak的配置，请参阅：[keycloak-springsecurity5-sample](https://github.com/hantsy/keycloak-springsecurity5-sample)
+
+- 关于Ory/Hydra的配置，请参阅：[ORY Hydra文档](https://www.ory.sh/docs/hydra/)
 
 #### 2.2 配置application.yaml
 
@@ -68,42 +70,63 @@ SpringMVC配置:
 
 ```java
 @Controller
-public class OAuth2LoginController {
+public class OAuth2LoginController implements InitializingBean {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2LoginController.class);
 
-	@Autowired
-	private OAuth2AuthorizedClientService authorizedClientService;
-
-	@Resource(name = "defaultRestTemplate")
-	private RestTemplate restTemplate;
-
+	private final Map<String,String> oauth2LoginLinks = new LinkedHashMap<String,String>();
+	
+	@GetMapping(value="/login")
+	public String login(Model model) {
+		model.addAttribute("oauth2LoginLinks", oauth2LoginLinks);
+		return "login";
+	}
+	
+	@RequestMapping(value="/login/failure")
+	public String loginFailure(HttpServletRequest request, HttpServletResponse response, Model model) {
+		Exception exception = SpringSecurityUtils.getAuthenticationException(request);
+		LOGGER.error(String.format(">>> login failure: %s", exception.getMessage()), exception);
+		model.addAttribute("error", Boolean.TRUE);
+		model.addAttribute("message", ExceptionUtils.getRootCauseMessage(exception));
+		return "login";
+	}
+	
 	@RequestMapping(value="/login/success")
-	public String loginSuccess(Model model, OAuth2AuthenticationToken authentication) {
+	public String loginSuccess() {
 		return "redirect:/index";
 	}
 	
 	@RequestMapping(value="/index")
-	public String index(Model model, OAuth2AuthenticationToken authentication) {
-		OAuth2AuthorizedClient client = authorizedClientService
-				.loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
-
-		String userInfoEndpointUri = client.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUri();
-
-		if (!StringUtils.isEmpty(userInfoEndpointUri)) {
-			HttpHeaders headers = new HttpHeaders();
-			headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken().getTokenValue());
-
-			HttpEntity<String> entity = new HttpEntity<String>("", headers);
-
-			ResponseEntity<Map<String, Object>> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET,
-					entity, new ParameterizedTypeReference<Map<String, Object>>() {
-					});
-			Map<String, Object> userInfo = response.getBody();
-			LOGGER.debug(">>> userInfo = {}", userInfo);
-			model.addAttribute("name", userInfo.get("name"));
+	public String index(Model model, AbstractAuthenticationToken authentication) {
+		Map<String,Object> userInfo = null;
+		LOGGER.info(">>> authentication = {}", authentication);
+		if(authentication instanceof OAuth2AuthenticationToken) {
+			LOGGER.info(">>> OAuth2 User Login Success!");
+			OAuth2AuthenticationToken authentication0 = SpringSecurityUtils.getAuthentication();
+			System.out.println(authentication0 == authentication);
+			userInfo = OAuth2UserUtils.getCurrentOAuth2UserInfo();
+			OAuth2AccessToken accessToken = OAuth2ClientUtils.getCurrentOAuth2AccessToken();
+			LOGGER.debug(">>> userInfo = {}", JsonUtils.object2Json(userInfo));
+			LOGGER.debug(">>> accessToken = {}", JsonUtils.object2Json(accessToken));
+		} else {
+			LOGGER.info(">>> Local User Login Success!");
+			User user = (User) authentication.getPrincipal();
+			userInfo = new LinkedHashMap<String,Object>();
+			userInfo.put("name", user.getUsername());
+			userInfo.put("authorities", user.getAuthorities());
+			LOGGER.debug(">>> userInfo = {}", JsonUtils.object2Json(userInfo));
 		}
+		
+		model.addAttribute("userInfo", userInfo);
 		return "index";
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		Map<String,String> loginLinks = OAuth2LoginUtils.getConfiguredOAuth2LoginLinks();
+		if(loginLinks != null) {
+			oauth2LoginLinks.putAll(loginLinks);
+		}
 	}
 
 }
@@ -133,6 +156,16 @@ src/main/resources/META-INF/resources/WEB-INF/jsp/index.jsp
 </body>
 </html>
 ```
+
+#### 2.5 ORY Hydra登录与同意页面的提供
+
+由于ORY Hydra没有用户模块，因此也就没有用户登录及同意页面的提供，需要额外开发。
+具体使用spring-security开发的案例参见隔壁项目：xmodule-examples-security-oauth2-hydra-login(该项目模仿自[官方示例](https://github.com/ory/hydra-login-consent-node))
+
+#### 2.6 SSO应用的初始化接口(匿名可访问)
+
+ORY Hydra客户端初始化：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2HydraServerController
+Keycloak客户端初始化：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2KeycloakServerController
 
 ### 3.运行&测试
 

@@ -12,7 +12,7 @@
 	<h2>An application requests access to your data!</h2>
 	
 	<form action="${pageContext.request.contextPath}/consent" method="post">
-		<input type="hidden" name="loginChallenge" value="${loginChallenge}"/>
+		<input type="hidden" name="consentChallenge" value="${consentChallenge}"/>
 		
 		<c:if test="${oauth2Client.logoUri}">
 			<img src="${oauth2Client.logoUri}">
@@ -45,9 +45,14 @@
 			<label><input type="checkbox" name="remember" value="true"/> Do not ask me again</label>
 		</div>
 		
+		<br/>
+		
+		<p>
+			Finally, do you agree to the above authorization?
+		</p>
 		<div>
 			<ul>
-				<li><label>Allow Access <input type="radio" name="consentAccess" value="1"/></label></li>
+				<li><label>Allow Access <input type="radio" name="consentAccess" value="1" checked="checked"/></label></li>
 				<li><label>Deny  Access <input type="radio" name="consentAccess" value="0"/></label></li>
 			</ul>
 		</div>

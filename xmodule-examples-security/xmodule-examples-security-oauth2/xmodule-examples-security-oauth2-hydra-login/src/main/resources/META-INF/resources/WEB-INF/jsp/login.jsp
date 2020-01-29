@@ -23,9 +23,11 @@
 			<label> Password: <input type="password" name="password" />
 			</label>
 		</div>
-		<div>
-			<label><input type="checkbox" name="remember" value="true"/> Remember Me</label>
-		</div>
+		<c:if test="${not empty loginChallenge}">
+			<div>
+				<label><input type="checkbox" name="remember" value="true"/> Remember Me</label>
+			</div>
+		</c:if>
 		<div>
 			<input type="submit" value="Sign In" />
 		</div>

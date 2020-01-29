@@ -21,7 +21,9 @@ server:
         application-display-name: ${spring.application.name}
         session:
             timeout: 7200
-
+            cookie:
+                name: olSESSIONID
+                
 #SpringBoot应用监控模块
 management:
     endpoints:
@@ -46,7 +48,7 @@ info:
 #SpringBoot应用的名称
 spring:
     application:
-        name: xmodule-examples-security-oauth2-login-simple
+        name: xmodule-examples-security-oauth2-login-sso
     #被排除的自动配置
     autoconfigure:
         exclude:

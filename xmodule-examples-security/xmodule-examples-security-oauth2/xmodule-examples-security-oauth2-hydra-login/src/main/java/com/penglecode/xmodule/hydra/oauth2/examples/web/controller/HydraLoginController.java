@@ -1,6 +1,7 @@
 package com.penglecode.xmodule.hydra.oauth2.examples.web.controller;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.beans.BeanMap;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +17,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 import com.penglecode.xmodule.common.util.ExceptionUtils;
@@ -35,7 +36,6 @@ import sh.ory.hydra.model.LoginRequest;
 import sh.ory.hydra.model.RejectRequest;
 
 @Controller
-@SuppressWarnings("unchecked")
 public class HydraLoginController extends HttpApiResourceSupport {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HydraLoginController.class);
@@ -128,7 +128,7 @@ public class HydraLoginController extends HttpApiResourceSupport {
 	 * @return
 	 */
 	@GetMapping(value="/consent")
-	public String consentRender(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+	public String consentRender(HttpServletRequest request, HttpServletResponse response, AbstractAuthenticationToken authentication, Model model) throws Exception {
 		String consentChallenge = request.getParameter("consent_challenge");
 		boolean hydraOAuth2Login = !StringUtils.isEmpty(consentChallenge);
 		if(hydraOAuth2Login) { //如果是来自hydra的OAuth2(authorization_code)认证流程
@@ -141,9 +141,10 @@ public class HydraLoginController extends HttpApiResourceSupport {
 				AcceptConsentRequest acceptConsentRequest = new AcceptConsentRequest();
 				acceptConsentRequest.setGrantScope(consentResponse.getRequestedScope());
 				acceptConsentRequest.setGrantAccessTokenAudience(consentResponse.getRequestedAccessTokenAudience());
+				Map<String,Object> userInfo = getUserinfoMap(authentication);
 				ConsentRequestSession session = new ConsentRequestSession(); //向access_token/id_token中添加的附属字段
-				session.putAccessTokenItem("foo", "bar");
-				session.putIdTokenItem("foo", "bar");
+				//session.accessToken(userInfo);
+				session.idToken(userInfo);
 				acceptConsentRequest.setSession(session);
 				LOGGER.info("【acceptConsentRequest】>>> acceptConsentRequest = {}", acceptConsentRequest);
 				CompletedRequest acceptConsentResponse = hydraAdminApi.acceptConsentRequest(consentChallenge, acceptConsentRequest);
@@ -167,23 +168,19 @@ public class HydraLoginController extends HttpApiResourceSupport {
 	 * @return
 	 */
 	@PostMapping(value="/consent")
-	public String consentAccess(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+	public String consentAccess(HttpServletRequest request, HttpServletResponse response, AbstractAuthenticationToken authentication, Model model) throws Exception {
 		String consentAccess = request.getParameter("consentAccess");
 		if(consentAccess.equals("1")) {
-			return consentAllowed(request, response, model);
+			return consentAllowed(request, response, authentication, model);
 		} else {
-			return consentDenied(request, response, model);
+			return consentDenied(request, response, authentication, model);
 		}
 	}
 	
 	/**
 	 * 同意授权
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @return
 	 */
-	public String consentAllowed(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+	public String consentAllowed(HttpServletRequest request, HttpServletResponse response, AbstractAuthenticationToken authentication, Model model) throws Exception {
 		String consentChallenge = request.getParameter("consentChallenge");
 		String remember = request.getParameter("remember");
 		Assert.hasText(consentChallenge, "The request parameter 'consentChallenge' not found!");
@@ -198,9 +195,10 @@ public class HydraLoginController extends HttpApiResourceSupport {
 		acceptConsentRequest.setGrantAccessTokenAudience(consentResponse.getRequestedAccessTokenAudience());
 		acceptConsentRequest.setRemember("1".equals(remember) || "true".equals(remember));
 		acceptConsentRequest.setRememberFor(getEnvironment().getProperty("server.servlet.session.timeout", Long.class, 7200L));
+		Map<String,Object> userInfo = getUserinfoMap(authentication);
 		ConsentRequestSession session = new ConsentRequestSession(); //向access_token/id_token中添加的附属字段
-		session.putAccessTokenItem("foo", "bar");
-		session.putIdTokenItem("foo", "bar");
+		//session.accessToken(userInfo);
+		session.idToken(userInfo);
 		acceptConsentRequest.setSession(session);
 		LOGGER.info("【acceptConsentRequest】>>> acceptConsentRequest = {}", acceptConsentRequest);
 		CompletedRequest acceptConsentResponse = hydraAdminApi.acceptConsentRequest(consentChallenge, acceptConsentRequest);
@@ -210,12 +208,8 @@ public class HydraLoginController extends HttpApiResourceSupport {
 	
 	/**
 	 * 拒绝授权
-	 * @param request
-	 * @param response
-	 * @param model
-	 * @return
 	 */
-	public String consentDenied(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+	public String consentDenied(HttpServletRequest request, HttpServletResponse response, AbstractAuthenticationToken authentication, Model model) throws Exception {
 		String consentChallenge = request.getParameter("consentChallenge");
 		Assert.hasText(consentChallenge, "The request parameter 'consentChallenge' not found!");
 		String message = "The resource owner denied the request";
@@ -236,11 +230,24 @@ public class HydraLoginController extends HttpApiResourceSupport {
 	@RequestMapping(value="/index")
 	public String index(AbstractAuthenticationToken authentication, Model model) {
 		LOGGER.info(">>> authentication = {}", authentication);
-		User user = (User) authentication.getPrincipal();
-		Map<String,Object> userInfo = BeanMap.create(user);
+		Map<String,Object> userInfo = getUserinfoMap(authentication);
 		LOGGER.debug(">>> userInfo = {}", JsonUtils.object2Json(userInfo));
 		model.addAttribute("userInfo", userInfo);
 		return "index";
+	}
+	
+	/**
+	 * 用户信息
+	 * @param authentication
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/userinfo")
+	public Object userinfo(AbstractAuthenticationToken authentication) {
+		LOGGER.info(">>> authentication = {}", authentication);
+		Map<String,Object> userInfo = getUserinfoMap(authentication);
+		LOGGER.debug(">>> userInfo = {}", JsonUtils.object2Json(userInfo));
+		return userInfo;
 	}
 	
 	/**
@@ -252,7 +259,19 @@ public class HydraLoginController extends HttpApiResourceSupport {
 	 */
 	@RequestMapping(value="/logout/success")
 	public String logoutSuccess(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		String logoutChallenge = request.getParameter("logout_challenge");
+		LOGGER.info(">>> logoutChallenge = {}", logoutChallenge);
 		return "redirect:/login";
+	}
+	
+	protected Map<String,Object> getUserinfoMap(AbstractAuthenticationToken authentication) {
+		User user = (User) authentication.getPrincipal();
+		Map<String,Object> userinfo = new LinkedHashMap<String,Object>();
+		userinfo.put("userid", user.getUserId());
+		userinfo.put("username", user.getUserName());
+		userinfo.put("nickname", user.getNickName());
+		userinfo.put("createTime", user.getCreateTime());
+		return userinfo;
 	}
 	
 }

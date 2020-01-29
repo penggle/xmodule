@@ -1,16 +1,20 @@
 package com.penglecode.xmodule.security.oauth2.examples.web.controller;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.penglecode.xmodule.common.support.Result;
+import com.penglecode.xmodule.common.util.SpelExpressionUtils;
 import com.penglecode.xmodule.common.util.StringUtils;
 import com.penglecode.xmodule.security.oauth2.examples.config.HydraOAuth2LoginConfigProperties;
 
@@ -56,7 +60,12 @@ public class OAuth2HydraServerController {
 		oauth2Client.setGrantTypes(Arrays.asList(hydraOAuth2LoginConfig.getAuthorizationGrantType()));
 		oauth2Client.setResponseTypes(Arrays.asList("token","code","id_token"));
 		oauth2Client.setScope(StringUtils.join(hydraOAuth2LoginConfig.getScope(), " "));
-		oauth2Client.setRedirectUris(Arrays.asList(hydraOAuth2LoginConfig.getRedirectUri()));
+		Map<String,Object> variables = new HashMap<String,Object>();
+		variables.put("baseUrl", hydraOAuth2LoginConfig.getBaseUrl());
+		variables.put("registrationId", "hydra");
+		String redirectUriTemplate = hydraOAuth2LoginConfig.getRedirectUri();
+		String redirectUri = SpelExpressionUtils.parseTemplate(new TemplateParserContext("{", "}"), redirectUriTemplate, variables);
+		oauth2Client.setRedirectUris(Arrays.asList(redirectUri));
 		oauth2Client.setTokenEndpointAuthMethod("client_secret_basic");
 		hydraAdminApi.createOAuth2Client(oauth2Client);
 		LOGGER.info(">>> 创建Client({})成功!", hydraOAuth2LoginConfig.getClientId());
