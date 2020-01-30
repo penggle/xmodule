@@ -16,7 +16,6 @@
 		<finalName>xmodule-examples-security-oauth2</finalName>
 	</build>
 	<modules>
-		<module>xmodule-examples-security-oauth2-login-sso</module>
-		<module>xmodule-examples-security-oauth2-hydra-login</module>
+		<module>xmodule-examples-security-oauth2-login</module>
 	</modules>
 </project>
