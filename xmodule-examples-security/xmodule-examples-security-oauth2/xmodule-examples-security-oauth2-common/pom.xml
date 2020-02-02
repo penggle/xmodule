@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.penglecode</groupId>
+		<artifactId>xmodule-examples-security-oauth2</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>xmodule-examples-security-oauth2-common</artifactId>
+	<name>xmodule-examples-security-oauth2-common</name>
+	<description>用于OAuth2示例的公共部分</description>
+
+	<dependencies>
+		<!-- xmodule-common-support -->
+		<dependency>
+			<groupId>com.penglecode</groupId>
+			<artifactId>xmodule-common-support</artifactId>
+			<version>${xmodule.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>xmodule-examples-security-oauth2-common</finalName>
+	</build>
+</project>

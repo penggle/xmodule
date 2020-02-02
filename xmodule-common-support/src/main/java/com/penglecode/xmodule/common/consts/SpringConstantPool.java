@@ -16,7 +16,7 @@ public class SpringConstantPool<T> implements ConstantPool<T> {
 		if (constant instanceof SpringBeanConstant) {
 			T bean = null;
 			try {
-				if(StringUtils.isEmpty(constant.name)) {
+				if(!StringUtils.isEmpty(constant.name)) {
 					bean = SpringUtils.getBean(constant.name);
 				} else {
 					bean = SpringUtils.getBean(constant.type);

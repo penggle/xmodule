@@ -19,16 +19,33 @@
 			<version>${xmodule.version}</version>
 		</dependency>
 
-		<!-- spring-security-oauth2-client -->
+		<!-- spring-boot-starter-oauth2-client -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-client</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
 
-		<!-- spring-security-oauth2-jose -->
+		<!-- spring-boot-starter-oauth2-resource-server -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-jose</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+		
+		<!-- spring5 WebClient support -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webflux</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor.netty</groupId>
+			<artifactId>reactor-netty</artifactId>
+		</dependency>
+		
+		<!-- j2ee web spec -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

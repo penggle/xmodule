@@ -3,19 +3,17 @@ package com.penglecode.xmodule.webflux.examples.initializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
-import com.penglecode.xmodule.common.initializer.InitializationRunAt;
-import com.penglecode.xmodule.common.initializer.SpringAppInitializer;
-
-@InitializationRunAt(ApplicationStartedEvent.class)
-public class WebFluxExampleAppStartedInitializer implements SpringAppInitializer {
+@Component
+public class WebFluxExampleAppStartedInitializer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WebFluxExampleAppStartedInitializer.class);
 	
-	@Override
-	public void initialize(ConfigurableApplicationContext applicationContext) throws Exception {
-		LOGGER.info(">>> Webflux example application started! applicationContext = {}", applicationContext);
+	@EventListener(ApplicationStartedEvent.class)
+	public void initialize(ApplicationStartedEvent event) throws Exception {
+		LOGGER.info(">>> Webflux example application started! event = {}", event);
 	}
 
 }

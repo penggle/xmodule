@@ -30,7 +30,7 @@
 	<h2>Login with OAuth 2.0</h2>
 	<ul>
 		<c:forEach items="${oauth2LoginLinks}" var="item">
-			<li><a href="${item.key}"/>${item.value}</li>
+			<li><a href="${item.key}">${item.value}</a></li>
 		</c:forEach>
 	</ul>
 </body>

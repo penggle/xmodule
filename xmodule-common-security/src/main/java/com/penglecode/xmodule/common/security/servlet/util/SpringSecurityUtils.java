@@ -105,11 +105,11 @@ public class SpringSecurityUtils {
 	}
 	
 	/**
-	 * 执行退出登录最后一步清除Authentication
+	 * 执行退出登录
 	 * @param request
 	 * @param response
 	 */
-	public static void clearAuthentication(HttpServletRequest request, HttpServletResponse response) {
+	public static void logout(HttpServletRequest request, HttpServletResponse response) {
 		SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
 		logoutHandler.logout(request, response, SecurityContextHolder.getContext().getAuthentication());
 	}

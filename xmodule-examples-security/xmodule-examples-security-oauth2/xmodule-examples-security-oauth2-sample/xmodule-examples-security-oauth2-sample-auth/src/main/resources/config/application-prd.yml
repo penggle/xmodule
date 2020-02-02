@@ -1,0 +1,49 @@
+#keycloak配置
+keycloak-admin:
+    server-url: http://127.0.0.1:8080/auth
+    username: admin
+    password: 123456
+
+spring:
+    datasource:
+        #默认数据源配置
+        default: 
+            username: root
+            password: 123456
+            url: jdbc:mysql://127.0.0.1:3306/xmodule?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+            
+    #OAuth2客户端配置
+    security:
+        oauth2:
+            #OAuth2客户端配置
+            client:
+                clock-skew: PT600S
+                registration:
+                    #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    password-client:
+                        provider: keycloak
+                        client-id: oauth2-client-password
+                        client-secret: 1bfa1a431ce347498759b7945c9c301a
+                        authorization-grant-type: password
+                        scope: user
+                    refresh-client:
+                        provider: keycloak
+                        client-id: oauth2-client-refresh
+                        client-secret: f3bb9a3644494ddc9f5556d5a2f1241e
+                        authorization-grant-type: refresh_token
+                        scope: user
+                    clientcreds-client:
+                        provider: keycloak
+                        client-id: oauth2-client-clientcreds
+                        client-secret: 77b4450ee8c64739b11d0f7f31ab5de9
+                        authorization-grant-type: client_credentials
+                        scope: app
+                provider:
+                    #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    keycloak:
+                        issuer-uri: ${keycloak-admin.server-url}/realms/spring-security-oauth2
+                        user-name-attribute: username
+            #OAuth2资源服务器配置
+            resourceserver:
+                jwt:
+                    jwk-set-uri: ${keycloak-admin.server-url}/realms/spring-security-oauth2/protocol/openid-connect/certs

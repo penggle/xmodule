@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.penglecode.xmodule.common.oauth2.client.util.OAuth2ClientUtils;
-import com.penglecode.xmodule.common.oauth2.client.util.OAuth2LoginUtils;
-import com.penglecode.xmodule.common.oauth2.client.util.OAuth2UserUtils;
+import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2ClientUtils;
+import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2LoginUtils;
+import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2UserUtils;
 import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 import com.penglecode.xmodule.common.util.ExceptionUtils;
 import com.penglecode.xmodule.common.util.JsonUtils;
@@ -61,7 +62,8 @@ public class OAuth2LoginController implements InitializingBean {
 			OAuth2AuthenticationToken authentication0 = SpringSecurityUtils.getAuthentication();
 			System.out.println(authentication0 == authentication);
 			userInfo = OAuth2UserUtils.getCurrentOAuth2UserInfo();
-			OAuth2AccessToken accessToken = OAuth2ClientUtils.getCurrentOAuth2AccessToken();
+			OAuth2AuthorizedClient oauth2AuthorizedClient = OAuth2ClientUtils.getOAuth2AuthorizedClient(authentication0.getAuthorizedClientRegistrationId(), authentication0, null);
+			OAuth2AccessToken accessToken = oauth2AuthorizedClient.getAccessToken();
 			LOGGER.debug(">>> userInfo = {}", JsonUtils.object2Json(userInfo));
 			LOGGER.debug(">>> accessToken = {}", JsonUtils.object2Json(accessToken));
 		} else {
