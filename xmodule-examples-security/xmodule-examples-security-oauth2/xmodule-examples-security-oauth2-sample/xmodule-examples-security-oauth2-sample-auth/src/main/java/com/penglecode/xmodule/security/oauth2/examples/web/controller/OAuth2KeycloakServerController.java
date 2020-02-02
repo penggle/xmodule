@@ -33,10 +33,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.penglecode.xmodule.common.support.Result;
+import com.penglecode.xmodule.common.util.StringUtils;
 import com.penglecode.xmodule.common.web.servlet.support.HttpApiResourceSupport;
+import com.penglecode.xmodule.security.oauth2.common.model.OAuth2LoginUser;
 import com.penglecode.xmodule.security.oauth2.examples.config.KeycloakOAuth2ClientProperties;
 import com.penglecode.xmodule.security.oauth2.examples.config.KeycloakOAuth2ConfigProperties;
-import com.penglecode.xmodule.security.oauth2.examples.config.KeycloakOAuth2ConfigProperties.KcUser;
 
 @RestController
 @RequestMapping("/api/keycloak")
@@ -140,52 +141,33 @@ public class OAuth2KeycloakServerController extends HttpApiResourceSupport {
 			if(oauth2Client.getAuthorizationGrantType().equals("authorization_code") || oauth2Client.getAuthorizationGrantType().equals("password")) {
 				List<ProtocolMapperRepresentation> mappers = new ArrayList<ProtocolMapperRepresentation>();
 				ProtocolMapperRepresentation mapper = null;
-				Map<String,String> config = null;
 				
-				/**
-				mapper = new ProtocolMapperRepresentation();
-				mapper.setName("username");
-				mapper.setProtocol("openid-connect");
-				mapper.setProtocolMapper("oidc-usermodel-property-mapper");
-				
-				config = new LinkedHashMap<String,String>();
-				config.put("userinfo.token.claim", "true"); //添加到userinfo中
-				config.put("user.attribute", "username");
-				config.put("id.token.claim", "true"); //添加到IdToken中
-				config.put("access.token.claim", "true"); //添加到AccessToken中
-				config.put("claim.name", "username");
-				config.put("jsonType.label", "String");
-				mapper.setConfig(config);
-				mappers.add(mapper);
-				**/
-				
-				mapper = new ProtocolMapperRepresentation();
-				mapper.setName("subject");
-				mapper.setProtocol("openid-connect");
-				mapper.setProtocolMapper("oidc-usermodel-property-mapper");
-				
-				config = new LinkedHashMap<String,String>();
-				config.put("userinfo.token.claim", "true"); //添加到userinfo中
-				config.put("user.attribute", "username");
-				config.put("id.token.claim", "true"); //添加到IdToken中
-				config.put("access.token.claim", "true"); //添加到AccessToken中
-				config.put("claim.name", "sub");
-				config.put("jsonType.label", "String");
-				mapper.setConfig(config);
+				mapper = createUserPropertyMapper("Subject", "username", "sub", true, true, true, "String");
 				mappers.add(mapper);
 				
-				mapper = new ProtocolMapperRepresentation();
-				mapper.setName("userroles");
-				mapper.setProtocol("openid-connect");
-				mapper.setProtocolMapper("oidc-usermodel-realm-role-mapper");
+				mapper = createUserPropertyMapper("User Name", "username", "username", true, true, true, "String");
+				mappers.add(mapper);
 				
-				config = new LinkedHashMap<String,String>();
-				config.put("user.attribute", "foo");
-				config.put("access.token.claim", "true"); //添加到AccessToken中
-				config.put("claim.name", "roles");
-				config.put("jsonType.label", "String");
-				config.put("multivalued", "true");
-				mapper.setConfig(config);
+				mapper = createUserRealmRoleMapper("User Roles", "userRoles", true, true, true);
+				mappers.add(mapper);
+				
+				mapper = createUserAttributeMapper("User ID", "userId", "userId", true, true, true, "long");
+				mappers.add(mapper);
+				mapper = createUserAttributeMapper("User Type", "userType", "userType", false, false, true, "int");
+				mappers.add(mapper);
+				mapper = createUserAttributeMapper("User Email", "email", "email", false, false, true, "String");
+				mappers.add(mapper);
+				mapper = createUserAttributeMapper("User MobilePhone", "mobilePhone", "mobilePhone", false, false, true, "String");
+				mappers.add(mapper);
+				mapper = createUserAttributeMapper("User Enabled", "enabled", "enabled", false, false, true, "String");
+				mappers.add(mapper);
+				mapper = createUserAttributeMapper("User LoginTimes", "loginTimes", "loginTimes", false, false, true, "int");
+				mappers.add(mapper);
+				mapper = createUserAttributeMapper("User LastLoginTime", "lastLoginTime", "lastLoginTime", false, false, true, "String");
+				mappers.add(mapper);
+				mapper = createUserAttributeMapper("User CreateTime", "createTime", "createTime", false, false, true, "String");
+				mappers.add(mapper);
+				mapper = createUserAttributeMapper("User UpdateTime", "updateTime", "updateTime", false, false, true, "String");
 				mappers.add(mapper);
 				
 				client.setProtocolMappers(mappers);
@@ -210,26 +192,93 @@ public class OAuth2KeycloakServerController extends HttpApiResourceSupport {
 	}
 	
 	/**
+	 * 创建User Realm Role Mapper
+	 * 对应Keycloak Admin界面上 Clients -> Select a client -> Mappers -> Create -> 'Mapper Type' select 'User Realm Role' option
+	 */
+	protected ProtocolMapperRepresentation createUserRealmRoleMapper(String mapperName, String claimName, boolean addToIdToken, boolean addToAccessToken, boolean addToUserInfo) {
+		ProtocolMapperRepresentation mapper = new ProtocolMapperRepresentation();
+		mapper.setName(mapperName);
+		mapper.setProtocol("openid-connect");
+		mapper.setProtocolMapper("oidc-usermodel-realm-role-mapper");
+		
+		Map<String,String> config = new LinkedHashMap<String,String>();
+		config.put("userinfo.token.claim", String.valueOf(addToUserInfo)); //添加到userinfo中
+		config.put("id.token.claim", String.valueOf(addToIdToken)); //添加到IdToken中
+		config.put("access.token.claim", String.valueOf(addToAccessToken)); //添加到AccessToken中
+		config.put("claim.name", claimName);
+		config.put("jsonType.label", "String");
+		config.put("multivalued", "true");
+		mapper.setConfig(config);
+		return mapper;
+	}
+	
+	/**
+	 * 创建User Property Mapper
+	 * 对应Keycloak Admin界面上 Clients -> Select a client -> Mappers -> Create -> 'Mapper Type' select 'User Property' option
+	 */
+	protected ProtocolMapperRepresentation createUserPropertyMapper(String mapperName, String userAttrName, String claimName, boolean addToIdToken, boolean addToAccessToken, boolean addToUserInfo, String valueType) {
+		ProtocolMapperRepresentation mapper = new ProtocolMapperRepresentation();
+		mapper.setName(mapperName);
+		mapper.setProtocol("openid-connect");
+		mapper.setProtocolMapper("oidc-usermodel-property-mapper");
+		
+		Map<String,String> config = new LinkedHashMap<String,String>();
+		config.put("userinfo.token.claim", String.valueOf(addToUserInfo)); //添加到userinfo中
+		config.put("user.attribute", userAttrName);
+		config.put("id.token.claim", String.valueOf(addToIdToken)); //添加到IdToken中
+		config.put("access.token.claim", String.valueOf(addToAccessToken)); //添加到AccessToken中
+		config.put("claim.name", claimName);
+		config.put("jsonType.label", StringUtils.defaultIfEmpty(valueType, "String"));
+		mapper.setConfig(config);
+		return mapper;
+	}
+	
+	/**
+	 * 创建User Attribute Mapper
+	 * 对应Keycloak Admin界面上 Clients -> Select a client -> Mappers -> Create -> 'Mapper Type' select 'User Attribute' option
+	 * @return
+	 */
+	protected ProtocolMapperRepresentation createUserAttributeMapper(String mapperName, String userAttrName, String claimName, boolean addToIdToken, boolean addToAccessToken, boolean addToUserInfo, String valueType) {
+		ProtocolMapperRepresentation mapper = new ProtocolMapperRepresentation();
+		mapper.setName(mapperName);
+		mapper.setProtocol("openid-connect");
+		mapper.setProtocolMapper("oidc-usermodel-attribute-mapper");
+		
+		Map<String,String> config = new LinkedHashMap<String,String>();
+		config.put("userinfo.token.claim", String.valueOf(addToUserInfo)); //添加到userinfo中
+		config.put("user.attribute", userAttrName);
+		config.put("id.token.claim", String.valueOf(addToIdToken)); //添加到IdToken中
+		config.put("access.token.claim", String.valueOf(addToAccessToken)); //添加到AccessToken中
+		config.put("claim.name", claimName);
+		config.put("jsonType.label", StringUtils.defaultIfEmpty(valueType, "String"));
+		mapper.setConfig(config);
+		return mapper;
+	}
+	
+	/**
 	 * 先删除后创建User
 	 */
 	protected void createUsers() {
 		UsersResource usersResource = keycloak.realm(keycloakOAuth2Config.getRealm()).users();
-		for(KcUser kcUser : keycloakOAuth2Config.getUsers()) {
-			usersResource.search(kcUser.getUsername()).forEach(u -> {
+		for(OAuth2LoginUser loginUser : keycloakOAuth2Config.getUsers()) {
+			usersResource.search(loginUser.getUsername()).forEach(u -> {
 				usersResource.delete(u.getId());
 				LOGGER.info(">>> 删除User({})成功!", u.getUsername()); 
 			});
+			
 			UserRepresentation user = new UserRepresentation();
-			user.setUsername(kcUser.getUsername());
-			user.setEmail(kcUser.getUsername() + "@qq.com");
-			user.setEnabled(true);
+			user.setUsername(loginUser.getUsername());
+			user.setEmail(loginUser.getEmail());
+			user.setEnabled(loginUser.getEnabled());
+			user.setRealmRoles(Arrays.asList("customer")); //设置User Realm Role (该值[customer]请先在Realm -> Roles中添加)
+			user.setAttributes(loginUser.getKcUserAttributes()); //设置User Attributes
 			CredentialRepresentation credential = new CredentialRepresentation();
 			credential.setTemporary(false);
 			credential.setType(CredentialRepresentation.PASSWORD);
-			credential.setValue(kcUser.getPassword());
+			credential.setValue(loginUser.getPassword());
 			user.setCredentials(Arrays.asList(credential));
 			usersResource.create(user);
-			LOGGER.info(">>> 创建User({})成功!", kcUser.getUsername()); 
+			LOGGER.info(">>> 创建User({})成功!", user.getUsername());
 		}
 	}
 	

@@ -52,6 +52,9 @@ spring:
         exclude:
           - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
           - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+          - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+          - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+          - org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration
     
     profiles:
         active: dev
@@ -108,3 +111,16 @@ spring:
             maxPoolPreparedStatementPerConnectionSize: 20
             connectionInitSqls: set names utf8;
             filters: stat,slf4j
+
+    #Redis共通配置
+    redis:
+        common:
+            global-key-prefix: SAMPLE_
+            timeout: 6000
+            lettuce:
+                shutdownTimeout: 2000
+                pool:
+                    maxIdle: 8
+                    minIdle: 0
+                    maxActive: 8
+                    maxWait: 30000

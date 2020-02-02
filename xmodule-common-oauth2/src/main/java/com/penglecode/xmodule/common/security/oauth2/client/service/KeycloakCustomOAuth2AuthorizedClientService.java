@@ -1,4 +1,4 @@
-package com.penglecode.xmodule.common.security.oauth2.client.support;
+package com.penglecode.xmodule.common.security.oauth2.client.service;
 
 import java.util.Arrays;
 
