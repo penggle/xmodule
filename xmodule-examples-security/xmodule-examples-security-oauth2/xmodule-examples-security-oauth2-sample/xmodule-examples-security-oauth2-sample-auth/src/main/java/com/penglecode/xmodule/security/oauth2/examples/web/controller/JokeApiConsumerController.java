@@ -25,6 +25,12 @@ import com.penglecode.xmodule.common.util.JsonUtils;
 import com.penglecode.xmodule.common.web.servlet.support.HttpApiResourceSupport;
 import com.penglecode.xmodule.security.oauth2.examples.model.Joke;
 
+/**
+ * 基于OAuth2 client_credentials模式的应用API之间相互调用的鉴权
+ * 
+ * @author 	pengpeng
+ * @date 	2020年2月3日 下午10:10:04
+ */
 @RestController
 @RequestMapping("/api/joke")
 public class JokeApiConsumerController extends HttpApiResourceSupport {

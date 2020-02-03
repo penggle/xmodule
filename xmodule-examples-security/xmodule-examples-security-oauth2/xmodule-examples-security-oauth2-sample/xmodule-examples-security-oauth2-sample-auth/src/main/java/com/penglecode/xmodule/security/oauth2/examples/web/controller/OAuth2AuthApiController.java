@@ -32,6 +32,12 @@ import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 import com.penglecode.xmodule.common.support.Result;
 import com.penglecode.xmodule.common.web.servlet.support.HttpApiResourceSupport;
 
+/**
+ * 基于OAuth2 password模式的用户登录
+ * 
+ * @author 	pengpeng
+ * @date 	2020年2月3日 下午10:08:59
+ */
 @RestController
 @RequestMapping("/api/oauth2")
 public class OAuth2AuthApiController extends HttpApiResourceSupport {

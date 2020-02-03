@@ -1,4 +1,4 @@
-# xmodule-examples-security-oauth2-login-sso: 基于Spring-Security的OAuth2Login示例
+# xmodule-examples-security-oauth2-login-sample: 基于Spring-Security的OAuth2Login示例
 
 ## SpringSecurity官方[参考示例](https://github.com/spring-projects/spring-security/tree/5.2.1.RELEASE/samples/boot/oauth2login)
 
@@ -162,11 +162,11 @@ src/main/resources/META-INF/resources/WEB-INF/jsp/index.jsp
 由于ORY Hydra没有用户模块，因此也就没有用户登录及同意页面的提供，需要额外开发。
 具体使用spring-security开发的案例参见隔壁项目：xmodule-examples-security-oauth2-hydra-login(该项目模仿自[官方示例](https://github.com/ory/hydra-login-consent-node))
 
-#### 2.6 SSO应用的初始化接口(匿名可访问)
+#### 2.6 应用的初始化接口(匿名可访问)
 
 ORY Hydra客户端初始化：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2HydraServerController
 Keycloak客户端初始化：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2KeycloakServerController
 
 ### 3.运行&测试
 
-启动SpringBoot应用，在浏览器输入http://127.0.0.1:8081/login后选择"Google", 并进行登录
+启动SpringBoot应用，在浏览器输入http://127.0.0.1:8081/login后选择"Google", "Github", "Hydra", "Keycloak"等进行SSO单点登录

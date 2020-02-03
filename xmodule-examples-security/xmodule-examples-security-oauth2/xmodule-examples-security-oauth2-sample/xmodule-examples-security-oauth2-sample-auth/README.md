@@ -1,172 +1,37 @@
-# xmodule-examples-security-oauth2-login-sso: 基于Spring-Security的OAuth2Login示例
+# xmodule-examples-security-oauth2-sample-auth: 基于spring-security-oauth2-client、keycloak构建的OAuth2认证授权示例
 
-## SpringSecurity官方[参考示例](https://github.com/spring-projects/spring-security/tree/5.2.1.RELEASE/samples/boot/oauth2login)
+## 示例功能实现
 
-## Quickstart
+### 1. 基于OAuth2 password模式的用户登录.
 
-### 1. 引入Maven依赖
+- 示例见com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2AuthApiController
 
-```xml
+### 2. 基于OAuth2 client_credentials模式的应用API之间相互调用的鉴权.
 
-<dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-oauth2-client</artifactId>
-</dependency>
-<dependency>
-   <groupId>org.springframework.security</groupId>
-   <artifactId>spring-security-oauth2-jose</artifactId>
-</dependency>
+- 示例见com.penglecode.xmodule.security.oauth2.examples.web.controller.JokeApiConsumerController
 
-```
+### 3. 拓展了基于Redis存储的OAuth2AuthorizedClientService
 
-### 2.OAuth2客户端设置
+- 代码见 xmodule-common-oauth2/com.penglecode.xmodule.common.security.oauth2.client.service.RedisOAuth2AuthorizedClientService.java
 
-#### 2.1 获取客户端凭证(client credentials)
+### 4. 关于OAuth2AuthorizedClientRepository的默认实现AuthenticatedPrincipalOAuth2AuthorizedClientRepository的问题
 
-- 获取Google的OAuth2客户端凭证：[Google API Console](https://console.developers.google.com/) - "Credentials"这一节中获取clientId与clientSecret。
-- 获取Github的OAuth2客户端凭证：[Register a new OAuth application](https://github.com/settings/applications/new)
-- 关于keycloak的配置，请参阅：[keycloak-springsecurity5-sample](https://github.com/hantsy/keycloak-springsecurity5-sample)
+- 阅读AuthenticatedPrincipalOAuth2AuthorizedClientRepository代码可知，其根据用户是否匿名，将OAuth2AuthorizedClient分两处存储：一处存储在内存中(InMemoryOAuth2AuthorizedClientService)，一处存储在HttpSession中(HttpSessionOAuth2AuthorizedClientRepository). 通过：1、使用自定义的com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2PrincipalNameAuthentication && 2、principalName使用username(password模式)或者client_id(client_credentials模式)来替代 && 3、自定义Keycloak JWT令牌的claims.sub值(在password模式使用username或者client_credentials模式下使用client_id)。通过以上三点共通确立OAuth2AuthorizedClient的存储和获取的唯一性(正确性). 至于为何要如此确保? 原因在于org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken中的principalName使用了硬编码：name取自令牌的sub字段导致的
 
-- 关于Ory/Hydra的配置，请参阅：[ORY Hydra文档](https://www.ory.sh/docs/hydra/)
+## 运行&测试
 
-#### 2.2 配置application.yaml
+1. 先启动xmodule-examples-security-oauth2-sample-auth (8081端口)
 
-```yaml
-spring:
-	#OAuth2客户端配置
-    security:
-        oauth2:
-            client:
-                registration:
-                    google:
-                        client-id: <Your clientId>
-                        client-secret: <Your clientSecret>
-```
+启动时在com.penglecode.xmodule.security.oauth2.examples.initializer.OAuth2AuthWebAppStartupInitializer初始化类中根据需要自动创建keycloak的realm
 
-由于SpringBoot2.x自动配置了主流的OAuth2 Provider([CommonOAuth2Provider.java](https://github.com/spring-projects/spring-security/blob/master/config/src/main/java/org/springframework/security/config/oauth2/client/CommonOAuth2Provider.java))，因此此处省略了其他的配置(如authorizationUri、tokenUri、jwkSetUri、userInfoUri等)
+2. 再启动xmodule-examples-security-oauth2-sample-api (8082端口)
 
-#### 2.3 spring-security配置
+3. GET请求接口：http://127.0.0.1:8081/api/keycloak/init (匿名可访问)，用于重新初始化示例中需要用到的Keycloak的Clients、ClientScopes、Roles、Users等
 
-```java
-@Configuration
-@EnableWebSecurity
-public class OAuth2LoginSecurityConfiguration extends WebSecurityConfigurerAdapter {
+4. 测试OAuth2登录接口：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2AuthApiController.login(...)
 
-	@Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-         		.anyRequest().authenticated()
-         	.and()
-         		.oauth2Login()
-         		.defaultSuccessUrl("/login/success");
-    }
-	
-}
-```
+5. 测试OAuth2续约接口：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2AuthApiController.renewal(...)
 
-#### 2.4 登录成功后的页面配置
+6. 测试OAuth2用户信息接口：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2AuthApiController.userinfo(...)
 
-SpringMVC配置:
-
-```java
-@Controller
-public class OAuth2LoginController implements InitializingBean {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2LoginController.class);
-
-	private final Map<String,String> oauth2LoginLinks = new LinkedHashMap<String,String>();
-	
-	@GetMapping(value="/login")
-	public String login(Model model) {
-		model.addAttribute("oauth2LoginLinks", oauth2LoginLinks);
-		return "login";
-	}
-	
-	@RequestMapping(value="/login/failure")
-	public String loginFailure(HttpServletRequest request, HttpServletResponse response, Model model) {
-		Exception exception = SpringSecurityUtils.getAuthenticationException(request);
-		LOGGER.error(String.format(">>> login failure: %s", exception.getMessage()), exception);
-		model.addAttribute("error", Boolean.TRUE);
-		model.addAttribute("message", ExceptionUtils.getRootCauseMessage(exception));
-		return "login";
-	}
-	
-	@RequestMapping(value="/login/success")
-	public String loginSuccess() {
-		return "redirect:/index";
-	}
-	
-	@RequestMapping(value="/index")
-	public String index(Model model, AbstractAuthenticationToken authentication) {
-		Map<String,Object> userInfo = null;
-		LOGGER.info(">>> authentication = {}", authentication);
-		if(authentication instanceof OAuth2AuthenticationToken) {
-			LOGGER.info(">>> OAuth2 User Login Success!");
-			OAuth2AuthenticationToken authentication0 = SpringSecurityUtils.getAuthentication();
-			System.out.println(authentication0 == authentication);
-			userInfo = OAuth2UserUtils.getCurrentOAuth2UserInfo();
-			OAuth2AccessToken accessToken = OAuth2ClientUtils.getCurrentOAuth2AccessToken();
-			LOGGER.debug(">>> userInfo = {}", JsonUtils.object2Json(userInfo));
-			LOGGER.debug(">>> accessToken = {}", JsonUtils.object2Json(accessToken));
-		} else {
-			LOGGER.info(">>> Local User Login Success!");
-			User user = (User) authentication.getPrincipal();
-			userInfo = new LinkedHashMap<String,Object>();
-			userInfo.put("name", user.getUsername());
-			userInfo.put("authorities", user.getAuthorities());
-			LOGGER.debug(">>> userInfo = {}", JsonUtils.object2Json(userInfo));
-		}
-		
-		model.addAttribute("userInfo", userInfo);
-		return "index";
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Map<String,String> loginLinks = OAuth2LoginUtils.getConfiguredOAuth2LoginLinks();
-		if(loginLinks != null) {
-			oauth2LoginLinks.putAll(loginLinks);
-		}
-	}
-
-}
-```
-
-JSP页面配置:
-
-src/main/resources/META-INF/resources/WEB-INF/jsp/index.jsp
-
-```jsp
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>首页</title>
-</head>
-<body>
-	<h1>首页</h1>
-	<div>
-		<a href="${pageContext.request.contextPath}/logout" style="float:right;">退出</a>
-	</div>
-	<div>
-		<h1>Welcome ${name}!</h1>
-	</div>
-</body>
-</html>
-```
-
-#### 2.5 ORY Hydra登录与同意页面的提供
-
-由于ORY Hydra没有用户模块，因此也就没有用户登录及同意页面的提供，需要额外开发。
-具体使用spring-security开发的案例参见隔壁项目：xmodule-examples-security-oauth2-hydra-login(该项目模仿自[官方示例](https://github.com/ory/hydra-login-consent-node))
-
-#### 2.6 SSO应用的初始化接口(匿名可访问)
-
-ORY Hydra客户端初始化：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2HydraServerController
-Keycloak客户端初始化：com.penglecode.xmodule.security.oauth2.examples.web.controller.OAuth2KeycloakServerController
-
-### 3.运行&测试
-
-启动SpringBoot应用，在浏览器输入http://127.0.0.1:8081/login后选择"Google", 并进行登录
+7. 测试应用之间相互调用示例：com.penglecode.xmodule.security.oauth2.examples.web.controller.JokeApiConsumerController.getJokeList(...)
