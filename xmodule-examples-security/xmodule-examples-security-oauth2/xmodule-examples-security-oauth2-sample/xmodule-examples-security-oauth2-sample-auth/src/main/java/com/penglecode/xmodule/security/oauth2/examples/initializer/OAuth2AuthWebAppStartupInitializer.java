@@ -1,12 +1,10 @@
 package com.penglecode.xmodule.security.oauth2.examples.initializer;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.RealmRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
-import org.keycloak.representations.idm.RolesRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,17 +49,8 @@ public class OAuth2AuthWebAppStartupInitializer implements SpringWebAppStartupIn
 				realm.setAccessTokenLifespan(applicationContext.getEnvironment().getProperty("server.servlet.session.timeout", Integer.class, 7200)); //设置access_token过期时间(秒),此设置还可以在具体的Client那里进行覆盖
 				realm.setSsoSessionIdleTimeout(60 * 60 * 24 * 7); //设置refresh_token过期时间(秒)
 				realm.setSsoSessionMaxLifespan(60 * 60 * 24 * 7); //设置access_token过期的最大时间
-				//添加应用角色
-				RolesRepresentation roles = new RolesRepresentation();
-				RoleRepresentation role1 = new RoleRepresentation();
-				role1.setName("customer");
-				role1.setDescription("customer");
-				role1.setClientRole(false);
-				role1.setComposite(false);
-				roles.setRealm(Arrays.asList(role1));
-				realm.setRoles(roles);
 				//设置默认角色(即用户的默认角色)
-				realm.setDefaultRoles(Arrays.asList("customer"));
+				realm.setDefaultRoles(new ArrayList<String>());
 				keycloak.realms().create(realm);
 				LOGGER.info(">>> 创建Realm({})成功!", realm.getRealm());
 			}

@@ -9,16 +9,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.ClientScopesResource;
 import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.ProtocolMappersResource;
+import org.keycloak.admin.client.resource.RoleScopeResource;
+import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.ClientScopeRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.ProtocolMapperRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.authorization.ResourceServerRepresentation;
 import org.slf4j.Logger;
@@ -54,6 +58,7 @@ public class OAuth2KeycloakServerController extends HttpApiResourceSupport {
 	public Result<Object> init() {
 		LOGGER.info(">>> 重新初始化Keycloak服务端配置开始...");
 		createClientsAndScopes();
+		createRoles();
 		createUsers();
 		return Result.success().build();
 	}
@@ -293,21 +298,40 @@ public class OAuth2KeycloakServerController extends HttpApiResourceSupport {
 	}
 	
 	/**
+	 * 先删除后创建Role
+	 */
+	protected void createRoles() {
+		String roleName = "customer";
+		RolesResource rolesResource = keycloak.realm(keycloakOAuth2Config.getRealm()).roles();
+		boolean notExists = rolesResource.list().stream().noneMatch(r -> r.getName().equals(roleName));
+		if(notExists) {
+			RoleRepresentation role = new RoleRepresentation();
+			role.setName(roleName);
+			role.setComposite(false);
+			role.setClientRole(false);
+			role.setDescription(roleName);
+			rolesResource.create(role);
+		}
+	}
+	
+	/**
 	 * 先删除后创建User
 	 */
 	protected void createUsers() {
 		UsersResource usersResource = keycloak.realm(keycloakOAuth2Config.getRealm()).users();
+		RolesResource rolesResource = keycloak.realm(keycloakOAuth2Config.getRealm()).roles();
 		for(OAuth2LoginUser loginUser : keycloakOAuth2Config.getUsers()) {
 			usersResource.search(loginUser.getUsername()).forEach(u -> {
 				usersResource.delete(u.getId());
 				LOGGER.info(">>> 删除User({})成功!", u.getUsername()); 
 			});
 			
+			List<String> userRoles = Arrays.asList("customer");
+			
 			UserRepresentation user = new UserRepresentation();
 			user.setUsername(loginUser.getUsername());
 			user.setEmail(loginUser.getEmail());
 			user.setEnabled(loginUser.getEnabled());
-			user.setRealmRoles(Arrays.asList("customer")); //设置User Realm Role (该值[customer]请先在Realm -> Roles中添加)
 			user.setAttributes(loginUser.getKcUserAttributes()); //设置User Attributes
 			CredentialRepresentation credential = new CredentialRepresentation();
 			credential.setTemporary(false);
@@ -316,6 +340,14 @@ public class OAuth2KeycloakServerController extends HttpApiResourceSupport {
 			user.setCredentials(Arrays.asList(credential));
 			usersResource.create(user);
 			LOGGER.info(">>> 创建User({})成功!", user.getUsername());
+			
+			//删除默认的offline_access和uma_authorization,再添加userRoles中的
+			usersResource.search(loginUser.getUsername()).forEach(u -> {
+				RoleScopeResource rsResource = usersResource.get(u.getId()).roles().realmLevel();
+				rsResource.remove(rsResource.listEffective());
+				List<RoleRepresentation> rolesToAdd = rolesResource.list().stream().filter(r -> userRoles.contains(r.getName())).collect(Collectors.toList());
+				rsResource.add(rolesToAdd);
+			});
 		}
 	}
 	

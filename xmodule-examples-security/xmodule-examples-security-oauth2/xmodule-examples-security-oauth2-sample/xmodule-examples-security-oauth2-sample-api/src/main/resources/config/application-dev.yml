@@ -18,8 +18,20 @@ spring:
             #OAuth2客户端配置
             client:
                 clock-skew: PT600S
+                user-token-timeout: ${server.servlet.session.timeout}
+                api-token-timeout: 86400
+                #用于用户登录的注册客户端的ID
+                user-registration-id: password-client
+                #用于API应用之间相互调用鉴权的注册客户端的ID
+                api-registration-id: clientcreds-client
                 registration:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    password-client:
+                        provider: keycloak
+                        client-id: oauth2-client-password
+                        client-secret: 1bfa1a431ce347498759b7945c9c301a
+                        authorization-grant-type: password
+                        scope: user
                     clientcreds-client:
                         provider: keycloak
                         client-id: oauth2-client-clientcreds
@@ -30,6 +42,7 @@ spring:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
                     keycloak:
                         issuer-uri: http://127.0.0.1:8080/auth/realms/spring-security-oauth2
+                        user-name-attribute: username
             #OAuth2资源服务器配置
             resourceserver:
                 jwt:
