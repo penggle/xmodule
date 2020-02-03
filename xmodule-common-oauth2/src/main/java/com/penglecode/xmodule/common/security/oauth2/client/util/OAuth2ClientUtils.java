@@ -10,16 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.core.ResolvableType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.util.Assert;
 
-import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2LoginAuthentication;
+import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2PrincipalNameAuthentication;
 import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
+import com.penglecode.xmodule.common.util.CollectionUtils;
 import com.penglecode.xmodule.common.util.SpringUtils;
 import com.penglecode.xmodule.common.util.SpringWebMvcUtils;
 
@@ -54,23 +55,19 @@ public class OAuth2ClientUtils {
 	 * @param authorizationGrantType
 	 * @return
 	 */
-	public static Set<ClientRegistration> getClientRegistrations(AuthorizationGrantType authorizationGrantType) {
+	public static Set<ClientRegistration> getClientRegistrationByType(AuthorizationGrantType authorizationGrantType) {
 		Set<ClientRegistration> allClientRegistrations = getAllClientRegistrations();
-		return allClientRegistrations.stream().filter(r -> AuthorizationGrantType.PASSWORD.equals(r.getAuthorizationGrantType())).collect(Collectors.toSet());
+		return allClientRegistrations.stream().filter(r -> r.getAuthorizationGrantType().equals(authorizationGrantType)).collect(Collectors.toSet());
 	}
 	
 	/**
-	 * 获取指定AuthorizationGrantType的OAuth2客户端注册(至多一个，否则报错)
-	 * @param authorizationGrantType
+	 * 根据clientRegistrationId查找ClientRegistration
+	 * @param clientRegistrationId
 	 * @return
 	 */
-	public static ClientRegistration getClientRegistration(AuthorizationGrantType authorizationGrantType) {
-		Set<ClientRegistration> clientRegistrations = getClientRegistrations(authorizationGrantType);
-		Assert.isTrue(clientRegistrations.size() <= 1, String.format("At most one ClientRegistration required for authorizationGrantType: %s", authorizationGrantType));
-		for(ClientRegistration clientRegistration : clientRegistrations) {
-			return clientRegistration;
-		}
-		return null;
+	public static ClientRegistration getClientRegistrationById(String clientRegistrationId) {
+		ClientRegistrationRepository clientRegistrationRepository = SpringUtils.getBean(ClientRegistrationRepository.class);
+		return clientRegistrationRepository.findByRegistrationId(clientRegistrationId);
 	}
 	
 	/**
@@ -98,11 +95,38 @@ public class OAuth2ClientUtils {
 	 * @param principalName
 	 * @return
 	 */
-	public static Authentication prepareOAuth2LoginAuthentication(ClientRegistration clientRegistration, Authentication principal, String principalName) {
+	public static Authentication preparePasswordOAuth2Authentication(ClientRegistration clientRegistration, Authentication principal, String principalName) {
 		if(AuthorizationGrantType.PASSWORD.equals(clientRegistration.getAuthorizationGrantType())) {
-			if(principal instanceof AnonymousAuthenticationToken) {
+			if(principal == null) {
+				//使用具名的Authentication而不是默认的AnonymousAuthenticationToken，使得获得到的新的OAuth2AuthorizedClient存储在同一位置(@see #AuthenticatedPrincipalOAuth2AuthorizedClientRepository.loadAuthorizedClient)
+				Set<String> scopes = (Set<String>) CollectionUtils.defaultIfEmpty(clientRegistration.getScopes(), OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_SCOPES.get(clientRegistration.getAuthorizationGrantType()));
+				return new OAuth2PrincipalNameAuthentication(principalName, scopes.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet()));
+			} else if (principal instanceof AnonymousAuthenticationToken) {
 				AnonymousAuthenticationToken anonAuthentication = (AnonymousAuthenticationToken) principal;
-				return new OAuth2LoginAuthentication(principalName, anonAuthentication.getAuthorities());
+				//使用具名的Authentication而不是默认的AnonymousAuthenticationToken，使得获得到的新的OAuth2AuthorizedClient存储在同一位置(@see #AuthenticatedPrincipalOAuth2AuthorizedClientRepository.loadAuthorizedClient)
+				return new OAuth2PrincipalNameAuthentication(principalName, anonAuthentication.getAuthorities());
+			}
+		}
+		return principal;
+	}
+	
+	/**
+	 *  准备OAuth2登录(Client_credentials模式)的Authentication
+	 * @param clientRegistration
+	 * @param principal
+	 * @param principalName
+	 * @return
+	 */
+	public static Authentication prepareClientCredentialsOAuth2Authentication(ClientRegistration clientRegistration, Authentication principal, String principalName) {
+		if(AuthorizationGrantType.CLIENT_CREDENTIALS.equals(clientRegistration.getAuthorizationGrantType())) {
+			if(principal == null) {
+				//使用具名的Authentication而不是默认的AnonymousAuthenticationToken，使得获得到的新的OAuth2AuthorizedClient存储在同一位置(@see #AuthenticatedPrincipalOAuth2AuthorizedClientRepository.loadAuthorizedClient)
+				Set<String> scopes = (Set<String>) CollectionUtils.defaultIfEmpty(clientRegistration.getScopes(), OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_SCOPES.get(clientRegistration.getAuthorizationGrantType()));
+				return new OAuth2PrincipalNameAuthentication(principalName, scopes.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet()));
+			} else if (principal instanceof AnonymousAuthenticationToken) {
+				AnonymousAuthenticationToken anonAuthentication = (AnonymousAuthenticationToken) principal;
+				//使用具名的Authentication而不是默认的AnonymousAuthenticationToken，使得获得到的新的OAuth2AuthorizedClient存储在同一位置(@see #AuthenticatedPrincipalOAuth2AuthorizedClientRepository.loadAuthorizedClient)
+				return new OAuth2PrincipalNameAuthentication(principalName, anonAuthentication.getAuthorities());
 			}
 		}
 		return principal;
@@ -117,7 +141,7 @@ public class OAuth2ClientUtils {
 	 */
 	public static OAuth2AuthorizedClient createTrickOAuth2AuthorizedClient(OAuth2AuthorizedClient realAuthorizedClient) {
 		OAuth2AccessToken realAccessToken = realAuthorizedClient.getAccessToken();
-		Instant expiresAt = OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CLOCK.instant(); //立即使其失效
+		Instant expiresAt = OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getClock().instant(); //立即使其失效
 		//构造一个欺骗令牌，使其能通过#RefreshTokenOAuth2AuthorizedClientProvider.hasTokenExpired(...)的校验认为该欺骗令牌是失效的，从而达到强制刷新令牌
 		OAuth2AccessToken trickAccessToken = new OAuth2AccessToken(realAccessToken.getTokenType(), realAccessToken.getTokenValue(), realAccessToken.getIssuedAt(), expiresAt, realAccessToken.getScopes());
 		//构造一个欺骗OAuth2AuthorizedClient，从而达到强制刷新令牌

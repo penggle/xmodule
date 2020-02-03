@@ -7,12 +7,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
 /**
- * 执行OAuth2 Password模式登录的Authentication
+ * 执行OAuth2认证时的具名Authentication
  * 
  * @author 	pengpeng
  * @date 	2020年1月31日 下午10:40:41
  */
-public final class OAuth2LoginAuthentication implements Authentication {
+public final class OAuth2PrincipalNameAuthentication implements Authentication {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -20,7 +20,7 @@ public final class OAuth2LoginAuthentication implements Authentication {
 	
 	private final Collection<GrantedAuthority> authorities;
 
-	public OAuth2LoginAuthentication(String principalName, Collection<GrantedAuthority> authorities) {
+	public OAuth2PrincipalNameAuthentication(String principalName, Collection<GrantedAuthority> authorities) {
 		super();
 		Assert.hasText(principalName, "principalName cannot be empty");
 		this.principalName = principalName;

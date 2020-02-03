@@ -32,12 +32,6 @@ spring:
                         client-secret: 1bfa1a431ce347498759b7945c9c301a
                         authorization-grant-type: password
                         scope: user
-                    refresh-client:
-                        provider: keycloak
-                        client-id: oauth2-client-refresh
-                        client-secret: f3bb9a3644494ddc9f5556d5a2f1241e
-                        authorization-grant-type: refresh_token
-                        scope: user
                     clientcreds-client:
                         provider: keycloak
                         client-id: oauth2-client-clientcreds

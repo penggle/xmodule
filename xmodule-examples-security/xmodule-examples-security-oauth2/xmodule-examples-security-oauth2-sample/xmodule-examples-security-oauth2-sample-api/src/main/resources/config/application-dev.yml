@@ -1,9 +1,3 @@
-#keycloak配置
-keycloak-admin:
-    server-url: http://127.0.0.1:8080/auth
-    username: admin
-    password: 123456
-
 spring:
     datasource:
         #默认数据源配置
@@ -11,20 +5,21 @@ spring:
             username: root
             password: 123456
             url: jdbc:mysql://127.0.0.1:3306/xmodule?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
-            
+
+    redis:
+        #默认使用的Redis配置
+        default:
+            host: 127.0.0.1
+            port: 6379
+
     #OAuth2客户端配置
     security:
         oauth2:
             #OAuth2客户端配置
             client:
+                clock-skew: PT600S
                 registration:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
-                    refresh-client:
-                        provider: keycloak
-                        client-id: oauth2-client-refresh
-                        client-secret: f3bb9a3644494ddc9f5556d5a2f1241e
-                        authorization-grant-type: refresh_token
-                        scope: openid, profile, email, address, phone, user
                     clientcreds-client:
                         provider: keycloak
                         client-id: oauth2-client-clientcreds
@@ -34,12 +29,8 @@ spring:
                 provider:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
                     keycloak:
-                        authorization-uri: ${keycloak-admin.server-url}/realms/spring-security-oauth2/protocol/openid-connect/auth
-                        token-uri: ${keycloak-admin.server-url}/realms/spring-security-oauth2/protocol/openid-connect/token
-                        user-info-uri: ${keycloak-admin.server-url}/realms/spring-security-oauth2/protocol/openid-connect/userinfo
-                        jwk-set-uri: ${keycloak-admin.server-url}/realms/spring-security-oauth2/protocol/openid-connect/certs
-                        user-name-attribute: preferred_username
+                        issuer-uri: http://127.0.0.1:8080/auth/realms/spring-security-oauth2
             #OAuth2资源服务器配置
             resourceserver:
                 jwt:
-                    jwk-set-uri: ${keycloak-admin.server-url}/realms/spring-security-oauth2/protocol/openid-connect/certs
+                    issuer-uri: http://127.0.0.1:8080/auth/realms/spring-security-oauth2

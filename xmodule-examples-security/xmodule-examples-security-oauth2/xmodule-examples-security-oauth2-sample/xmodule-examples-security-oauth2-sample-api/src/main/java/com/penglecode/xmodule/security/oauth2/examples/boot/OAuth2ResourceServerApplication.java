@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.penglecode.xmodule.BasePackage;
 
 @SpringBootApplication(scanBasePackageClasses=BasePackage.class)
-public class OAuth2SampleResourceServerApplication {
+public class OAuth2ResourceServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OAuth2SampleResourceServerApplication.class, args);
+		SpringApplication.run(OAuth2ResourceServerApplication.class, args);
 	}
 	
 }

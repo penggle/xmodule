@@ -18,7 +18,6 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -28,15 +27,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2ClientUtils;
+import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
 import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 import com.penglecode.xmodule.common.support.Result;
 import com.penglecode.xmodule.common.web.servlet.support.HttpApiResourceSupport;
 
 @RestController
 @RequestMapping("/api/oauth2")
-public class OAuth2AuthController extends HttpApiResourceSupport {
+public class OAuth2AuthApiController extends HttpApiResourceSupport {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2AuthController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2AuthApiController.class);
 
 	@Autowired
 	private OAuth2AuthorizedClientManager authorizedClientManager;
@@ -55,9 +55,9 @@ public class OAuth2AuthController extends HttpApiResourceSupport {
 	@PostMapping(value="/login", consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Result<Object> login(HttpServletRequest request, HttpServletResponse response) {
 		LOGGER.info(">>> 执行OAuth2(Password模式)用户登录...");
-		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistration(AuthorizationGrantType.PASSWORD);
+		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistrationById(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getUserRegistrationId());
 		Authentication authentication = SpringSecurityUtils.getAuthentication(); //初次登录时应该是个匿名的Authentication实例
-		authentication = OAuth2ClientUtils.prepareOAuth2LoginAuthentication(clientRegistration, authentication, request.getParameter(OAuth2ParameterNames.USERNAME)); //创建执行OAuth2 Password模式登录的Authentication
+		authentication = OAuth2ClientUtils.preparePasswordOAuth2Authentication(clientRegistration, authentication, request.getParameter(OAuth2ParameterNames.USERNAME)); //创建执行OAuth2 Password模式登录的Authentication
 		OAuth2AuthorizeRequest.Builder builder = OAuth2AuthorizeRequest.withClientRegistrationId(clientRegistration.getRegistrationId()).principal(authentication);
 		builder.attributes(attributes -> {
 			attributes.put(HttpServletRequest.class.getName(), request);
@@ -83,7 +83,7 @@ public class OAuth2AuthController extends HttpApiResourceSupport {
 	@PostMapping(value="/renewal", consumes=MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces=MediaType.APPLICATION_JSON_VALUE)
 	public Result<Object> renewal(HttpServletRequest request, HttpServletResponse response) {
 		LOGGER.info(">>> 执行OAuth2(Password模式)用户登录续约...");
-		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistration(AuthorizationGrantType.PASSWORD);
+		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistrationById(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getUserRegistrationId());
 		Authentication authentication = SpringSecurityUtils.getAuthentication();
 		OAuth2AuthorizedClient oauth2AuthorizedClient = OAuth2ClientUtils.getOAuth2AuthorizedClient(clientRegistration.getRegistrationId(), authentication, request);
 		
@@ -118,7 +118,7 @@ public class OAuth2AuthController extends HttpApiResourceSupport {
 		System.out.println(authentication == authentication0);
 		LOGGER.info(">>> 获取登录用户信息，authentication = {}", authentication);
 		
-		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistration(AuthorizationGrantType.PASSWORD);
+		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistrationById(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getUserRegistrationId());
 		OAuth2AuthorizedClient oauth2AuthorizedClient = OAuth2ClientUtils.getOAuth2AuthorizedClient(clientRegistration.getRegistrationId(), authentication, null);
 		OAuth2UserRequest userRequest = new OAuth2UserRequest(clientRegistration, oauth2AuthorizedClient.getAccessToken());
 		

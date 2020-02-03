@@ -7,7 +7,7 @@
 <configuration scan="true" scanPeriod="120 seconds">
 
     <!--日志文件名-->
-    <springProperty scope="context" name="logFile" source="logging.file.name" defaultValue="xmodule-examples-security-oauth2-sample-resource-server"/>
+    <springProperty scope="context" name="logFile" source="logging.file.name" defaultValue="xmodule-examples-security-oauth2-sample-api"/>
     <!--日志文件路径-->
     <springProperty scope="context" name="logPath" source="logging.file.path" defaultValue="${java.io.tmpdir}"/>
 

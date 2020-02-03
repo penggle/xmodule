@@ -50,6 +50,7 @@ public class OAuth2AuthWebAppStartupInitializer implements SpringWebAppStartupIn
 				realm.setDisplayNameHtml("<h3>Spring Security OAuth2 示例</h3>");
 				realm.setAccessTokenLifespan(applicationContext.getEnvironment().getProperty("server.servlet.session.timeout", Integer.class, 7200)); //设置access_token过期时间(秒),此设置还可以在具体的Client那里进行覆盖
 				realm.setSsoSessionIdleTimeout(60 * 60 * 24 * 7); //设置refresh_token过期时间(秒)
+				realm.setSsoSessionMaxLifespan(60 * 60 * 24 * 7); //设置access_token过期的最大时间
 				//添加应用角色
 				RolesRepresentation roles = new RolesRepresentation();
 				RoleRepresentation role1 = new RoleRepresentation();

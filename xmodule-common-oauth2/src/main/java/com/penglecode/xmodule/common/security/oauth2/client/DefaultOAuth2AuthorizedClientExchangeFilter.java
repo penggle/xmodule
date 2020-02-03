@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServletOAuth2AuthorizedClientExchangeFilterFunction;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.client.ClientRequest;
@@ -22,8 +23,10 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
 
 import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2ClientUtils;
+import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 
 import reactor.core.publisher.Mono;
 
@@ -61,8 +64,20 @@ public class DefaultOAuth2AuthorizedClientExchangeFilter implements ExchangeFilt
 	}
 	
 	public Consumer<WebClient.Builder> oauth2Configuration() {
+		return oauth2Configuration(null);
+	}
+	
+	/**
+	 * @param overrideDefaultRequest - 临时覆盖默认全局请求设置的钩子
+	 * @return
+	 */
+	public Consumer<WebClient.Builder> oauth2Configuration(Consumer<RequestHeadersSpec<?>> overrideDefaultRequest) {
 		return builder -> {
-			builder.defaultRequest(delegatingOAuth2ClientExchangeFilter.defaultRequest())
+			Consumer<RequestHeadersSpec<?>> defaultRequest = delegatingOAuth2ClientExchangeFilter.defaultRequest();
+			if(overrideDefaultRequest != null) {
+				defaultRequest = defaultRequest.andThen(overrideDefaultRequest);
+			}
+			builder.defaultRequest(defaultRequest) //WebClient的全局默认请求设置
 				   .filter(delegatingOAuth2ClientExchangeFilter.andThen(this));
 		};
 	}
@@ -84,6 +99,37 @@ public class DefaultOAuth2AuthorizedClientExchangeFilter implements ExchangeFilt
 		};
 	}
 
+	/**
+	 * 修改本次WebClient请求所使用的的OAuth2AuthorizedClient
+	 * 例如使用当前登录者的OAuth2AuthorizedClient(基于Password模式)，或者使用应用API之间相互调用的OAuth2AuthorizedClient(基于client_credentials模式)
+	 * @param authorizationGrantType
+	 * @return
+	 */
+	public static Consumer<Map<String, Object>> withClientRegistration(String clientRegistrationId) {
+		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistrationById(clientRegistrationId);
+		Assert.notNull(clientRegistration, "No ClientRegistration found for clientRegistrationId: " + clientRegistrationId);
+		if(AuthorizationGrantType.CLIENT_CREDENTIALS.equals(clientRegistration.getAuthorizationGrantType())) {
+			/**
+			 * AccessToken中的sub字段值与#OAuth2PrincipalNameAuthentication.name及#JwtAuthenticationToken.name的值保持一致(至于为什么要保持一致，究其原因是#JwtAuthenticationToken.name硬编码取自令牌的sub字段),
+			 * 这样才能保证#OAuth2AuthorizedClientRepository.loadAuthorizedClient()方法在查找OAuth2AuthorizedClient时才能获取正确的结果
+			 * (因为OAuth2AuthorizedClientRepository.loadAuthorizedClient()方法查找逻辑是根据key(clientRegistrationId + principal.name)作为唯一键来查找的)
+			 */
+			String principalName = clientRegistration.getClientId(); //此处不能轻易改动，必须约定好了
+			Authentication authentication = OAuth2ClientUtils.prepareClientCredentialsOAuth2Authentication(clientRegistration, null, principalName);
+			return attributes -> {
+				attributes.put(CLIENT_REGISTRATION_ID_ATTR_NAME, clientRegistration.getRegistrationId());
+				attributes.put(AUTHENTICATION_ATTR_NAME, authentication);
+			};
+		} else if (AuthorizationGrantType.PASSWORD.equals(clientRegistration.getAuthorizationGrantType()) || AuthorizationGrantType.AUTHORIZATION_CODE.equals(clientRegistration.getAuthorizationGrantType()) || AuthorizationGrantType.IMPLICIT.equals(clientRegistration.getAuthorizationGrantType())) {
+			Authentication authentication = SpringSecurityUtils.getAuthentication(); //当前已登录用户
+			return attributes -> {
+				attributes.put(CLIENT_REGISTRATION_ID_ATTR_NAME, clientRegistration.getRegistrationId());
+				attributes.put(AUTHENTICATION_ATTR_NAME, authentication);
+			};
+		}
+		return attributes -> {};
+	}
+	
 	/**
 	 * Modifies the {@link ClientRequest#attributes()} to include the {@link ClientRegistration#getRegistrationId()} to
 	 * be used to look up the {@link OAuth2AuthorizedClient}.
@@ -136,6 +182,7 @@ public class DefaultOAuth2AuthorizedClientExchangeFilter implements ExchangeFilt
 	public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
 		String clientRegistrationId = request.attribute(CLIENT_REGISTRATION_ID_ATTR_NAME).get().toString();
 		Authentication principal = (Authentication) request.attribute(AUTHENTICATION_ATTR_NAME).orElse(ANONYMOUS_AUTHENTICATION);
+		LOGGER.debug(">>> principal = {}", principal);
 		HttpServletRequest httpRequest = (HttpServletRequest) request.attribute(HTTP_SERVLET_REQUEST_ATTR_NAME).get();
 		OAuth2AuthorizedClient oauth2AuthorizedClient = OAuth2ClientUtils.getOAuth2AuthorizedClient(clientRegistrationId, principal, httpRequest);
 		if(oauth2AuthorizedClient != null) {

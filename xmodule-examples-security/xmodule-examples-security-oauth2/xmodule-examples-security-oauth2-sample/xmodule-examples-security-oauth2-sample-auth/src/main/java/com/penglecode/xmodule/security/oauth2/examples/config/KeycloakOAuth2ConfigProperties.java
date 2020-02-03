@@ -22,10 +22,6 @@ public class KeycloakOAuth2ConfigProperties implements InitializingBean {
 	private final List<OAuth2LoginUser> users = new ArrayList<>();
 	
 	@Autowired
-	@Qualifier("refreshClient")
-	private KeycloakOAuth2ClientProperties refreshClient;
-	
-	@Autowired
 	@Qualifier("passwordClient")
 	private KeycloakOAuth2ClientProperties passwordClient;
 	
@@ -54,10 +50,6 @@ public class KeycloakOAuth2ConfigProperties implements InitializingBean {
 		return new KeycloakOAuth2ClientProperties();
 	}
 	
-	public KeycloakOAuth2ClientProperties getRefreshClient() {
-		return refreshClient;
-	}
-
 	public KeycloakOAuth2ClientProperties getPasswordClient() {
 		return passwordClient;
 	}

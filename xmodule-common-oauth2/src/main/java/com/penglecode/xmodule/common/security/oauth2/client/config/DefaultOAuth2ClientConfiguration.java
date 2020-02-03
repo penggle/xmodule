@@ -3,11 +3,13 @@ package com.penglecode.xmodule.common.security.oauth2.client.config;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
@@ -26,9 +28,11 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
 
 import com.penglecode.xmodule.common.boot.config.AbstractSpringConfiguration;
 import com.penglecode.xmodule.common.security.oauth2.client.DefaultOAuth2AuthorizedClientExchangeFilter;
+import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2ClientConfigProperties;
 import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
 
 /**
@@ -40,6 +44,12 @@ import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationCon
 @Configuration
 public class DefaultOAuth2ClientConfiguration extends AbstractSpringConfiguration {
 
+	@Bean
+	@ConfigurationProperties(prefix="spring.security.oauth2.client")
+	public OAuth2ClientConfigProperties oauth2ClientConfigProperties() {
+		return OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG;
+	}
+	
 	@Bean(name="defaultAuthorizedClientService")
 	@ConditionalOnMissingBean(name="defaultAuthorizedClientService")
 	public OAuth2AuthorizedClientService defaultAuthorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
@@ -52,11 +62,20 @@ public class DefaultOAuth2ClientConfiguration extends AbstractSpringConfiguratio
 		return new AuthenticatedPrincipalOAuth2AuthorizedClientRepository(authorizedClientService);
 	}
 	
-	@Bean(name="defaultOAuth2WebClient")
-	@ConditionalOnMissingBean(name="defaultOAuth2WebClient")
-	public WebClient defaultOAuth2WebClient(WebClient.Builder webClientBuilder, OAuth2AuthorizedClientManager authorizedClientManager) {
+	/**
+	 * 默认的供各应用API之间相互调用的WebClient
+	 * 
+	 */
+	@Bean(name="defaultApiWebClient")
+	@ConditionalOnMissingBean(name="defaultApiWebClient")
+	public WebClient defaultApiWebClient(WebClient.Builder webClientBuilder, OAuth2AuthorizedClientManager authorizedClientManager) {
 		DefaultOAuth2AuthorizedClientExchangeFilter oauth2Client = new DefaultOAuth2AuthorizedClientExchangeFilter(authorizedClientManager);
-		return webClientBuilder.apply(oauth2Client.oauth2Configuration()).build();
+		Consumer<RequestHeadersSpec<?>> overrideDefaultRequest = spec -> {
+			//默认使用client_credentials客户端来进行WebClient请求OAuth2认证
+			spec.attributes(DefaultOAuth2AuthorizedClientExchangeFilter.withClientRegistration(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getApiRegistrationId()));
+		};
+		
+		return webClientBuilder.apply(oauth2Client.oauth2Configuration(overrideDefaultRequest)).build();
 	}
 
 	@Bean(name="defaultAuthorizedClientManager")
@@ -67,16 +86,16 @@ public class DefaultOAuth2ClientConfiguration extends AbstractSpringConfiguratio
 				OAuth2AuthorizedClientProviderBuilder.builder()
 						.authorizationCode()
 						.refreshToken(builder -> {
-							builder.clock(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CLOCK);
-							builder.clockSkew(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CLOCK_SKEW.get());
+							builder.clock(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getClock());
+							builder.clockSkew(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getClockSkew());
 						})
 						.clientCredentials(builder -> {
-							builder.clock(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CLOCK);
-							builder.clockSkew(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CLOCK_SKEW.get());
+							builder.clock(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getClock());
+							builder.clockSkew(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getClockSkew());
 						})
 						.password(builder -> {
-							builder.clock(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CLOCK);
-							builder.clockSkew(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CLOCK_SKEW.get());
+							builder.clock(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getClock());
+							builder.clockSkew(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getClockSkew());
 						})
 						.build();
 		DefaultOAuth2AuthorizedClientManager authorizedClientManager = new DefaultOAuth2AuthorizedClientManager(

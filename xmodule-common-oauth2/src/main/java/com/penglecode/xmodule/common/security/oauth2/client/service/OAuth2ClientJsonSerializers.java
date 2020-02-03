@@ -2,7 +2,8 @@ package com.penglecode.xmodule.common.security.oauth2.client.service;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,7 +25,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.penglecode.xmodule.common.util.SpringUtils;
 import com.penglecode.xmodule.common.util.StringUtils;
 
@@ -33,12 +34,16 @@ import com.penglecode.xmodule.common.util.StringUtils;
  * @author 	pengpeng
  * @date 	2020年2月2日 下午6:22:31
  */
+@SuppressWarnings("unchecked")
 public class OAuth2ClientJsonSerializers {
 
 	public static final SimpleModule DEFAULT_MODULE = new SimpleModule();
 	
 	static {
 		DEFAULT_MODULE.addSerializer(OAuth2AuthorizedClient.class, new OAuth2AuthorizedClientJsonSerializer());
+		DEFAULT_MODULE.addSerializer(OAuth2AccessToken.class, new OAuth2AccessTokenJsonSerializer());
+		DEFAULT_MODULE.addSerializer(OAuth2RefreshToken.class, new OAuth2RefreshTokenJsonSerializer());
+		
 		DEFAULT_MODULE.addDeserializer(OAuth2AuthorizedClient.class, new OAuth2AuthorizedClientJsonDeserializer());
 		DEFAULT_MODULE.addDeserializer(OAuth2AccessToken.class, new OAuth2AccessTokenJsonDeserializer());
 		DEFAULT_MODULE.addDeserializer(OAuth2RefreshToken.class, new OAuth2RefreshTokenJsonDeserializer());
@@ -48,12 +53,7 @@ public class OAuth2ClientJsonSerializers {
 
 		@Override
 		public void serialize(OAuth2AuthorizedClient value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-			gen.writeStartObject();
-			gen.writeStringField("clientRegistrationId", value.getClientRegistration().getRegistrationId());
-			gen.writeStringField("principalName", value.getPrincipalName());
-			gen.writeObjectField("accessToken", value.getAccessToken());
-			gen.writeObjectField("refreshToken", value.getRefreshToken());
-			gen.writeEndObject();
+			serializeWithType(value, gen, serializers, null);
 		}
 
 		@Override
@@ -75,6 +75,66 @@ public class OAuth2ClientJsonSerializers {
 		@Override
 		public Class<OAuth2AuthorizedClient> handledType() {
 			return OAuth2AuthorizedClient.class;
+		}
+
+	}
+	
+	public static class OAuth2AccessTokenJsonSerializer extends JsonSerializer<OAuth2AccessToken> {
+
+		@Override
+		public void serialize(OAuth2AccessToken value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+			serializeWithType(value, gen, serializers, null);
+		}
+
+		@Override
+		public void serializeWithType(OAuth2AccessToken value, JsonGenerator gen, SerializerProvider serializers,
+				TypeSerializer typeSer) throws IOException {
+			gen.writeStartObject();
+			
+			if(typeSer != null) {
+				gen.writeStringField(typeSer.getPropertyName(), handledType().getName());
+			}
+			
+			gen.writeStringField("tokenType", value.getTokenType().getValue());
+			gen.writeObjectField("scopes", new HashSet<String>(value.getScopes() == null ? Collections.EMPTY_SET : value.getScopes()));
+			gen.writeObjectField("tokenValue", value.getTokenValue());
+			gen.writeObjectField("issuedAt", value.getIssuedAt());
+			gen.writeObjectField("expiresAt", value.getExpiresAt());
+			gen.writeEndObject();
+		}
+
+		@Override
+		public Class<OAuth2AccessToken> handledType() {
+			return OAuth2AccessToken.class;
+		}
+
+	}
+	
+	public static class OAuth2RefreshTokenJsonSerializer extends JsonSerializer<OAuth2RefreshToken> {
+
+		@Override
+		public void serialize(OAuth2RefreshToken value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+			serializeWithType(value, gen, serializers, null);
+		}
+
+		@Override
+		public void serializeWithType(OAuth2RefreshToken value, JsonGenerator gen, SerializerProvider serializers,
+				TypeSerializer typeSer) throws IOException {
+			gen.writeStartObject();
+			
+			if(typeSer != null) {
+				gen.writeStringField(typeSer.getPropertyName(), handledType().getName());
+			}
+			
+			gen.writeObjectField("tokenValue", value.getTokenValue());
+			gen.writeObjectField("issuedAt", value.getIssuedAt());
+			gen.writeObjectField("expiresAt", value.getExpiresAt());
+			gen.writeEndObject();
+		}
+
+		@Override
+		public Class<OAuth2RefreshToken> handledType() {
+			return OAuth2RefreshToken.class;
 		}
 
 	}
@@ -113,11 +173,7 @@ public class OAuth2ClientJsonSerializers {
 			ObjectCodec codec = jsonParser.getCodec();
 			JsonNode jsonNode = codec.readTree(jsonParser);
 			TokenType tokenType = TokenType.BEARER;
-			ArrayNode scopeNodes = (ArrayNode) jsonNode.get("scopes");
-			Set<String> scopes = new LinkedHashSet<String>();
-			for(int i = 0, len = scopeNodes.size(); i < len; i++) {
-				scopes.add(scopeNodes.get(i).asText());
-			}
+			Set<String> scopes = jsonNode.get("scopes").traverse(codec).readValueAs(new TypeReference<Set<String>>() {});
 			String tokenValue = jsonNode.get("tokenValue").asText();
 			String instant = null;
 			instant = jsonNode.get("issuedAt").asText();
