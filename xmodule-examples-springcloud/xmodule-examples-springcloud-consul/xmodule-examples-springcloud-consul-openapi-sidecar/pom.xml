@@ -57,13 +57,13 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-consul-config</artifactId>
 		</dependency>
-		
+
 		<!-- spring-cloud-starter-gateway -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>
 		</dependency>
-		
+
 		<!-- spring-cloud-starter-netflix-ribbon -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -74,6 +74,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+		</dependency>
+
+		<!-- mysql driver -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
 
 		<!-- spring-boot-starter-test -->

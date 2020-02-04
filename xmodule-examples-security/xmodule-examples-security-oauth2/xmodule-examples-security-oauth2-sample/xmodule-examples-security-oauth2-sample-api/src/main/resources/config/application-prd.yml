@@ -42,7 +42,7 @@ spring:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
                     keycloak:
                         issuer-uri: http://127.0.0.1:8080/auth/realms/spring-security-oauth2
-                        user-name-attribute: username
+                        user-name-attribute: sub
             #OAuth2资源服务器配置
             resourceserver:
                 jwt:

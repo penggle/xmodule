@@ -35,7 +35,7 @@ public class OAuth2ClientConfigProperties implements InitializingBean {
 	 * API应用之间相互调用鉴权令牌失效时间(包括CLIENT_CREDENTIALS)
 	 * (注意在KC中timeout最大值不能超过Realm.ssoSessionMaxLifespan)
 	 */
-	private Duration apiTokenTimeout;
+	private Duration appTokenTimeout;
 	
 	/**
 	 * 用于用户登录的注册客户端的ID
@@ -45,7 +45,7 @@ public class OAuth2ClientConfigProperties implements InitializingBean {
 	/**
 	 * 用于API应用之间相互调用鉴权的注册客户端的ID
 	 */
-	private String apiRegistrationId;
+	private String appRegistrationId;
 
 	public Duration getClockSkew() {
 		return clockSkew;
@@ -71,12 +71,12 @@ public class OAuth2ClientConfigProperties implements InitializingBean {
 		this.userTokenTimeout = userTokenTimeout;
 	}
 
-	public Duration getApiTokenTimeout() {
-		return apiTokenTimeout;
+	public Duration getAppTokenTimeout() {
+		return appTokenTimeout;
 	}
 
-	public void setApiTokenTimeout(Duration apiTokenTimeout) {
-		this.apiTokenTimeout = apiTokenTimeout;
+	public void setAppTokenTimeout(Duration appTokenTimeout) {
+		this.appTokenTimeout = appTokenTimeout;
 	}
 
 	public String getUserRegistrationId() {
@@ -87,18 +87,18 @@ public class OAuth2ClientConfigProperties implements InitializingBean {
 		this.userRegistrationId = userRegistrationId;
 	}
 
-	public String getApiRegistrationId() {
-		return apiRegistrationId;
+	public String getAppRegistrationId() {
+		return appRegistrationId;
 	}
 
-	public void setApiRegistrationId(String apiRegistrationId) {
-		this.apiRegistrationId = apiRegistrationId;
+	public void setAppRegistrationId(String appRegistrationId) {
+		this.appRegistrationId = appRegistrationId;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		if(this.apiTokenTimeout == null) {
-			this.apiTokenTimeout = Duration.ofSeconds(3600 * 24);
+		if(this.appTokenTimeout == null) {
+			this.appTokenTimeout = Duration.ofSeconds(3600 * 24);
 		}
 		if(this.userTokenTimeout == null) {
 			this.userTokenTimeout = Duration.ofSeconds(SpringUtils.getEnvironment().getProperty("server.servlet.session.timeout", Long.class, 7200L));

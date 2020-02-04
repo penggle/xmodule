@@ -19,5 +19,6 @@
 		<module>xmodule-examples-security-oauth2-login</module>
 		<module>xmodule-examples-security-oauth2-sample</module>
 		<module>xmodule-examples-security-oauth2-common</module>
+		<module>xmodule-examples-security-oauth2-advance</module>
 	</modules>
 </project>

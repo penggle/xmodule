@@ -1,0 +1,79 @@
+#keycloak配置
+keycloak-admin:
+    server-url: http://127.0.0.1:8080/auth
+    username: admin
+    password: 123456
+
+spring:
+    datasource:
+        #默认数据源配置
+        default: 
+            username: root
+            password: 123456
+            url: jdbc:mysql://127.0.0.1:3306/xmodule?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+            
+    #SpringCloud应用配置
+    cloud:
+        inetutils:
+            preferredNetworks: 
+                - 172.16
+                - 192.168
+    redis:
+        #默认使用的Redis配置
+        default:
+            host: 127.0.0.1
+            port: 6379
+
+    #OAuth2客户端配置
+    security:
+        oauth2:
+            #OAuth2客户端配置
+            client:
+                clock-skew: PT600S
+                user-token-timeout: ${server.servlet.session.timeout}
+                app-token-timeout: 86400
+                #用于用户登录的注册客户端的ID
+                user-registration-id: user-client
+                #当前应用的用于API应用之间相互调用鉴权的注册客户端的ID
+                app-registration-id: auth-app-client
+                registration:
+                    #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    user-client:
+                        provider: keycloak
+                        client-id: user-client
+                        client-secret: 1bfa1a431ce347498759b7945c9c301a
+                        authorization-grant-type: password
+                        scope: user
+                    auth-app-client:
+                        provider: keycloak
+                        client-id: auth-app-client
+                        client-secret: ce2de9e366f6484495486474990747cf
+                        authorization-grant-type: client_credentials
+                        scope: app
+                    producer-app-client:
+                        provider: keycloak
+                        client-id: producer-app-client
+                        client-secret: f8d55054289b405ebf40f2ef479daf87
+                        authorization-grant-type: client_credentials
+                        scope: app
+                    consumer-app-client:
+                        provider: keycloak
+                        client-id: consumer-app-client
+                        client-secret: d56cc05f6131410999d03729e293badb
+                        authorization-grant-type: client_credentials
+                        scope: app
+                    sidecar-app-client:
+                        provider: keycloak
+                        client-id: sidecar-app-client
+                        client-secret: 3ffd064ed34f402d929f2fe6d700b40e
+                        authorization-grant-type: client_credentials
+                        scope: app
+                provider:
+                    #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    keycloak:
+                        issuer-uri: ${keycloak-admin.server-url}/realms/springcloud-security-oauth2
+                        user-name-attribute: sub
+            #OAuth2资源服务器配置
+            resourceserver:
+                jwt:
+                    issuer-uri: ${keycloak-admin.server-url}/realms/springcloud-security-oauth2

@@ -32,6 +32,7 @@ public class JwtUtils {
 	public static final String NOT_BEFORE_CLAIM = "nbf";
 	public static final String ISSUED_AT_CLAIM = "iat";
 	public static final String JWT_ID_CLAIM = "jti";
+	public static final String AUTHORIZED_PARTY = "azp";
 	
 	/**
 	 * 创建JWT令牌

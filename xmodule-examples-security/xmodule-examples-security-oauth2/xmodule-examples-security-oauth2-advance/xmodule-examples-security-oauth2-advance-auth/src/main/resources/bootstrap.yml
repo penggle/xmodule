@@ -1,0 +1,77 @@
+spring:
+    #SpringBoot应用配置
+    application:
+        #应用名称不能变更!!!
+        name: xmodule-examples-security-oauth2-advance-auth
+        index: ${spring.cloud.client.ip-address}:${server.port}
+        #index: ${random.uuid}
+    #SpringCloud应用配置
+    cloud:
+        inetutils:
+            #多网卡模式下SpringCloud优先选取的IP网段
+            preferredNetworks: 
+                - 172.16
+                - 192.168
+        #SpringCloud消息总线配置
+        bus:
+            id: ${spring.application.name}:${spring.application.index}
+            enabled: false
+            destination: topic-${spring.application.name}-bus
+            trace:
+                enabled: true
+        #Consul服务注册与发现配置
+        consul:
+            #是否启用Consul
+            enabled: true
+            host: 127.0.0.1
+            port: 8500
+            #Consul配置中心
+            config:
+                #是否启用配置中心
+                enabled: true
+                #以下三项联合配置对应的consul配置文件key为:config/${spring.application.name}/application-(dev|prd).(yml|yaml|properties)
+                prefix: config/${spring.application.name}
+                defaultContext: application
+                profileSeparator: '-'
+                format: FILES
+            #Consul服务注册与发现
+            discovery:
+                register: true
+                queryPassing: true
+                serviceName: ${spring.application.name}
+                preferIpAddress: true
+                ipAddress: ${spring.cloud.client.ip-address}
+                instanceId: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+                healthCheckPath: /actuator/health/application
+                healthCheckInterval: 10s
+#Feign客户端配置
+feign:
+    httpclient:
+        enabled: false
+    okhttp:
+        #启用OkHttp
+        enabled: true
+        connection-timeout: 15000
+        read-timeout: 60000
+        write-timeout: 45000
+    hystrix:
+        enabled: true
+
+#Ribbon(负载均衡)配置
+ribbon:
+    #ServerList定时刷新时间间隔
+    ServerListRefreshInterval: 30000
+    ReadTimeout: 60000
+    ConnectTimeout: 10000
+    hystrix:
+        enabled: false
+    
+#Hystrix(熔断|降级)配置
+hystrix:
+    command:
+        default:
+            execution:
+                isolation:
+                    thread:
+                        #默认的熔断超时时间,默认1000毫秒,需要设大点否则很容易触发熔断
+                        timeoutInMilliseconds: 30000

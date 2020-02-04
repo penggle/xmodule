@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.penglecode</groupId>
+		<artifactId>xmodule-examples-security-oauth2</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>xmodule-examples-security-oauth2-advance</artifactId>
+	<packaging>pom</packaging>
+	<name>xmodule-examples-security-oauth2-advance</name>
+	<description>基于springcloud、spring-security-oauth2-client的OAuth2的客户端、服务端进阶示例</description>
+	
+	<build>
+		<finalName>xmodule-examples-security-oauth2-advance</finalName>
+	</build>
+	<modules>
+		<module>xmodule-examples-security-oauth2-advance-auth</module>
+		<module>xmodule-examples-security-oauth2-advance-api</module>
+		<module>
+			xmodule-examples-security-oauth2-advance-producer
+		</module>
+		<module>
+			xmodule-examples-security-oauth2-advance-consumer
+		</module>
+		<module>
+			xmodule-examples-security-oauth2-advance-sidecar
+		</module>
+	</modules>
+</project>

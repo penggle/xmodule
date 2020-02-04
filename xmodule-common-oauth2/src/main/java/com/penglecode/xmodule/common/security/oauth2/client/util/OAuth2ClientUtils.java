@@ -17,10 +17,13 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2PrincipalNameAuthentication;
 import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
+import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 import com.penglecode.xmodule.common.util.CollectionUtils;
+import com.penglecode.xmodule.common.util.JwtUtils;
 import com.penglecode.xmodule.common.util.SpringUtils;
 import com.penglecode.xmodule.common.util.SpringWebMvcUtils;
 
@@ -68,6 +71,43 @@ public class OAuth2ClientUtils {
 	public static ClientRegistration getClientRegistrationById(String clientRegistrationId) {
 		ClientRegistrationRepository clientRegistrationRepository = SpringUtils.getBean(ClientRegistrationRepository.class);
 		return clientRegistrationRepository.findByRegistrationId(clientRegistrationId);
+	}
+	
+	/**
+	 * 在遵守约定的情况下，获取当前已认证#JwtAuthenticationToken 所指向的 #ClientRegistration
+	 * 
+	 * 约定：1、配置spring.security.oauth2.client.registration.<registrationId>.client_id中：registrationId的值与client_id的值保持一致
+	 * 		 2、这样JwtAuthenticationToken.getTokenAttributes().get("azp")既是client_id的值也是registrationId的值
+	 * @return
+	 */
+	public static String getAgreedClientRegistrationId() {
+		JwtAuthenticationToken authentication = SpringSecurityUtils.getAuthentication();
+		String registrationId = (String) authentication.getTokenAttributes().get(JwtUtils.AUTHORIZED_PARTY);
+		return registrationId;
+	}
+	
+	/**
+	 * 在遵守约定的情况下，获取当前已认证#JwtAuthenticationToken 所指向的 #ClientRegistration
+	 * 
+	 * 约定：1、配置spring.security.oauth2.client.registration.<registrationId>.client_id中：registrationId的值与client_id的值保持一致
+	 * 		 2、这样JwtAuthenticationToken.getTokenAttributes().get("azp")既是client_id的值也是registrationId的值
+	 * @return
+	 */
+	public static ClientRegistration getAgreedClientRegistration() {
+		return getClientRegistrationById(getAgreedClientRegistrationId());
+	}
+	
+	/**
+	 * 在遵守约定的情况下，获取当前已认证#JwtAuthenticationToken 所指向的 #OAuth2AuthorizedClient
+	 * 
+	 * 约定：1、配置spring.security.oauth2.client.registration.<registrationId>.client_id中：registrationId的值与client_id的值保持一致
+	 * 		 2、这样JwtAuthenticationToken.getTokenAttributes().get("azp")既是client_id的值也是registrationId的值
+	 * @return
+	 */
+	public static OAuth2AuthorizedClient getAgreedOAuth2AuthorizedClient() {
+		JwtAuthenticationToken authentication = SpringSecurityUtils.getAuthentication();
+		String registrationId = (String) authentication.getTokenAttributes().get(JwtUtils.AUTHORIZED_PARTY);
+		return getOAuth2AuthorizedClient(registrationId, authentication, null);
 	}
 	
 	/**

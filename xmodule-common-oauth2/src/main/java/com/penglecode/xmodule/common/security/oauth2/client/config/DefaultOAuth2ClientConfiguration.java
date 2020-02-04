@@ -72,7 +72,7 @@ public class DefaultOAuth2ClientConfiguration extends AbstractSpringConfiguratio
 		DefaultOAuth2AuthorizedClientExchangeFilter oauth2Client = new DefaultOAuth2AuthorizedClientExchangeFilter(authorizedClientManager);
 		Consumer<RequestHeadersSpec<?>> overrideDefaultRequest = spec -> {
 			//默认使用client_credentials客户端来进行WebClient请求OAuth2认证
-			spec.attributes(DefaultOAuth2AuthorizedClientExchangeFilter.withClientRegistration(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getApiRegistrationId()));
+			spec.attributes(DefaultOAuth2AuthorizedClientExchangeFilter.withClientRegistration(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getAppRegistrationId()));
 		};
 		
 		return webClientBuilder.apply(oauth2Client.oauth2Configuration(overrideDefaultRequest)).build();
