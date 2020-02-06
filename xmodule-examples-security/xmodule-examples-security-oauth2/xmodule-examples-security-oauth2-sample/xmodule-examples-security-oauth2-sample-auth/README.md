@@ -12,11 +12,12 @@
 
 ### 3. 拓展了基于Redis存储的OAuth2AuthorizedClientService
 
-- 代码见 xmodule-common-oauth2/com.penglecode.xmodule.common.security.oauth2.client.service.RedisOAuth2AuthorizedClientService.java
+- 代码见 xmodule-common-oauth2/com.penglecode.xmodule.common.security.oauth2.client.servlet.service.RedisServletOAuth2AuthorizedClientService.java
+		 xmodule-common-oauth2/com.penglecode.xmodule.common.security.oauth2.client.reactive.service.RedisReactiveOAuth2AuthorizedClientService.java
 
 ### 4. 关于OAuth2AuthorizedClientRepository的默认实现AuthenticatedPrincipalOAuth2AuthorizedClientRepository的问题
 
-- 阅读AuthenticatedPrincipalOAuth2AuthorizedClientRepository代码可知，其根据用户是否匿名，将OAuth2AuthorizedClient分两处存储：一处存储在内存中(InMemoryOAuth2AuthorizedClientService)，一处存储在HttpSession中(HttpSessionOAuth2AuthorizedClientRepository). 通过：1、使用自定义的com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2PrincipalNameAuthentication && 2、principalName使用username(password模式)或者client_id(client_credentials模式)来替代 && 3、自定义Keycloak JWT令牌的claims.sub值(在password模式使用username或者client_credentials模式下使用client_id)。通过以上三点共通确立OAuth2AuthorizedClient的存储和获取的唯一性(正确性). 至于为何要如此确保? 原因在于org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken中的principalName使用了硬编码：name取自令牌的sub字段导致的
+- 阅读AuthenticatedPrincipalOAuth2AuthorizedClientRepository代码可知，其根据用户是否匿名，将OAuth2AuthorizedClient分两处存储：一处存储在内存中(InMemoryOAuth2AuthorizedClientService)，一处存储在Session中(HttpSessionOAuth2AuthorizedClientRepository). 通过：1、使用自定义的com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2PrincipalNameAuthentication && 2、principalName使用username(password模式)或者client_id(client_credentials模式)来替代 && 3、自定义Keycloak JWT令牌的claims.sub值(在password模式使用username或者client_credentials模式下使用client_id)。通过以上三点共通确立OAuth2AuthorizedClient的存储和获取的唯一性(正确性). 至于为何要如此确保? 原因在于org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken中的principalName使用了硬编码：name取自令牌的sub字段导致的
 
 ## 运行&测试
 
