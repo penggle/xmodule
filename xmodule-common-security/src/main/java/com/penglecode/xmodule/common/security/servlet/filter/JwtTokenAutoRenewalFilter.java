@@ -48,7 +48,7 @@ public class JwtTokenAutoRenewalFilter extends OncePerRequestFilter {
 		if(!loginRequestMatcher.matches(request)) {
 			JwtToken jwtToken = getCurrentJwtToken(request);
 			if(jwtToken != null && jwtToken.isValid() && TokenSource.COOKIE.equals(jwtToken.getSource())) { //如果Cookie作为JWT令牌的载体，并且当前JWT令牌是有效的，则提前校验令牌的有效期，并根据情况自动续约
-				UserDetails loginUser = SpringSecurityUtils.getAuthenticatedUser();
+				UserDetails loginUser = SpringSecurityUtils.getCurrentAuthenticatedUser();
 				Instant expiresAt = jwtToken.getExpiresAt();
 				boolean needRenewal = !expiresAt.minusSeconds(jwtTokenConfig.getRenewalAheadTime()).isAfter(Instant.now()); //是否需要提前刷新JWT令牌?
 				if(needRenewal) { //需要提前续约?

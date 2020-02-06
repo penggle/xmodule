@@ -67,7 +67,7 @@ public class OAuth2KeycloakController extends HttpApiResourceSupport {
 	 * 先删除后创建Client
 	 */
 	protected void createClientsAndScopes() {
-		List<KeycloakOAuth2ClientProperties> oauth2Clients = Arrays.asList(keycloakOAuth2Config.getPasswordClient(), keycloakOAuth2Config.getClientcredsClient());
+		List<KeycloakOAuth2ClientProperties> oauth2Clients = new ArrayList<>(keycloakOAuth2Config.getRegistration().values());
 		
 		Set<String> clientScopes = new HashSet<String>();
 		for(KeycloakOAuth2ClientProperties oauth2Client : oauth2Clients) {
@@ -169,7 +169,7 @@ public class OAuth2KeycloakController extends HttpApiResourceSupport {
 			} else if (oauth2Client.getAuthorizationGrantType().equals("client_credentials")) { //client_credentials模式的Client需要设置Client的Mappers，定制AccessToken中的返回字段(增加appId等字段)
 				//设置access_token的寿命(秒)
 				attributes.put("access.token.lifespan", String.valueOf(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getAppTokenTimeout().getSeconds()));
-				attributes.put("appId", "1");
+				attributes.put("appId", getEnvironment().getProperty("spring.cloud.consul.discovery.instanceId"));
 				attributes.put("appName", getEnvironment().getProperty("spring.application.name"));
 				
 				List<ProtocolMapperRepresentation> mappers = new ArrayList<ProtocolMapperRepresentation>();

@@ -14,9 +14,9 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 
-import com.penglecode.xmodule.common.security.oauth2.client.service.RedisOAuth2AuthorizedClientService;
-import com.penglecode.xmodule.common.security.oauth2.resource.support.OAuth2BearerTokenAccessDeniedHandler;
-import com.penglecode.xmodule.common.security.oauth2.resource.support.OAuth2BearerTokenAuthenticationEntryPoint;
+import com.penglecode.xmodule.common.security.oauth2.client.servlet.service.RedisServletOAuth2AuthorizedClientService;
+import com.penglecode.xmodule.common.security.oauth2.resource.servlet.support.OAuth2BearerTokenAccessDeniedHandler;
+import com.penglecode.xmodule.common.security.oauth2.resource.servlet.support.OAuth2BearerTokenAuthenticationEntryPoint;
 
 @Primary
 @Configuration
@@ -37,7 +37,7 @@ public class OAuth2ClientSecurityConfiguration extends WebSecurityConfigurerAdap
 	@Bean(name="defaultAuthorizedClientService")
 	public OAuth2AuthorizedClientService defaultAuthorizedClientService(ClientRegistrationRepository clientRegistrationRepository, 
 			@Qualifier("defaultRedisConnectionFactory") RedisConnectionFactory defaultRedisConnectionFactory) {
-		return new RedisOAuth2AuthorizedClientService(clientRegistrationRepository, defaultRedisConnectionFactory);
+		return new RedisServletOAuth2AuthorizedClientService(clientRegistrationRepository, defaultRedisConnectionFactory);
 	}
 	
 	@Override

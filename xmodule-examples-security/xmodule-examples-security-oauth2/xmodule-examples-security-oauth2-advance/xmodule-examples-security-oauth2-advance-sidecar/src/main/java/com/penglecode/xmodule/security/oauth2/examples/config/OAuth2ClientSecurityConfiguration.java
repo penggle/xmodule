@@ -7,11 +7,13 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
-import com.penglecode.xmodule.common.security.oauth2.client.service.RedisOAuth2AuthorizedClientService;
+import com.penglecode.xmodule.common.security.oauth2.client.reactive.service.RedisReactiveOAuth2AuthorizedClientService;
+import com.penglecode.xmodule.common.security.oauth2.resource.reactive.support.OAuth2BearerTokenAccessDeniedHandler;
+import com.penglecode.xmodule.common.security.oauth2.resource.reactive.support.OAuth2BearerTokenAuthenticationEntryPoint;
 
 @Primary
 @Configuration
@@ -19,9 +21,9 @@ import com.penglecode.xmodule.common.security.oauth2.client.service.RedisOAuth2A
 public class OAuth2ClientSecurityConfiguration {
 
 	@Bean(name="defaultAuthorizedClientService")
-	public OAuth2AuthorizedClientService defaultAuthorizedClientService(ClientRegistrationRepository clientRegistrationRepository, 
+	public ReactiveOAuth2AuthorizedClientService defaultAuthorizedClientService(ReactiveClientRegistrationRepository clientRegistrationRepository, 
 			@Qualifier("defaultRedisConnectionFactory") RedisConnectionFactory defaultRedisConnectionFactory) {
-		return new RedisOAuth2AuthorizedClientService(clientRegistrationRepository, defaultRedisConnectionFactory);
+		return new RedisReactiveOAuth2AuthorizedClientService(clientRegistrationRepository, defaultRedisConnectionFactory);
 	}
 	
 	@Bean
@@ -35,8 +37,8 @@ public class OAuth2ClientSecurityConfiguration {
             	.oauth2Client()
             .and()
             	.oauth2ResourceServer()
-            		.authenticationEntryPoint(null)
-            		.accessDeniedHandler(null);
+            		.authenticationEntryPoint(new OAuth2BearerTokenAuthenticationEntryPoint())
+            		.accessDeniedHandler(new OAuth2BearerTokenAccessDeniedHandler());
         http.csrf().disable();
         return http.build();
     }

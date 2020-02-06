@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2ClientUtils;
+import com.penglecode.xmodule.common.security.oauth2.client.servlet.util.OAuth2ClientUtils;
 import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
 import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 import com.penglecode.xmodule.common.support.Result;
@@ -56,7 +56,7 @@ public class OAuth2AuthApiController extends HttpApiResourceSupport {
 	public Result<Object> login(HttpServletRequest request, HttpServletResponse response) {
 		LOGGER.info(">>> 执行OAuth2(Password模式)用户登录...");
 		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistrationById(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getUserRegistrationId());
-		Authentication authentication = SpringSecurityUtils.getAuthentication(); //初次登录时应该是个匿名的Authentication实例
+		Authentication authentication = SpringSecurityUtils.getCurrentAuthentication(); //初次登录时应该是个匿名的Authentication实例
 		authentication = OAuth2ClientUtils.preparePasswordOAuth2Authentication(clientRegistration, authentication, request.getParameter(OAuth2ParameterNames.USERNAME)); //创建执行OAuth2 Password模式登录的Authentication
 		OAuth2AuthorizeRequest.Builder builder = OAuth2AuthorizeRequest.withClientRegistrationId(clientRegistration.getRegistrationId()).principal(authentication);
 		builder.attributes(attributes -> {
@@ -84,7 +84,7 @@ public class OAuth2AuthApiController extends HttpApiResourceSupport {
 	public Result<Object> renewal(HttpServletRequest request, HttpServletResponse response) {
 		LOGGER.info(">>> 执行OAuth2(Password模式)用户登录续约...");
 		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistrationById(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getUserRegistrationId());
-		Authentication authentication = SpringSecurityUtils.getAuthentication();
+		Authentication authentication = SpringSecurityUtils.getCurrentAuthentication();
 		OAuth2AuthorizedClient oauth2AuthorizedClient = OAuth2ClientUtils.getOAuth2AuthorizedClient(clientRegistration.getRegistrationId(), authentication, request);
 		
 		OAuth2AuthorizeRequest.Builder builder = null;
@@ -114,7 +114,7 @@ public class OAuth2AuthApiController extends HttpApiResourceSupport {
 	 */
 	@GetMapping(value="/userinfo", produces=MediaType.APPLICATION_JSON_VALUE)
 	public Result<Object> getAuthenticatedUserInfo() {
-		JwtAuthenticationToken authentication = SpringSecurityUtils.getAuthentication();
+		JwtAuthenticationToken authentication = SpringSecurityUtils.getCurrentAuthentication();
 		OAuth2AuthorizedClient authorizedClient = OAuth2ClientUtils.getAgreedOAuth2AuthorizedClient();
 		LOGGER.info(">>> 获取登录用户信息，authentication = {}, authorizedClient", authentication, authorizedClient);
 		return Result.success().data(authentication.getTokenAttributes()).build();

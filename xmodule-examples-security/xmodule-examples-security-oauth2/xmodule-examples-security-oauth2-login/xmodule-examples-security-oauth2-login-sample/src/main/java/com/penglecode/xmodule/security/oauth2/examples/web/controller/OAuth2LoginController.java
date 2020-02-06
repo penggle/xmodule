@@ -19,9 +19,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2ClientUtils;
-import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2LoginUtils;
-import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2UserUtils;
+import com.penglecode.xmodule.common.security.oauth2.client.servlet.util.OAuth2ClientUtils;
+import com.penglecode.xmodule.common.security.oauth2.client.servlet.util.OAuth2LoginUtils;
 import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 import com.penglecode.xmodule.common.util.ExceptionUtils;
 import com.penglecode.xmodule.common.util.JsonUtils;
@@ -59,9 +58,9 @@ public class OAuth2LoginController implements InitializingBean {
 		LOGGER.info(">>> authentication = {}", authentication);
 		if(authentication instanceof OAuth2AuthenticationToken) {
 			LOGGER.info(">>> OAuth2 User Login Success!");
-			OAuth2AuthenticationToken authentication0 = SpringSecurityUtils.getAuthentication();
+			OAuth2AuthenticationToken authentication0 = SpringSecurityUtils.getCurrentAuthentication();
 			System.out.println(authentication0 == authentication);
-			userInfo = OAuth2UserUtils.getCurrentOAuth2UserInfo();
+			userInfo = OAuth2LoginUtils.getCurrentOAuth2UserInfo();
 			OAuth2AuthorizedClient oauth2AuthorizedClient = OAuth2ClientUtils.getOAuth2AuthorizedClient(authentication0.getAuthorizedClientRegistrationId(), authentication0, null);
 			OAuth2AccessToken accessToken = oauth2AuthorizedClient.getAccessToken();
 			LOGGER.debug(">>> userInfo = {}", JsonUtils.object2Json(userInfo));

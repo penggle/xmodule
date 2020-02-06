@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.penglecode.xmodule.common.security.oauth2.client.DefaultOAuth2AuthorizedClientExchangeFilter;
+import com.penglecode.xmodule.common.security.oauth2.client.servlet.ServletOAuth2AuthorizedClientExchangeFilter;
 import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
 import com.penglecode.xmodule.common.support.Result;
 import com.penglecode.xmodule.common.util.JsonUtils;
@@ -70,7 +70,7 @@ public class JokeApiConsumerController extends HttpApiResourceSupport {
 				.get()
 				.uri("http://127.0.0.1:8082/api/joke/{sid}", parameter)
 				//此接口调用指定使用password模式客户端(即当前登录用户的OAuth2AuthorizedClient)来进行WebClient请求OAuth2认证
-				.attributes(DefaultOAuth2AuthorizedClientExchangeFilter.withClientRegistration(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getUserRegistrationId()))
+				.attributes(ServletOAuth2AuthorizedClientExchangeFilter.withClientRegistration(OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getUserRegistrationId()))
 				.retrieve()
 				.bodyToMono(new ParameterizedTypeReference<Result<Joke>>() {})
 				.block();

@@ -17,7 +17,7 @@ import com.penglecode.xmodule.common.util.ReflectionUtils;
 import com.penglecode.xmodule.common.util.SpringUtils;
 
 /**
- * spring-security工具类
+ * Servlet Web环境下的spring-security工具类
  * 
  * @author 	pengpeng
  * @date	2019年1月16日 下午2:38:43
@@ -84,11 +84,11 @@ public class SpringSecurityUtils {
 	}
 	
 	/**
-	 * 获取当前登录证明(Authentication)
+	 * 获取当前登录身份证明(Authentication)
 	 * @param <T>
 	 * @return
 	 */
-	public static <T extends Authentication> T getAuthentication() {
+	public static <T extends Authentication> T getCurrentAuthentication() {
 		return (T) SecurityContextHolder.getContext().getAuthentication();
 	}
 	
@@ -96,7 +96,7 @@ public class SpringSecurityUtils {
 	 * 获取当前登录用户
 	 * @return
 	 */
-	public static UserDetails getAuthenticatedUser() {
+	public static UserDetails getCurrentAuthenticatedUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if(authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserDetails) {
 			return (UserDetails) authentication.getPrincipal();

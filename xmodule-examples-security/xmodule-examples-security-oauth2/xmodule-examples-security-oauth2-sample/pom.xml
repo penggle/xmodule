@@ -18,5 +18,6 @@
 	<modules>
 		<module>xmodule-examples-security-oauth2-sample-auth</module>
 		<module>xmodule-examples-security-oauth2-sample-api</module>
+		<module>xmodule-examples-security-oauth2-sample-flux</module>
 	</modules>
 </project>

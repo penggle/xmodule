@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextListener;
 
-import com.penglecode.xmodule.common.initializer.DefaultServletWebAppStartupListener;
 import com.penglecode.xmodule.common.web.servlet.support.EnabledFilterRegistrationBeanLogger;
 import com.penglecode.xmodule.common.web.support.DefaultXUploadFileTransfer;
 import com.penglecode.xmodule.common.web.support.XUploadFileHelper;
@@ -21,14 +20,6 @@ import com.penglecode.xmodule.common.web.support.XUploadFileHelper;
 @ConditionalOnWebApplication(type = Type.SERVLET)
 public class DefaultServletWebAppConfiguration extends AbstractSpringConfiguration {
 
-	/**
-	 * 基于Servlet环境的Web应用启动时的初始化程序
-	 */
-	@Bean
-	public DefaultServletWebAppStartupListener defaultServletWebAppStartupListener() {
-		return new DefaultServletWebAppStartupListener();
-	}
-	
 	/**
 	 * 小文件上传助手
 	 */

@@ -1,5 +1,7 @@
 package com.penglecode.xmodule.common.security.oauth2.client.util;
 
+import java.util.Map;
+
 import org.springframework.util.Assert;
 
 import com.nimbusds.oauth2.sdk.ParseException;
@@ -24,10 +26,28 @@ public class OAuth2ErrorUtils {
 		return BearerTokenError.parse(wwwAuthenticate);
 	}
 	
-	public static void main(String[] args) throws Exception {
-		String wwwAuthenticate = "Bearer error=\"invalid_token\", error_description=\"An error occurred while attempting to decode the Jwt: Jwt expired at 2020-01-31T14:31:31Z\", error_uri=\"https://tools.ietf.org/html/rfc6750#section-3.1\"";
-		BearerTokenError error = parseBearerTokenError(wwwAuthenticate);
-		System.out.println(error);
+	/**
+	 * 计算wwwAuthenticate头的值
+	 * @param wwwAuthenticateParameters
+	 * @return
+	 */
+	public static String computeWWWAuthenticateHeaderValue(Map<String, String> wwwAuthenticateParameters) {
+		StringBuilder wwwAuthenticate = new StringBuilder();
+		wwwAuthenticate.append("Bearer");
+
+		if (!wwwAuthenticateParameters.isEmpty()) {
+			wwwAuthenticate.append(" ");
+			int i = 0;
+			for (Map.Entry<String, String> entry : wwwAuthenticateParameters.entrySet()) {
+				wwwAuthenticate.append(entry.getKey()).append("=\"").append(entry.getValue()).append("\"");
+				if (i != wwwAuthenticateParameters.size() - 1) {
+					wwwAuthenticate.append(", ");
+				}
+				i++;
+			}
+		}
+
+		return wwwAuthenticate.toString();
 	}
 	
 }

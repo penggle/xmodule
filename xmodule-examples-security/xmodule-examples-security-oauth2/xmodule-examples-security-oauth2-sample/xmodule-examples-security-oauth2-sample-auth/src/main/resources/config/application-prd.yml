@@ -34,13 +34,13 @@ spring:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
                     password-client:
                         provider: keycloak
-                        client-id: oauth2-client-password
+                        client-id: password-client
                         client-secret: 1bfa1a431ce347498759b7945c9c301a
                         authorization-grant-type: password
                         scope: user
                     clientcreds-client:
                         provider: keycloak
-                        client-id: oauth2-client-clientcreds
+                        client-id: clientcreds-client
                         client-secret: 77b4450ee8c64739b11d0f7f31ab5de9
                         authorization-grant-type: client_credentials
                         scope: app

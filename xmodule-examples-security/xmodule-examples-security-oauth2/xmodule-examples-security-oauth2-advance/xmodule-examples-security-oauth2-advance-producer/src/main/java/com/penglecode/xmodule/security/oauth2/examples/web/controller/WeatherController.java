@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.penglecode.xmodule.common.security.oauth2.client.util.OAuth2ClientUtils;
+import com.penglecode.xmodule.common.security.oauth2.client.servlet.util.OAuth2ClientUtils;
 import com.penglecode.xmodule.common.security.servlet.util.SpringSecurityUtils;
 import com.penglecode.xmodule.common.support.Result;
 import com.penglecode.xmodule.common.util.JsonUtils;
@@ -37,7 +37,7 @@ public class WeatherController implements WeatherApiService {
 	
 	@Override
 	public Result<Weather> getTodayWeather(String province, String city) {
-		JwtAuthenticationToken authentication = SpringSecurityUtils.getAuthentication();
+		JwtAuthenticationToken authentication = SpringSecurityUtils.getCurrentAuthentication();
 		OAuth2AuthorizedClient authorizedClient = OAuth2ClientUtils.getAgreedOAuth2AuthorizedClient();
 		LOGGER.info("【getTodayWeather】>>> authentication = {}, authorizedClient = {}", authentication, authorizedClient);
 		

@@ -8,9 +8,9 @@ import org.keycloak.representations.idm.RealmRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import com.penglecode.xmodule.common.initializer.SpringWebAppStartupInitializer;
 import com.penglecode.xmodule.security.oauth2.examples.config.KeycloakOAuth2ConfigProperties;
@@ -27,7 +27,7 @@ public class OAuth2AuthWebAppStartupInitializer implements SpringWebAppStartupIn
 	private KeycloakOAuth2ConfigProperties keycloakOAuth2Config;
 	
 	@Override
-	public void initialize(ConfigurableWebApplicationContext applicationContext) throws Exception {
+	public void initialize(ConfigurableApplicationContext applicationContext) throws Exception {
 		LOGGER.info(">>> 初始化Keycloak realm: {}", keycloakOAuth2Config.getRealm());
 		createRealmIfNotExists(applicationContext);
 	}
@@ -35,7 +35,7 @@ public class OAuth2AuthWebAppStartupInitializer implements SpringWebAppStartupIn
 	/**
 	 * 创建应用Realm如果不存在
 	 */
-	protected void createRealmIfNotExists(ConfigurableWebApplicationContext applicationContext) {
+	protected void createRealmIfNotExists(ConfigurableApplicationContext applicationContext) {
 		List<RealmRepresentation> allRealms = keycloak.realms().findAll();
 		if(!CollectionUtils.isEmpty(allRealms)) {
 			boolean notExists = allRealms.stream().noneMatch(r -> r.getRealm().equals(keycloakOAuth2Config.getRealm()));

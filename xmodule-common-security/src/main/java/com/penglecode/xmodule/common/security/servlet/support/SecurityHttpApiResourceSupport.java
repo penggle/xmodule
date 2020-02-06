@@ -19,8 +19,8 @@ public abstract class SecurityHttpApiResourceSupport extends HttpApiResourceSupp
 	 * @return
 	 */
 	
-	protected <T extends UserDetails> T getAuthenticatedUser() {
-		return (T) SpringSecurityUtils.getAuthenticatedUser();
+	protected <T extends UserDetails> T getCurrentAuthenticatedUser() {
+		return (T) SpringSecurityUtils.getCurrentAuthenticatedUser();
 	}
 	
 }

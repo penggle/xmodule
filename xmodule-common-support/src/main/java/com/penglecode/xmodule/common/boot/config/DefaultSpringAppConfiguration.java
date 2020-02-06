@@ -18,6 +18,7 @@ import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.penglecode.xmodule.common.consts.GlobalConstants;
+import com.penglecode.xmodule.common.initializer.DefaultWebServerPreStartupListener;
 
 /**
  * 默认的SpringBoot应用配置
@@ -30,6 +31,14 @@ import com.penglecode.xmodule.common.consts.GlobalConstants;
 public class DefaultSpringAppConfiguration extends AbstractSpringConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSpringAppConfiguration.class);
+	
+	/**
+	 * 默认的Web应用启动时的初始化程序主类
+	 */
+	@Bean
+	public DefaultWebServerPreStartupListener defaultWebServerPreStartupListener() {
+		return new DefaultWebServerPreStartupListener();
+	}
 	
 	/**
 	 * 全局默认的MessageSourceAccessor

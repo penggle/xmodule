@@ -130,6 +130,28 @@ public class MonoExample {
 		});
 	}
 	
+	public static void doOnNext() {
+		Map<String,Object> context = new HashMap<String,Object>();
+		context.put("110", "公安");
+		
+		boolean switch1 = true;
+		boolean switch2 = true;
+		
+		Mono.just(context).filter(ctx -> switch1).flatMap(ctx -> {
+			ctx.put("119", "火警");
+			return Mono.just(ctx);
+		}).switchIfEmpty(Mono.defer(() -> {
+			return Mono.just(context);
+		})).filter(ctx -> switch2).flatMap(ctx -> {
+			ctx.put("120", "急救");
+			return Mono.just(ctx);
+		}).switchIfEmpty(Mono.defer(() -> {
+			return Mono.just(context);
+		})).doOnNext(ctx -> {
+			System.out.println("【log】>>> ctx = " + ctx);
+		}).subscribe(System.out::println);
+	}
+	
 	public static void main(String[] args) {
 		//just();
 		//fromRunnable();
@@ -138,7 +160,8 @@ public class MonoExample {
 		//fromSupplier();
 		//delay();
 		//create();
-		pagingQuery();
+		//pagingQuery();
+		doOnNext();
 	}
 
 }

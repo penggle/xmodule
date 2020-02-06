@@ -1,7 +1,7 @@
 package com.penglecode.xmodule.common.initializer;
 
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 /**
  * 基于Servlet环境的Web应用启动时的初始化程序
@@ -18,6 +18,6 @@ public interface SpringWebAppStartupInitializer {
 	 * 执行初始化
 	 * @param applicationContext
 	 */
-	public void initialize(ConfigurableWebApplicationContext applicationContext) throws Exception;
+	public void initialize(ConfigurableApplicationContext applicationContext) throws Exception;
 	
 }
