@@ -1,7 +1,6 @@
 package com.penglecode.xmodule.security.oauth2.examples.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -24,12 +23,6 @@ import com.penglecode.xmodule.common.security.oauth2.resource.servlet.support.OA
 public class OAuth2ClientSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Bean
-	@ConfigurationProperties(prefix="spring.security.oauth2.client")
-	public KeycloakOAuth2ConfigProperties keycloakOAuth2Config() {
-		return new KeycloakOAuth2ConfigProperties();
-	}
-	
-	@Bean
 	public DefaultOAuth2UserService defaultOAuth2UserService() {
 		return new DefaultOAuth2UserService();
 	}
@@ -44,7 +37,7 @@ public class OAuth2ClientSecurityConfiguration extends WebSecurityConfigurerAdap
     protected void configure(HttpSecurity http) throws Exception {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-				.antMatcher("/**") //指定API资源访问安全管辖路径
+				.antMatcher("/api/**") //指定API资源访问安全管辖路径
 				.authorizeRequests()
 				.antMatchers("/api/keycloak/init").permitAll()
 				.antMatchers("/api/oauth2/login").permitAll()

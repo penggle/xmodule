@@ -10,6 +10,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
@@ -17,6 +21,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 import org.springframework.util.StringUtils;
 
 /**
@@ -33,11 +38,24 @@ public class DefaultActuatorReactiveSecurityConfiguration {
 
 	public static final String CONFIGURATION_ENABLED = "management.customized.enabled";
 	
-	@Bean
-	public MapReactiveUserDetailsService reactiveUserDetailsService(SecurityProperties properties,
-			ObjectProvider<PasswordEncoder> passwordEncoder) {
-		SecurityProperties.User user = properties.getUser();
-		UserDetails userDetails = getUserDetails(user, getEncodedPassword(user, passwordEncoder.getIfAvailable()));
+	private final SecurityProperties securityProperties;
+	
+	private final PasswordEncoder passwordEncoder;
+	
+	public DefaultActuatorReactiveSecurityConfiguration(SecurityProperties securityProperties, ObjectProvider<PasswordEncoder> passwordEncoder) {
+		this.securityProperties = securityProperties;
+		this.passwordEncoder = passwordEncoder.getIfAvailable();
+	}
+	
+	private ReactiveAuthenticationManager reactiveAuthenticationManager() {
+		UserDetailsRepositoryReactiveAuthenticationManager reactiveAuthenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(reactiveUserDetailsService());
+		reactiveAuthenticationManager.setPasswordEncoder(passwordEncoder);
+		return reactiveAuthenticationManager;
+	}
+	
+	private MapReactiveUserDetailsService reactiveUserDetailsService() {
+		SecurityProperties.User user = securityProperties.getUser();
+		UserDetails userDetails = getUserDetails(user, getEncodedPassword(user));
 		return new MapReactiveUserDetailsService(userDetails);
 	}
 
@@ -46,23 +64,26 @@ public class DefaultActuatorReactiveSecurityConfiguration {
 		return User.withUsername(user.getName()).password(password).roles(StringUtils.toStringArray(roles)).build();
 	}
 	
-	private String getEncodedPassword(SecurityProperties.User user, PasswordEncoder encoder) {
+	private String getEncodedPassword(SecurityProperties.User user) {
 		String password = user.getPassword();
-		if(encoder != null) {
-			password = encoder.encode(password);
+		if(passwordEncoder != null) {
+			password = passwordEncoder.encode(password);
 		}
 		return password;
 	}
 	
 	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityWebFilterChain actuatorSpringSecurityFilterChain(ServerHttpSecurity http) {
-		http.authorizeExchange()
-			.matchers(EndpointRequest.to("info", "health", "sidecarhealth")).permitAll()
-			.matchers(EndpointRequest.toAnyEndpoint()).hasRole("ACTUATOR")
-			.anyExchange().permitAll()
-		.and().cors()
-		.and().httpBasic()
-		.and().csrf().disable();
+		http.securityMatcher(new PathPatternParserServerWebExchangeMatcher("/actuator/**"))
+			.authenticationManager(reactiveAuthenticationManager())
+			.authorizeExchange()
+				.matchers(EndpointRequest.to("info", "health", "sidecarhealth")).permitAll()
+				.matchers(EndpointRequest.toAnyEndpoint()).hasRole("ACTUATOR")
+				.anyExchange().permitAll()
+			.and().httpBasic()
+			.and().cors()
+			.and().csrf().disable();
 		return http.build();
 	}
 	

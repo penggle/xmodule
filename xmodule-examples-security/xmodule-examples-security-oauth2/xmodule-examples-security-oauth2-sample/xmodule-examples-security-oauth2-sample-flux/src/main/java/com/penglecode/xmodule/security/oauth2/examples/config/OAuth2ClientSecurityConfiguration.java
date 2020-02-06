@@ -10,6 +10,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 
 import com.penglecode.xmodule.common.security.oauth2.client.reactive.service.RedisReactiveOAuth2AuthorizedClientService;
 import com.penglecode.xmodule.common.security.oauth2.resource.reactive.support.OAuth2BearerTokenAccessDeniedHandler;
@@ -28,7 +29,8 @@ public class OAuth2ClientSecurityConfiguration {
 	
 	@Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        http.authorizeExchange(exchanges ->
+		http.securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
+        	.authorizeExchange(exchanges ->
                 exchanges
                 	.pathMatchers("/api/server/info").permitAll()
                 	.pathMatchers("/api/**").hasAnyAuthority("SCOPE_user", "SCOPE_app")

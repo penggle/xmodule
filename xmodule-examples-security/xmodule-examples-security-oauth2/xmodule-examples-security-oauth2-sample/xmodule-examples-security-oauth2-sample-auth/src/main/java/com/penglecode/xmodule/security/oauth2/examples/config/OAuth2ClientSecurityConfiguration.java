@@ -37,7 +37,7 @@ public class OAuth2ClientSecurityConfiguration extends WebSecurityConfigurerAdap
     protected void configure(HttpSecurity http) throws Exception {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-				.antMatcher("/**") //指定API资源访问安全管辖路径
+				.antMatcher("/api/**") //指定API资源访问安全管辖路径
 				.authorizeRequests()
 				.antMatchers("/api/keycloak/init").permitAll()
 				.antMatchers("/api/oauth2/login").permitAll()

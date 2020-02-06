@@ -29,7 +29,7 @@ spring:
                 #用于用户登录的注册客户端的ID
                 user-registration-id: user-client
                 #当前应用的用于API应用之间相互调用鉴权的注册客户端的ID
-                app-registration-id: producer-app-client
+                app-registration-id: consumer-app-client
                 registration:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
                     user-client:
