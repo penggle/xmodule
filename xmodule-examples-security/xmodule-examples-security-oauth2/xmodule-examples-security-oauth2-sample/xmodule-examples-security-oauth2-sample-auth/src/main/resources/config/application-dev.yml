@@ -24,8 +24,8 @@ spring:
             #OAuth2客户端配置
             client:
                 clock-skew: PT600S
-                user-token-timeout: 1800
-                app-token-timeout: 1800
+                user-token-timeout: ${server.servlet.session.timeout}
+                app-token-timeout: 86400
                 #用于用户登录的注册客户端的ID
                 user-registration-id: password-client
                 #用于API应用之间相互调用鉴权的注册客户端的ID
