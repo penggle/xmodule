@@ -11,7 +11,7 @@ spring:
             #多网卡模式下SpringCloud优先选取的IP网段
             preferredNetworks: 
                 - 172.16
-                - 192.168
+                - 192.168.0
         #SpringCloud消息总线配置
         bus:
             id: ${spring.application.name}:${spring.application.index}

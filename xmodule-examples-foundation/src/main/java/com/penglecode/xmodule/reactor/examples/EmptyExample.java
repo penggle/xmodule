@@ -83,15 +83,15 @@ public class EmptyExample {
 		}).switchIfEmpty(Mono.defer(() -> Mono.empty()));
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		//fineIfOnlyOneElement1();
 		//fineIfOnlyOneElement2();
 		//fineIfOnlyOneElement3();
 		//fineIfOnlyOneElement4();
 		//findMyLikeOne();
 		//handleEmpty1();
-		handleEmpty2();
-		handleEmpty3();
+		//handleEmpty2();
+		//handleEmpty3();
 	}
 
 }

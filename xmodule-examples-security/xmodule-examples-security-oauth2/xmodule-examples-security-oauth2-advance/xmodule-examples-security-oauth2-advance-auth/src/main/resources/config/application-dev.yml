@@ -12,12 +12,6 @@ spring:
             password: 123456
             url: jdbc:mysql://127.0.0.1:3306/xmodule?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
             
-    #SpringCloud应用配置
-    cloud:
-        inetutils:
-            preferredNetworks: 
-                - 172.16
-                - 192.168
     redis:
         #默认使用的Redis配置
         default:

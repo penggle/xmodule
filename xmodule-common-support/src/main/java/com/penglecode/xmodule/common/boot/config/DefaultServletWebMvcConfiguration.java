@@ -27,6 +27,7 @@ import org.springframework.web.servlet.view.JstlView;
 import com.penglecode.xmodule.common.consts.GlobalConstants;
 import com.penglecode.xmodule.common.web.springmvc.handler.DefaultSpringMvcExceptionHandler;
 import com.penglecode.xmodule.common.web.springmvc.support.EnhancedRequestMappingHandlerAdapter;
+import com.penglecode.xmodule.common.web.springmvc.support.ResultEntityResponseServletConfiguration;
 /**
  * SpringMVC的定制化配置
  * 
@@ -37,7 +38,7 @@ import com.penglecode.xmodule.common.web.springmvc.support.EnhancedRequestMappin
 @ConditionalOnWebApplication(type = Type.SERVLET)
 @ConditionalOnClass({ Servlet.class, DispatcherServlet.class, WebMvcConfigurer.class })
 @ConditionalOnProperty(name=DefaultServletWebMvcConfiguration.CONFIGURATION_ENABLED, havingValue="true", matchIfMissing=true)
-public class DefaultServletWebMvcConfiguration extends AbstractSpringConfiguration implements WebMvcConfigurer, WebMvcRegistrations {
+public class DefaultServletWebMvcConfiguration extends ResultEntityResponseServletConfiguration implements WebMvcConfigurer, WebMvcRegistrations {
 	
 	public static final String CONFIGURATION_ENABLED = "spring.mvc.customized.enabled";
 	
