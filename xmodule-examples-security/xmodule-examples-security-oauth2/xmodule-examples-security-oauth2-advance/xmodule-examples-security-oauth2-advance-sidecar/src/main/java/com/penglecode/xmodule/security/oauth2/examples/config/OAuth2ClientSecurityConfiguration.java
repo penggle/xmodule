@@ -29,7 +29,7 @@ public class OAuth2ClientSecurityConfiguration {
 	
 	@Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-		http.securityMatcher(new PathPatternParserServerWebExchangeMatcher("/api/**"))
+		http.securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
         	.authorizeExchange(exchanges ->
                 exchanges
                 	.pathMatchers("/api/server/info").permitAll()

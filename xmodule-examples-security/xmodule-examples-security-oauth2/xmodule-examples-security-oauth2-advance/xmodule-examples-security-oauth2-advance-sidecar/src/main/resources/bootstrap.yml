@@ -2,7 +2,7 @@ spring:
     #SpringBoot应用配置
     application:
         #应用名称不能变更!!!
-        name: xmodule-examples-security-oauth2-advance-producer
+        name: xmodule-examples-security-oauth2-advance-sidecar
         index: ${spring.cloud.client.ip-address}:${server.port}
         #index: ${random.uuid}
     #SpringCloud应用配置
@@ -11,7 +11,7 @@ spring:
             #多网卡模式下SpringCloud优先选取的IP网段
             preferredNetworks: 
                 - 172.16
-                - 127.0.0.1
+                - 192.168.0
         #SpringCloud消息总线配置
         bus:
             id: ${spring.application.name}:${spring.application.index}

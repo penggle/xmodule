@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
-import com.penglecode.xmodule.common.security.oauth2.client.servlet.support.OAuth2ClientConfigProperties;
+import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2ClientConfigProperties;
 
 /**
  * OAuth2应用常量

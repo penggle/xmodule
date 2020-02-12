@@ -47,7 +47,10 @@ public class WeatherController implements WeatherApiService {
 		parameter.put("weatherType", weatherType);
 		parameter.put("province", province);
 		parameter.put("city", city);
+		long start = System.currentTimeMillis();
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, String.class, parameter);
+		long end = System.currentTimeMillis();
+		System.out.println(">>> cost " + (end - start) + " ms");
 		HttpStatus status = response.getStatusCode();
 		String body = response.getBody();
 		if(status.is2xxSuccessful()) {

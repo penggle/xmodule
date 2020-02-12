@@ -14,9 +14,9 @@ import org.springframework.security.oauth2.client.registration.ReactiveClientReg
 import com.penglecode.xmodule.common.boot.config.AbstractSpringConfiguration;
 import com.penglecode.xmodule.common.initializer.SpringWebAppStartupInitializer;
 import com.penglecode.xmodule.common.security.oauth2.client.reactive.support.ReactiveClientRegistrationRepositoryAdapter;
-import com.penglecode.xmodule.common.security.oauth2.client.servlet.support.OAuth2ClientConfigProperties;
 import com.penglecode.xmodule.common.security.oauth2.client.servlet.support.ServletClientRegistrationRepositoryAdapter;
 import com.penglecode.xmodule.common.security.oauth2.client.support.ClientRegistrationRepositoryAdapter;
+import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2ClientConfigProperties;
 import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
 
 @Configuration

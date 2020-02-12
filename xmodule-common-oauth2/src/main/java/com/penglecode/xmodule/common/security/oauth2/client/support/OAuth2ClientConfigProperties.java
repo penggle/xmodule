@@ -1,7 +1,9 @@
-package com.penglecode.xmodule.common.security.oauth2.client.servlet.support;
+package com.penglecode.xmodule.common.security.oauth2.client.support;
 
 import java.time.Clock;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
 
@@ -33,7 +35,7 @@ public class OAuth2ClientConfigProperties implements InitializingBean {
 	private Duration userTokenTimeout;
 	
 	/**
-	 * API应用之间相互调用鉴权令牌失效时间(包括CLIENT_CREDENTIALS)
+	 * 应用之间相互调用API鉴权令牌失效时间(包括CLIENT_CREDENTIALS)
 	 * (注意在KC中timeout最大值不能超过Realm.ssoSessionMaxLifespan)
 	 */
 	private Duration appTokenTimeout;
@@ -44,9 +46,14 @@ public class OAuth2ClientConfigProperties implements InitializingBean {
 	private String userRegistrationId;
 	
 	/**
-	 * 用于API应用之间相互调用鉴权的注册客户端的ID
+	 * 用于应用之间相互调用API鉴权的注册客户端的ID
 	 */
 	private String appRegistrationId;
+	
+	/**
+	 * 应用之间相互调用API无须鉴权的URL集合
+	 */
+	private List<String> appAuthExcludesUrl = Arrays.asList("/api/oauth2/login");
 
 	public Duration getClockSkew() {
 		return clockSkew;
@@ -116,6 +123,14 @@ public class OAuth2ClientConfigProperties implements InitializingBean {
 
 	public void setAppRegistrationId(String appRegistrationId) {
 		this.appRegistrationId = appRegistrationId;
+	}
+
+	public List<String> getAppAuthExcludesUrl() {
+		return appAuthExcludesUrl;
+	}
+
+	public void setAppAuthExcludesUrl(List<String> appAuthExcludesUrl) {
+		this.appAuthExcludesUrl = appAuthExcludesUrl;
 	}
 
 	@Override
