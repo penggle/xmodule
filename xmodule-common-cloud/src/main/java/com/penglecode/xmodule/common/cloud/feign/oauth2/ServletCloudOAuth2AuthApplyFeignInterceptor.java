@@ -1,6 +1,8 @@
-package com.penglecode.xmodule.common.security.oauth2.cloud.servlet.feign;
+package com.penglecode.xmodule.common.cloud.feign.oauth2;
 
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -9,11 +11,11 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
-import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest.Builder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 
-import com.penglecode.xmodule.common.security.oauth2.cloud.feign.AbstractCloudOAuth2AuthApplyFeignInterceptor;
+import com.penglecode.xmodule.common.cloud.hystrix.HystrixConcurrencyContext;
+import com.penglecode.xmodule.common.cloud.hystrix.HystrixConcurrencyContextHolder;
 import com.penglecode.xmodule.common.support.UnsupportedOperationExceptionInvocationHandler;
 
 import feign.RequestTemplate;
@@ -37,12 +39,20 @@ public class ServletCloudOAuth2AuthApplyFeignInterceptor extends AbstractCloudOA
 	}
 
 	@Override
-	protected OAuth2AuthorizeRequest buildAuthorizeRequest(RequestTemplate template, Builder builder) {
-		builder.attributes(attributes -> {
-			attributes.put(HttpServletRequest.class.getName(), new DummyHttpServletRequest());
-			attributes.put(HttpServletResponse.class.getName(), new DummyHttpServletResponse());
-		});
-		return builder.build();
+	protected Map<String,Object> authorizeRequestAttributes(RequestTemplate template) {
+		Map<String,Object> attributes = new HashMap<String,Object>();
+		HystrixConcurrencyContext context = HystrixConcurrencyContextHolder.getContext();
+		HttpServletRequest request = null;
+		if(context == null || (request = (HttpServletRequest) context.get(HttpServletRequest.class.getName())) == null) {
+			request = new DummyHttpServletRequest();
+		}
+		HttpServletResponse response = null;
+		if(context == null || (response = (HttpServletResponse) context.get(HttpServletResponse.class.getName())) == null) {
+			response = new DummyHttpServletResponse();
+		}
+		attributes.put(HttpServletRequest.class.getName(), request);
+		attributes.put(HttpServletResponse.class.getName(), response);
+		return attributes;
 	}
 
 	protected OAuth2AuthorizedClientManager getAuthorizedClientManager() {

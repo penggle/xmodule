@@ -39,7 +39,11 @@ public class SpringWebMvcUtils {
 	 * @return
 	 */
 	public static HttpServletRequest getCurrentHttpServletRequest() {
-		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		ServletRequestAttributes requestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
+		if(requestAttributes != null) {
+			return requestAttributes.getRequest();
+		}
+		return null;
 	}
 	
 	/**
@@ -48,7 +52,11 @@ public class SpringWebMvcUtils {
 	 * @return
 	 */
 	public static HttpServletResponse getCurrentHttpServletResponse() {
-		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+		ServletRequestAttributes requestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
+		if(requestAttributes != null) {
+			return requestAttributes.getResponse();
+		}
+		return null;
 	}
 	
 	/**
@@ -56,7 +64,11 @@ public class SpringWebMvcUtils {
 	 * @return
 	 */
 	public static HttpSession getCurrentHttpSession() {
-		return getCurrentHttpServletRequest().getSession();
+		HttpServletRequest request = getCurrentHttpServletRequest();
+		if(request != null) {
+			return request.getSession();
+		}
+		return null;
 	}
 	
 	/**

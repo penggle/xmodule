@@ -25,6 +25,22 @@
 			<version>${xmodule.version}</version>
 		</dependency>
 		
+		<!-- xmodule-common-security -->
+		<dependency>
+			<groupId>com.penglecode</groupId>
+			<artifactId>xmodule-common-security</artifactId>
+			<version>${xmodule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- xmodule-common-oauth2 -->
+		<dependency>
+			<groupId>com.penglecode</groupId>
+			<artifactId>xmodule-common-oauth2</artifactId>
+			<version>${xmodule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
 		<!-- spring-cloud-starter-openfeign -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

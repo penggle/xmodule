@@ -1,4 +1,4 @@
-package com.penglecode.xmodule.common.cloud.feign;
+package com.penglecode.xmodule.common.cloud.feign.hystrix;
 
 import java.lang.reflect.Method;
 

@@ -22,9 +22,9 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.penglecode.xmodule.common.boot.config.AbstractSpringConfiguration;
-import com.penglecode.xmodule.common.cloud.feign.DefaultHystrixFallbackHandlerFactory;
 import com.penglecode.xmodule.common.cloud.feign.ObjectRequestParamToStringConverter;
 import com.penglecode.xmodule.common.cloud.feign.StringToObjectRequestParamConverter;
+import com.penglecode.xmodule.common.cloud.feign.hystrix.DefaultHystrixFallbackHandlerFactory;
 
 import feign.Feign;
 import feign.Logger;

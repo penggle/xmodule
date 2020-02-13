@@ -1,6 +1,7 @@
-package com.penglecode.xmodule.common.security.oauth2.cloud.feign;
+package com.penglecode.xmodule.common.cloud.feign.oauth2;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 
+import com.penglecode.xmodule.common.cloud.util.FeignUtils;
 import com.penglecode.xmodule.common.exception.ApplicationServiceApiException;
 import com.penglecode.xmodule.common.security.oauth2.client.servlet.util.OAuth2ClientUtils;
 import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2ClientConfigProperties;
@@ -53,11 +55,17 @@ public abstract class AbstractCloudOAuth2AuthApplyFeignInterceptor implements Re
 				}
 			}
 			if(applyAuthorization) {
-				OAuth2AuthorizeRequest authorizeRequest = buildAuthorizeRequest(template, createAuthorizeRequestBuilder());
-				OAuth2AuthorizedClient authorizedClient = authorize(authorizeRequest);
+				
+				OAuth2AuthorizedClient authorizedClient = null;
+				Map<String,Object> attributes = authorizeRequestAttributes(template);
+				if((authorizedClient = (OAuth2AuthorizedClient) attributes.get(OAuth2AuthorizedClient.class.getName())) == null) {
+					OAuth2AuthorizeRequest authorizeRequest = buildAuthorizeRequest(template, attributes);
+					authorizedClient = authorize(authorizeRequest);
+				}
+				
 				Assert.notNull(authorizedClient, "Can not obtain a OAuth2AuthorizedClient!");
 				String authorization = authorizedClient.getAccessToken().getTokenValue();
-				LOGGER.debug(">>> Apply OAuth2 'Authorization' [{}] with ClientRegistration({}) for request: {}", authorization, authorizeRequest.getClientRegistrationId(), path);
+				LOGGER.debug(">>> Apply OAuth2 'Authorization' [{}] with ClientRegistration({}) for request: {}", authorization, authorizedClient.getClientRegistration().getRegistrationId(), path);
 				FeignUtils.setHeader(template, "Authorization", "bearer " + authorization);
 			}
 		} catch (Exception e) {
@@ -68,9 +76,9 @@ public abstract class AbstractCloudOAuth2AuthApplyFeignInterceptor implements Re
 	
 	protected abstract OAuth2AuthorizedClient authorize(OAuth2AuthorizeRequest authorizeRequest);
 	
-	protected abstract OAuth2AuthorizeRequest buildAuthorizeRequest(RequestTemplate template, OAuth2AuthorizeRequest.Builder builder);
+	protected abstract Map<String,Object> authorizeRequestAttributes(RequestTemplate template);
 	
-	protected OAuth2AuthorizeRequest.Builder createAuthorizeRequestBuilder() {
+	protected OAuth2AuthorizeRequest buildAuthorizeRequest(RequestTemplate template, Map<String,Object> attributes) {
 		//默认使用当前应用的APP客户端(client_credentials模式)来进行Feign请求OAuth2认证
 		String clientRegistrationId = OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_CONFIG.getAppRegistrationId();
 		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistrationById(clientRegistrationId);
@@ -78,7 +86,11 @@ public abstract class AbstractCloudOAuth2AuthApplyFeignInterceptor implements Re
 		String principalName = clientRegistration.getClientId(); //此处是约定好的
 		Authentication authentication = OAuth2ClientUtils.prepareClientCredentialsOAuth2Authentication(clientRegistration, null, principalName);
 		
-		return OAuth2AuthorizeRequest.withClientRegistrationId(clientRegistration.getRegistrationId()).principal(authentication);
+		OAuth2AuthorizeRequest.Builder builder = OAuth2AuthorizeRequest.withClientRegistrationId(clientRegistration.getRegistrationId()).principal(authentication);
+		System.out.println(">>> attributes = " + attributes);
+		builder.attributes(attrs -> attrs.putAll(attributes));
+		
+		return builder.build();
 	}
 	
 	protected OAuth2ClientConfigProperties getOauth2ClientConfig() {

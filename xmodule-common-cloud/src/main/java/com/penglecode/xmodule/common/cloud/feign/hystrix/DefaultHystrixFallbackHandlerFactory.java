@@ -1,4 +1,4 @@
-package com.penglecode.xmodule.common.cloud.feign;
+package com.penglecode.xmodule.common.cloud.feign.hystrix;
 
 import org.springframework.cloud.openfeign.HystrixFallbackHandler;
 import org.springframework.cloud.openfeign.HystrixFallbackHandlerFactory;
