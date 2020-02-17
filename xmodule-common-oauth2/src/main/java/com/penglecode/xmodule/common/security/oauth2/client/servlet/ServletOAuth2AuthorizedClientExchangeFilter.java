@@ -58,7 +58,6 @@ public class ServletOAuth2AuthorizedClientExchangeFilter implements ExchangeFilt
 	public ServletOAuth2AuthorizedClientExchangeFilter(String defaultClientRegistrationId,
 			OAuth2AuthorizedClientManager authorizedClientManager) {
 		super();
-		Assert.hasText(defaultClientRegistrationId, "Parameter 'defaultClientRegistrationId' must be required!");
 		Assert.notNull(authorizedClientManager, "Parameter 'authorizedClientManager' must be required!");
 		this.defaultClientRegistrationId = defaultClientRegistrationId;
 		this.authorizedClientManager = authorizedClientManager;
@@ -99,6 +98,7 @@ public class ServletOAuth2AuthorizedClientExchangeFilter implements ExchangeFilt
 	 */
 	protected void applyDefaultClientRegistration(Map<String, Object> attrs) {
 		if(!attrs.containsKey(CLIENT_REGISTRATION_ID_ATTR_NAME)) {
+			Assert.hasText(defaultClientRegistrationId, "Parameter 'defaultClientRegistrationId' must be required!");
 			attrs.put(CLIENT_REGISTRATION_ID_ATTR_NAME, defaultClientRegistrationId);
 		}
 	}

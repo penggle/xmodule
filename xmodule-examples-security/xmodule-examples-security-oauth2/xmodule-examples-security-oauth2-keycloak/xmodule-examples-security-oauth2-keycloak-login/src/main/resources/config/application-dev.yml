@@ -1,0 +1,49 @@
+#keycloak配置
+keycloak-admin:
+    server-url: http://192.168.137.102:8080/auth
+    username: admin
+    password: 123456
+
+spring:
+    datasource:
+        #默认数据源配置
+        default: 
+            username: root
+            password: 123456
+            url: jdbc:mysql://127.0.0.1:3306/xmodule?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+            
+    #OAuth2客户端配置
+    security:
+        oauth2:
+            client:
+                registration:
+                    #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    user-authcode-client:
+                        provider: keycloak
+                        client-name: Keycloak OAuth2(Authorization Code)
+                        client-id: user-authcode-client
+                        client-secret: fa1cdd68009948458b4f35cfe0ffe235
+                        redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+                        authorization-grant-type: authorization_code
+                        scope: user
+                    user-implicit-client:
+                        provider: keycloak
+                        client-name: Keycloak OAuth2(Implicit)
+                        client-id: user-implicit-client
+                        client-secret: 57a463c030db456b9cc1ae7878100dae
+                        redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+                        authorization-grant-type: implicit
+                        scope: user
+                    user-password-client:
+                        provider: keycloak
+                        client-name: Keycloak OAuth2(Password)
+                        client-id: user-password-client
+                        client-secret: 42904560eabe495ba1732996df38a2d0
+                        redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+                        authorization-grant-type: password
+                        scope: user
+                provider:
+                    #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
+                    keycloak:
+                        issuer-uri: ${keycloak-admin.server-url}/realms/spring-security-oauth2
+                        user-name-attribute: sub

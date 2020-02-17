@@ -1,0 +1,18 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.penglecode</groupId>
+    <artifactId>xmodule-examples-security-oauth2</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <artifactId>xmodule-examples-security-oauth2-keycloak</artifactId>
+  <packaging>pom</packaging>
+  <name>xmodule-examples-security-oauth2-keycloak</name>
+  <description>使用spring-security-oauth2-client基于Keycloak的OAuth2登录示例</description>
+  <modules>
+  	<module>xmodule-examples-security-oauth2-keycloak-login</module>
+  	<module>
+  		xmodule-examples-security-oauth2-keycloak-upmsstorage-spi
+  	</module>
+  </modules>
+</project>

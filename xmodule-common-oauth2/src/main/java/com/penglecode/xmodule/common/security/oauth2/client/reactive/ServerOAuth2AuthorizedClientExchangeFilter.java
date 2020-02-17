@@ -53,7 +53,6 @@ public class ServerOAuth2AuthorizedClientExchangeFilter implements ExchangeFilte
 	public ServerOAuth2AuthorizedClientExchangeFilter(String defaultClientRegistrationId,
 			ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
 		super();
-		Assert.hasText(defaultClientRegistrationId, "Parameter 'defaultClientRegistrationId' must be required!");
 		Assert.notNull(authorizedClientManager, "Parameter 'authorizedClientManager' must be required!");
 		this.defaultClientRegistrationId = defaultClientRegistrationId;
 		this.authorizedClientManager = authorizedClientManager;
@@ -82,6 +81,7 @@ public class ServerOAuth2AuthorizedClientExchangeFilter implements ExchangeFilte
 	 */
 	protected void applyDefaultClientRegistration(Map<String, Object> attrs) {
 		if(!attrs.containsKey(CLIENT_REGISTRATION_ID_ATTR_NAME)) {
+			Assert.hasText(defaultClientRegistrationId, "Parameter 'defaultClientRegistrationId' must be required!");
 			attrs.put(CLIENT_REGISTRATION_ID_ATTR_NAME, defaultClientRegistrationId);
 		}
 	}
