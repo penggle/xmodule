@@ -34,6 +34,14 @@ spring:
                         redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
                         authorization-grant-type: implicit
                         scope: user
+                    user-password-client:
+                        provider: keycloak
+                        client-name: Keycloak OAuth2(Password)
+                        client-id: user-password-client
+                        client-secret: 42904560eabe495ba1732996df38a2d0
+                        redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+                        authorization-grant-type: password
+                        scope: user
                 provider:
                     #Keycloak OAuth2授权服务器配置(由于不在预定义配置CommonOAuth2Provider中出现,此处需要手动配置)
                     keycloak:

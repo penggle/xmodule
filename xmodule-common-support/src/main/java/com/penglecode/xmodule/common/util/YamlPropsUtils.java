@@ -3,6 +3,7 @@ package com.penglecode.xmodule.common.util;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsFactory;
@@ -57,6 +58,30 @@ public class YamlPropsUtils {
 		}
 	}
 	
+	public static String object2Yaml(Object object) {
+		try {
+			return yamlObjectMapper.writeValueAsString(object);
+		} catch (Exception e) {
+			throw new ApplicationRuntimeException(e);
+		}
+	}
+	
+	public static <T> T yaml2Object(String yaml, Class<T> clazz) {
+		try {
+			return yamlObjectMapper.readValue(yaml, clazz);
+		} catch (Exception e) {
+			throw new ApplicationRuntimeException(e);
+		}
+	}
+	
+	public static <T> T yaml2Object(String yaml, TypeReference<T> typeReference) {
+		try {
+			return yamlObjectMapper.readValue(yaml, typeReference);
+		} catch (Exception e) {
+			throw new ApplicationRuntimeException(e);
+		}
+	}
+	
 	public static String map2Yaml(Map<String,Object> yamlMap) {
 		try {
 			return yamlObjectMapper.writeValueAsString(yamlMap);
@@ -79,6 +104,14 @@ public class YamlPropsUtils {
 		} catch (Exception e) {
 			throw new ApplicationRuntimeException(e);
 		}
+	}
+	
+	public static ObjectMapper getDefaultYamlObjectMapper() {
+		return yamlObjectMapper;
+	}
+	
+	public static ObjectMapper getDefaultPropsObjectMapper() {
+		return propsObjectMapper;
 	}
 	
 }

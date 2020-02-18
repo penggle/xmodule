@@ -52,7 +52,7 @@ spring:
                           instanceUrl: https://api.apiopen.top
                     #当前sidecar服务代理异构微服务进行TTL健康检测?
                     delegateHeartbeatEnabled: true
-                    instanceHealthCheckPath: /test
+                    #instanceHealthCheckPath: /test
                     
         #负载均衡重试配置
         loadbalancer:
