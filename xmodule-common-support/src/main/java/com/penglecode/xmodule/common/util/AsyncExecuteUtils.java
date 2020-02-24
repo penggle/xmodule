@@ -5,8 +5,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
-import com.penglecode.xmodule.common.consts.ApplicationConstants;
-
 /**
  * 在将来执行某个任务的工具类
  * 
@@ -15,7 +13,7 @@ import com.penglecode.xmodule.common.consts.ApplicationConstants;
  */
 public class AsyncExecuteUtils {
 
-	private static final Executor DEFAULT_EXECUTOR = ApplicationConstants.DEFAULT_EXECUTOR;
+	private static final Executor DEFAULT_EXECUTOR = ThreadPoolUtils.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4);
 	
 	public static void asyncExecute(Runnable task) {
 		CompletableFuture.runAsync(task, DEFAULT_EXECUTOR);

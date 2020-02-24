@@ -1,7 +1,5 @@
 package com.penglecode.xmodule.common.consts;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -14,7 +12,6 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.MediaType;
 
-import com.penglecode.xmodule.common.support.NamedThreadFactory;
 import com.penglecode.xmodule.common.util.SpringUtils;
 
 /**
@@ -26,11 +23,6 @@ import com.penglecode.xmodule.common.util.SpringUtils;
  */
 public abstract class ApplicationConstants {
 
-	/**
-	 * 应用默认的线程池
-	 */
-	public static final Executor DEFAULT_EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4, new NamedThreadFactory("DEFAULT-EXECUTOR-"));
-	
 	/**
 	 * 应用默认的响应类型
 	 */
