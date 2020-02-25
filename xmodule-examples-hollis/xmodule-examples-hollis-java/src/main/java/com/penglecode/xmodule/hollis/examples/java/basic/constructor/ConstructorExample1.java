@@ -15,7 +15,7 @@ import java.net.URL;
  * 	  非静态代码块在类初始化创建实例时，将会被提取到类的构造器中执行，但是非静态代码块会比构造器中的代码块先被执行。
  * 
  */
-public class Constructor1Example {
+public class ConstructorExample1 {
 
 	private static int a;
 	
@@ -30,14 +30,14 @@ public class Constructor1Example {
 		System.out.println("非静态块, a = " + a);
 	}
 	
-	public Constructor1Example() {
+	public ConstructorExample1() {
 		System.out.println("自定义的无参构造函数");
 	}
 	
 	/**
 	 * 构造函数也可以声明抛出异常
 	 */
-	public Constructor1Example(String url) throws MalformedURLException {
+	public ConstructorExample1(String url) throws MalformedURLException {
 		System.out.println("带参构造函数");
 		this.url = new URL(url);
 		System.out.println(this.url);
@@ -48,7 +48,7 @@ public class Constructor1Example {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		new Constructor1Example("http://www.baidu.com");
+		new ConstructorExample1("http://www.baidu.com");
 	}
 
 }

@@ -6,7 +6,7 @@ package com.penglecode.xmodule.hollis.examples.java.basic.constructor;
  * 子类的构造函数中如果没有显式的调用父类(super(...))或者本类(this(...))的构造函数，
  * 那么就会默认调用父类的无参构造函数，否则不会调用父类的无参构造函数。
  */
-public class Constructor2Example {
+public class ConstructorExample2 {
 
 	public static void main(String[] args) {
 		System.out.println("---------------new Cat()--------------");
