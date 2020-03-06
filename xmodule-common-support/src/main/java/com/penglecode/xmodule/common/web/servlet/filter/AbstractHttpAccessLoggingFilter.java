@@ -21,10 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
 import org.springframework.http.MediaType;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
@@ -39,16 +37,16 @@ import com.penglecode.xmodule.common.support.NamedThreadFactory;
 import com.penglecode.xmodule.common.util.ArrayUtils;
 import com.penglecode.xmodule.common.util.CollectionUtils;
 import com.penglecode.xmodule.common.util.DateTimeUtils;
-import com.penglecode.xmodule.common.util.ServletWebUtils;
 import com.penglecode.xmodule.common.util.JsonUtils;
 import com.penglecode.xmodule.common.util.NetUtils;
+import com.penglecode.xmodule.common.util.ServletWebUtils;
 import com.penglecode.xmodule.common.util.StringUtils;
 import com.penglecode.xmodule.common.web.support.HttpAccessLog;
+import com.penglecode.xmodule.common.web.support.HttpAccessLog.HttpRequestParameter;
 import com.penglecode.xmodule.common.web.support.HttpAccessLogContext;
 import com.penglecode.xmodule.common.web.support.HttpAccessLogDAO;
 import com.penglecode.xmodule.common.web.support.HttpAccessLogging;
 import com.penglecode.xmodule.common.web.support.MvcResourceMethodMapping;
-import com.penglecode.xmodule.common.web.support.HttpAccessLog.HttpRequestParameter;
 
 /**
  * Http访问日志记录之Servlet输入输出流过滤器,解决：
@@ -60,7 +58,7 @@ import com.penglecode.xmodule.common.web.support.HttpAccessLog.HttpRequestParame
  * @version 	1.0
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilter implements ApplicationContextAware, ApplicationListener<ApplicationReadyEvent> {
+public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilter implements ApplicationContextAware {
 
 	public static final Pattern MESSAGE_SOURCE_CODE_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9_.]+)\\}");
 	
@@ -483,25 +481,10 @@ public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilt
 	@Override
 	public void afterPropertiesSet() throws ServletException {
 		//nothing to do, to avoid initFilterBean() method invoke twice
-	}
-
-	@Override
-	public void onApplicationEvent(ApplicationReadyEvent event) {
-		LOGGER.info("Prepare to init all MvcResourceMethodMappings!");
 		initAllMvcResourceMethodMappings();
+		initHttpAccessLogDAOCacheMap();
 	}
-
-	@Override
-	protected void initFilterBean() throws ServletException {
-		Map<String, HttpAccessLogDAO> beans = applicationContext.getBeansOfType(HttpAccessLogDAO.class);
-		if(!CollectionUtils.isEmpty(beans)) {
-			for(Map.Entry<String, HttpAccessLogDAO> entry : beans.entrySet()) {
-				HttpAccessLogDAO httpAccessLogDAO = entry.getValue();
-				getHttpAccessLogDAOCacheMap().put(httpAccessLogDAO.getLoggingMode(), httpAccessLogDAO);
-			}
-		}
-	}
-
+	
 	public void destroy() {
 		getHttpAccessLogHandlerExecutor().shutdown();
 		getHttpAccessLogDAOCacheMap().clear();
@@ -520,6 +503,19 @@ public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilt
 	 * 根据项目中所有的SpringMVC/Jersey控制方法来初始化所有MvcResourceMethodMapping
 	 */
 	protected abstract void initAllMvcResourceMethodMappings();
+	
+	/**
+	 * 初始化HttpAccessLogDAO的缓存cache
+	 */
+	protected void initHttpAccessLogDAOCacheMap() {
+		Map<String, HttpAccessLogDAO> beans = applicationContext.getBeansOfType(HttpAccessLogDAO.class);
+		if(!CollectionUtils.isEmpty(beans)) {
+			for(Map.Entry<String, HttpAccessLogDAO> entry : beans.entrySet()) {
+				HttpAccessLogDAO httpAccessLogDAO = entry.getValue();
+				getHttpAccessLogDAOCacheMap().put(httpAccessLogDAO.getLoggingMode(), httpAccessLogDAO);
+			}
+		}
+	}
 	
 	/**
 	 * 获取操作人的LoginUser对象

@@ -3,11 +3,14 @@ package com.penglecode.xmodule.common.util;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -25,7 +28,7 @@ import com.penglecode.xmodule.common.consts.ApplicationConstants;
  * @date 	 2015年4月26日 下午8:36:35
  * @version 1.0
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class SpringUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpringUtils.class);
@@ -60,12 +63,36 @@ public class SpringUtils {
 		return getApplicationContext().getBean(requiredType);
 	}
 	
+	public static <T> T getBeanQuietly(Class<T> requiredType) {
+		try {
+			return getBean(requiredType);
+		} catch (NoSuchBeanDefinitionException e) {
+			return null;
+		}
+	}
+	
 	public static <T> T getBean(String name, Class<T> requiredType) {
 		return getApplicationContext().getBean(name, requiredType);
 	}
 	
+	public static <T> T getBeanQuietly(String name, Class<T> requiredType) {
+		try {
+			return getBean(name, requiredType);
+		} catch (NoSuchBeanDefinitionException e) {
+			return null;
+		}
+	}
+	
 	public static <T> T getBean(String name) {
 		return (T) getApplicationContext().getBean(name);
+	}
+	
+	public static <T> T getBeanQuietly(String name) {
+		try {
+			return getBean(name);
+		} catch (NoSuchBeanDefinitionException e) {
+			return null;
+		}
 	}
 	
 	public static <T> Map<String,T> getBeansOfType(Class<T> type) {
@@ -100,102 +127,116 @@ public class SpringUtils {
 	}
 	
 	/**
-	 * 手动创建一个Bean
+	 * 创建默认的beanName
+	 * @param applicationContext
+	 * @param beanClass
+	 * @return
+	 */
+	public static String createDefaultBeanName(ApplicationContext applicationContext, Class beanClass) {
+		String beanName = null;
+		for(int i = 0; i < Integer.MAX_VALUE; i++){
+			beanName = beanClass.getName() + "#" + i;
+			if(!applicationContext.containsBean(beanName)){
+				break;
+			}
+		}
+		return beanName;
+	}
+	
+	/**
+	 * 创建默认的beanName
+	 * @param applicationContext
+	 * @param beanClass
+	 * @return
+	 */
+	public static String createDefaultBeanName(Class beanClass) {
+		String beanName = null;
+		for(int i = 0; i < Integer.MAX_VALUE; i++){
+			beanName = beanClass.getName() + "#" + i;
+			if(!applicationContext.containsBean(beanName)){
+				break;
+			}
+		}
+		return beanName;
+	}
+	
+	/**
+	 * 手动向Spring容器注册一个Bean
+	 * @param applicationContext
 	 * @param beanName
 	 * @param beanClass
-	 * @param beanProperties
 	 * @param singleton
-	 * @param initMethod
-	 * @param destroyMethod
-	 * @param handleAutowireDependency	 - 当前被创建的bean被其他已经存在的bean依赖需要autowire?
-	 * @return 如果return null则表示该名称的bean已经存在了
+	 * @param beanCustomizer
 	 */
-	public static <T> void createBean(ApplicationContext applicationContext, String beanName, Class<T> beanClass, Map<String,Object> beanProperties, boolean singleton, String initMethod, String destroyMethod, boolean handleAutowireDependency){
+	public static <T> void registerBean(ApplicationContext applicationContext, String beanName, Class<T> beanClass, boolean singleton, Consumer<BeanDefinitionBuilder> beanCustomizer){
 		Assert.notNull(beanClass, "Parameter 'beanClass' can not be null!");
 		ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
 		DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
 		boolean canCreate = true;
-		if(singleton){
-			if(!StringUtils.isEmpty(beanName)){
-				canCreate = !beanFactory.containsBean(beanName);
-			}
+		if(!StringUtils.isEmpty(beanName)){
+			canCreate = !beanFactory.containsBean(beanName);
 		}
-		boolean hasBeanName = !StringUtils.isEmpty(beanName);
-		if(!hasBeanName){
-			for(int i = 0; i < Integer.MAX_VALUE; i++){
-				beanName = beanClass.getName() + "#" + i;
-				if(!beanFactory.containsBean(beanName)){
-					break;
-				}
-			}
+		if(StringUtils.isEmpty(beanName)){
+			beanName = createDefaultBeanName(beanClass);
 		}
-		
         if(canCreate){
             BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(beanClass);
-            if(!CollectionUtils.isEmpty(beanProperties)){
-            	for(Map.Entry<String,Object> entry : beanProperties.entrySet()){
-            		beanDefinitionBuilder.addPropertyValue(entry.getKey(), entry.getValue());
-            	}
-            }
-            if(!StringUtils.isEmpty(initMethod)){
-            	beanDefinitionBuilder.setInitMethodName(initMethod);
-            }
-            if(!StringUtils.isEmpty(destroyMethod)){
-            	beanDefinitionBuilder.setDestroyMethodName(destroyMethod);
-            }
             beanDefinitionBuilder.setScope(singleton ? "singleton" : "prototype");
-            beanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getBeanDefinition());
-            if(handleAutowireDependency){
-            	 String[] existBeanNames = beanFactory.getBeanDefinitionNames();
-                 for(String existBeanName : existBeanNames){
-             		Object existingBean = beanFactory.getBean(existBeanName);
-                 	beanFactory.autowireBean(existingBean); //process @Autowire dependency
-                 }
+            if(beanCustomizer != null) {
+            	beanCustomizer.accept(beanDefinitionBuilder);
             }
-            LOGGER.info("Create and register bean[name = {}, class= {}] to spring container successfully.", beanName, beanClass);
+            beanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getBeanDefinition());
+            LOGGER.info("Create and register spring managed bean[name = {}, class= {}] successfully.", beanName, beanClass);
         }else{
-        	LOGGER.error("Create and register bean[name = {}, class= {}] to spring container failed：spring container already exists a bean with name '{}'.", beanName, beanClass, beanName);
+        	LOGGER.error("Create and register spring managed bean[name = {}, class= {}] failed：already exists a bean with name '{}'.", beanName, beanClass, beanName);
         }
 	}
 	
 	/**
-	 * 手动创建一个Bean
+	 * 手动向Spring容器注册一个Bean
 	 * @param beanName
 	 * @param beanClass
-	 * @param beanProperties
 	 * @param singleton
-	 * @param initMethod
-	 * @param destroyMethod
-	 * @param handleAutowireDependency	 - 当前被创建的bean被其他已经存在的bean依赖需要autowire?
-	 * @return 如果return null则表示该名称的bean已经存在了
+	 * @param beanCustomizer
 	 */
-	public static <T> void createBean(String beanName, Class<T> beanClass, Map<String,Object> beanProperties, boolean singleton, String initMethod, String destroyMethod, boolean handleAutowireDependency){
-		createBean(applicationContext, beanName, beanClass, beanProperties, singleton, initMethod, destroyMethod, handleAutowireDependency);
+	public static <T> void registerBean(String beanName, Class<T> beanClass, boolean singleton, Consumer<BeanDefinitionBuilder> beanCustomizer){
+		registerBean(applicationContext, beanName, beanClass, singleton, beanCustomizer);
 	}
 	
 	/**
-	 * 手动创建一个Bean
+	 * 根据beanName销毁一个已存在的bean
+	 * @param <T>
+	 * @param applicationContext
 	 * @param beanName
-	 * @param beanClass
-	 * @param beanProperties
-	 * @param singleton
-	 * @param handleAutowireDependency	 - 当前被创建的bean被其他已经存在的bean依赖需要autowire?
-	 * @return 如果return null则表示该名称的bean已经存在了
+	 * @param beanInstance		- 如果bean是以scope=prototype形式注册的，并且在销毁时需要执行其destroy()方法，那么该参数必须指定
 	 */
-	public static <T> void createBean(String beanName, Class<T> beanClass, Map<String,Object> beanProperties, boolean singleton, boolean handleAutowireDependency){
-		createBean(beanName, beanClass, beanProperties, singleton, null, null, handleAutowireDependency);
+	public static <T> boolean destroyBean(ApplicationContext applicationContext, String beanName, Object beanInstance) {
+		ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
+		DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
+		try {
+			BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
+			if(beanDefinition.isSingleton()) {
+				beanFactory.destroySingleton(beanName);
+			} else if (beanInstance != null) {
+				beanFactory.destroyBean(beanName, beanInstance);
+			}
+			beanFactory.removeBeanDefinition(beanName);
+			return true;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return false;
+		}
 	}
 	
 	/**
-	 * 手动创建一个Bean
+	 * 根据beanName销毁一个已存在的bean
+	 * @param <T>
+	 * @param applicationContext
 	 * @param beanName
-	 * @param beanClass
-	 * @param beanProperties
-	 * @param singleton
-	 * @return 如果return null则表示该名称的bean已经存在了
+	 * @param beanInstance		- 如果bean是以scope=prototype形式注册的，并且在销毁时需要执行其destroy()方法，那么该参数必须指定
 	 */
-	public static <T> void createBean(String beanName, Class<T> beanClass, Map<String,Object> beanProperties, boolean singleton){
-		createBean(beanName, beanClass, beanProperties, singleton, null, null, true);
+	public static <T> boolean destroyBean(String beanName, Object beanInstance) {
+		return destroyBean(applicationContext, beanName, beanInstance);
 	}
 	
 	/**

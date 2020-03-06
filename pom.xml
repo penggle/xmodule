@@ -207,9 +207,9 @@
 		<module>xmodule-examples-webflux</module>
 		<module>xmodule-examples-springcloud</module>
 		<module>xmodule-examples-foundation</module>
-		<module>xmodule-examples-hollis</module>
 		<module>xmodule-examples-security</module>
 		<module>xmodule-common-keycloak</module>
 		<module>xmodule-common-oauth2</module>
+		<module>xmodule-examples-ssltlsserts</module>
 	</modules>
 </project>
