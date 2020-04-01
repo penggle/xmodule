@@ -47,7 +47,7 @@ public abstract class Constant<T> implements Supplier<T> {
 
 		@Override
 		public T get(Constant<T> constant) {
-			return null;
+			return constant.defaultValue;
 		}
 		
 	}
