@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.penglecode</groupId>
+		<artifactId>xmodule</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>xmodule-examples-codegen</artifactId>
+	<packaging>pom</packaging>
+	<name>xmodule-examples-codegen</name>
+	<description>代码自动生成样例</description>
+	<modules>
+		<module>xmodule-examples-codegen-modulea</module>
+		<module>xmodule-examples-codegen-moduleb</module>
+		<module>xmodule-examples-codegen-sample</module>
+	</modules>
+</project>

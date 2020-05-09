@@ -61,21 +61,23 @@
 	<build>
 		<finalName>xmodule-common-keycloak</finalName>
 		<pluginManagement>
-			<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>2.0.2.Final</version>
-				<configuration>
-					<skip>false</skip>
-					<force>true</force>
-					<hostname>172.16.18.174</hostname>
-					<port>9990</port>
-					<!-- 执行${KC_HOME}/bin/add-user.bat|sh，选择a) Management User (mgmt-users.properties) 
-						... -->
-					<username>madmin</username>
-					<password>madmin123</password>
-				</configuration>
-			</plugin>
+			<plugins>
+				<plugin>
+					<groupId>org.wildfly.plugins</groupId>
+					<artifactId>wildfly-maven-plugin</artifactId>
+					<version>2.0.2.Final</version>
+					<configuration>
+						<skip>false</skip>
+						<force>true</force>
+						<hostname>172.16.18.174</hostname>
+						<port>9990</port>
+						<!-- 执行${KC_HOME}/bin/add-user.bat|sh，选择a) Management User (mgmt-users.properties) 
+							... -->
+						<username>madmin</username>
+						<password>madmin123</password>
+					</configuration>
+				</plugin>
+			</plugins>
 		</pluginManagement>
 	</build>
 

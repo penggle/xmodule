@@ -41,6 +41,13 @@ public interface BaseMybatisMapper<T extends BaseModel<T>> {
 	public int deleteModelById(Serializable id);
 	
 	/**
+	 * 根据多个ID批量删除实体
+	 * @param ids
+	 * @return
+	 */
+	public int deleteModelByIds(List<? extends Serializable> ids);
+	
+	/**
 	 * 根据ID查询单个结果集
 	 * @param id
 	 * @return
@@ -60,7 +67,7 @@ public interface BaseMybatisMapper<T extends BaseModel<T>> {
 	 * @param ids
 	 * @return
 	 */
-	public List<T> selectModelListByIds(List<?> ids);
+	public List<T> selectModelListByIds(List<? extends Serializable> ids);
 	
 	/**
 	 * 查询所有结果集
@@ -72,7 +79,7 @@ public interface BaseMybatisMapper<T extends BaseModel<T>> {
 	 * 查询所有结果集计数
 	 * @return
 	 */
-	public int countAllModelList();
+	public int selectAllModelCount();
 	
 	/**
 	 * 根据样例查询结果集
@@ -96,6 +103,6 @@ public interface BaseMybatisMapper<T extends BaseModel<T>> {
 	 * @param example	- 样例参数(为null则查询所有)
 	 * @return
 	 */
-	public int countModelPageListByExample(@Param("example")T example);
+	public int selectModelPageCountByExample(@Param("example")T example);
 	
 }

@@ -17,7 +17,6 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.util.Assert;
 
 import com.penglecode.xmodule.common.consts.ApplicationConstants;
-import com.penglecode.xmodule.common.util.ClassUtils;
 
 /**
  * 基于Spring类路径上类或接口的扫描工具类

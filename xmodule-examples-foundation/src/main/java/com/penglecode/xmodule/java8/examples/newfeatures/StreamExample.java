@@ -60,6 +60,13 @@ public class StreamExample {
 	}
 	
 	/**
+	 * stream基本的排序操作示例
+	 */
+	public static void streamSorted() {
+		ALL_STUDENTSCORE_LIST.stream().sorted(Comparator.comparingDouble(StudentScore::getScore)).forEach(System.out::println);
+	}
+	
+	/**
 	 * stream基本的过滤、转换操作示例
 	 */
 	public static void streamFilter1() {
@@ -279,6 +286,7 @@ public class StreamExample {
 	}
 	
 	public static void main(String[] args) {
+		streamSorted();
 		//streamFilter1();
 		//streamFilter2();
 		//streamMap();
@@ -287,7 +295,7 @@ public class StreamExample {
 		//streamCollectWithGroupByCountSort();
 		//streamCollectWithSort();
 		//streamCollectWithGroupBySum();
-		streamCollectWithGroupByMapping();
+		//streamCollectWithGroupByMapping();
 		//streamWithNulls();
 		//sequentialSumOfSquares();
 		//parallelSumOfSquares();

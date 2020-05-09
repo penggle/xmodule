@@ -29,4 +29,25 @@ public class ClassUtils extends org.springframework.util.ClassUtils {
 		return resolveClassName(name, getDefaultClassLoader());
 	}
 	
+	/**
+	 * 根据名称加载某个Class
+	 * @param name
+	 * @return
+	 */
+	public static Class<?> loadClass(String name) {
+		try {
+			return forName(name);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * 获取指定类的路径式包名，例如: java/util/cocurrent
+	 * @param clazz
+	 * @return
+	 */
+	public static String ofPackagePath(Class<?> clazz) {
+		return clazz.getPackage().getName().replace('.', '/');
+	}
 }

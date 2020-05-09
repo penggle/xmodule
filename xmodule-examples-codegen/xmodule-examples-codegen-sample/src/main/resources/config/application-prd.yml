@@ -1,0 +1,59 @@
+spring:
+    datasource:
+        #默认数据源配置
+        default: 
+            username: root
+            password: 123456
+            url: jdbc:mysql://127.0.0.1:3306/xmodule?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+    #代码生成配置
+    codegen:
+        #Mybatis代码
+        mybatis: 
+            config:
+                #业务模块
+                order: 
+                    #使用的数据源名称
+                    dataSourceName: default
+                    javaModel:
+                        #model源码输出目录
+                        targetProject: src/main/java
+                        #model所在包名
+                        targetPackage: com.penglecode.xmodule.ordercenter.model
+                    xmlMapper:
+                        #XxxMapper.xml源码输出目录
+                        targetProject: src/main/java
+                        #XxxMapper.xml所在包名
+                        targetPackage: com.penglecode.xmodule.ordercenter.mapper
+                    daoMapper:
+                        #XxxMapper.java源码输出目录
+                        targetProject: src/main/java
+                        #XxxMapper.java所在包名
+                        targetPackage: com.penglecode.xmodule.ordercenter.mapper
+                        
+        #Service代码
+        service: 
+            config:
+                #业务模块
+                order: 
+                    jinterface:
+                        #服务接口源码输出目录
+                        targetProject: src/main/java
+                        #服务接口所在包名
+                        targetPackage: com.penglecode.xmodule.ordercenter.service
+                    jimplement:
+                        #服务实现源码输出目录
+                        targetProject: src/main/java
+                        #服务实现所在包名
+                        targetPackage: com.penglecode.xmodule.ordercenter.service.impl
+                        
+        #Controller代码
+        controller: 
+            config:
+                #业务模块
+                order: 
+                    #Controller源码输出目录
+                    targetProject: src/main/java
+                    #Controller所在包名
+                    targetPackage: com.penglecode.xmodule.ordercenter.web.controller
+                    #Controller继承的超类(可以不配置)
+                    extendsClass: com.penglecode.xmodule.common.web.servlet.support.HttpApiResourceSupport

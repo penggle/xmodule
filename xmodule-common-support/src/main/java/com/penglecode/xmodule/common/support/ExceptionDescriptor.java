@@ -1,7 +1,5 @@
 package com.penglecode.xmodule.common.support;
 
-import com.penglecode.xmodule.common.support.Result;
-
 /**
  * 异常描述
  * 

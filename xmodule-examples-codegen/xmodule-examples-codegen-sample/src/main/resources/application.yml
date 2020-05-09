@@ -1,0 +1,45 @@
+#SpringBoot自动配置开启debug模式
+debug: false
+
+#应用日志配置
+logging:
+    config: classpath:logback-spring.xml
+    file: 
+        name: ${spring.application.name}
+        path: /usr/local/xmodule/logs
+
+#Spring上下文初始化程序
+context:
+    initializer:
+        classes: com.penglecode.xmodule.common.initializer.DefaultSpringAppPreInitializer
+
+#SpringBoot应用的名称
+spring:
+    application:
+        name: xmodule-examples-codegen-sample
+    #被排除的自动配置
+    autoconfigure:
+        exclude:
+          - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+          - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+    
+    profiles:
+        active: dev
+
+    #Druid数据源连接池配置
+    datasource:
+        druid:
+            initialSize: 10
+            minIdle: 10
+            maxActive: 250
+            maxWait: 60000
+            timeBetweenEvictionRunsMillis: 60000
+            minEvictableIdleTimeMillis: 300000
+            validationQuery: SELECT 'x'
+            testWhileIdle: true
+            testOnBorrow: false
+            testOnReturn: false
+            poolPreparedStatements: false
+            maxPoolPreparedStatementPerConnectionSize: 20
+            connectionInitSqls: set names utf8;
+            filters: stat,slf4j

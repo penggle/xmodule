@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<!-- 引入配置文件, 此处注掉，所需配置项均改为配置在springboot的application.yaml中，并在运行时进行加载
+	<properties resource="mybatis-codegen-config-order.properties" />
+	 -->
+	<context id="mybatisGenerator" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+		<!-- 生成的文件编码 -->
+		<property name="javaFileEncoding" value="UTF-8"/>
+		<!-- beginningDelimiter和endingDelimiter：指明数据库的用于标记数据库对象名的符号，比如ORACLE就是双引号，MYSQL默认是`反引号； -->
+		<property name="beginningDelimiter" value="`"/>
+    	<property name="endingDelimiter" value="`"/>
+    	<property name="xmlFormatter" value="com.penglecode.xmodule.common.codegen.mybatis.CustomXmlFormatter"/>
+    	
+    	<plugin type="com.penglecode.xmodule.common.codegen.mybatis.CustomGeneratorPlugin">
+    		<!-- 解决MybatisGenerator设置overwrite=false时仅对Java文件有效,XML文件无效的问题 -->
+    		<property name="mergeableXmlMapper" value="false"/>
+    	</plugin>
+    	
+		<commentGenerator type="com.penglecode.xmodule.common.codegen.mybatis.CustomCommentGenerator">
+			<!-- 取消默认生成的注释 -->
+			<property name="suppressAllComments" value="true"/>
+		</commentGenerator>
+		<!-- 数据库连接 -->
+		<jdbcConnection driverClass="${jdbcDriverClass}" connectionURL="${jdbcUrl}" userId="${jdbcUsername}" password="${jdbcPassword}">
+		</jdbcConnection>
+		<!-- 指定生成的类型为java类型，避免数据库中number等类型字段 -->
+		<javaTypeResolver type="com.penglecode.xmodule.common.codegen.mybatis.CustomJavaTypeResolver">
+			<property name="forceBigDecimals" value="false"/>
+			<!-- 数据库date/datetime类型的字段,在Model中定义为String类型 -->
+			<property name="forceDateTimeStampAsString" value="true"/>
+			<!-- 数据库tinyint类型的字段,在Model中定义为Integer类型 -->
+			<property name="forceTinyintAsInteger" value="true"/>
+			<!-- 数据库tinyint(1)/number(1)/integer(1)类型的字段,在Model中定义为Boolean类型 -->
+			<property name="forceNumber1AsBoolean" value="true"/>
+			<!-- 数据库decimal/numeric类型的字段,在Model中定义为Double类型 -->
+			<property name="forceDecimalNumericAsDouble" value="true"/>
+		</javaTypeResolver>
+		<!-- 生成model模型，对应的包，存放位置可以指定具体的路径,如/ProjectName/src，也可以使用MAVEN来自动生成 -->
+		<javaModelGenerator targetPackage="${javaModelTargetPackage}" targetProject="${javaModelTargetProject}">
+			<!-- 是否生成一个包含全部字段的构造方法 -->
+			<property name="constructorBased" value="false"/>
+			<!-- 在targetPackage的基础上，根据数据库的schema再生成一层package，最终生成的类放在这个package下，默认为false -->
+			<property name="enableSubPackages" value="true"/>
+			<!-- 设置是否在getter方法中，对String类型字段调用trim()方法 -->
+			<property name="trimStrings" value="false"/>
+			<!-- 所有生成的Model的基类(是class不是interface)
+			<property name="rootClass" value="com.xxx.model.AbstractModel"/>
+			 -->
+		</javaModelGenerator>
+		<!-- 对应的xml mapper文件 -->
+		<sqlMapGenerator targetPackage="${xmlMapperTargetPackage}" targetProject="${xmlMapperTargetProject}">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+		<!-- 对应的Mapper接口 -->
+		<javaClientGenerator type="XMLMAPPER" targetPackage="${daoMapperTargetPackage}" targetProject="${daoMapperTargetProject}">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+		<!-- ！！！！！！！！！以下需要动态改动，以免覆盖他人代码！！！！！！！！ -->
+		
+		<table tableName="cg_order" domainObjectName="Order" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+			<!-- 数据模型的名称 -->
+			<property name="modelName" value="订单"/>
+			<!-- 数据模型的别名 -->
+			<property name="modelAlias" value="Order"/>
+			<!-- 指定insertModel的插入字段 -->
+			<property name="insertModelColumns" value="['total_amount', 'freight_amount', 'order_time', 'customer_id', 'payment_type', 'status', 'remark']"/>
+			<!-- Model注释的author -->
+			<property name="modelCommentAuthor" value="Mybatis-Generator"/>
+			<!-- 对应的Mapper接口上的注解 -->
+			<property name="mapperAnnotations" value="com.penglecode.xmodule.common.support.DefaultDatabase"/>
+			<!-- selectModelListByExample查询的where条件列 -->
+			<property name="exampleQueryWhereColumns" value="{'total_amount': 'gte,lte', 'order_time': 'gte,lte', 'customer_id': 'eq', 'payment_type': 'eq', 'status': 'eq', 'remark': 'like'}"/>
+		</table>
+		
+		<table tableName="cg_order_detail" domainObjectName="OrderDetail" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+			<!-- 数据模型的名称 -->
+			<property name="modelName" value="订单明细"/>
+			<!-- 数据模型的别名 -->
+			<property name="modelAlias" value="OrderDetail"/>
+			<!-- 指定insertModel的插入字段 -->
+			<property name="insertModelColumns" value="['order_id', 'product_id', 'product_name', 'product_url', 'unit_price', 'quantity', 'freight_amount', 'sub_total_amount']"/>
+			<!-- Model注释的author -->
+			<property name="modelCommentAuthor" value="Mybatis-Generator"/>
+			<!-- 对应的Mapper接口上的注解 -->
+			<property name="mapperAnnotations" value="com.penglecode.xmodule.common.support.DefaultDatabase"/>
+			<!-- selectModelListByExample查询的where条件列 -->
+			<property name="exampleQueryWhereColumns" value="{'order_id': 'eq', 'product_id': 'eq', 'product_name': 'like', 'unit_price': 'gte,lte', 'sub_total_amount': 'gte,lte'}"/>
+		</table>
+		
+	</context>
+</generatorConfiguration>
