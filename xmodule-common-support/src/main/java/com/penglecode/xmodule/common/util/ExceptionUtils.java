@@ -1,7 +1,5 @@
 package com.penglecode.xmodule.common.util;
 
-import java.util.regex.Pattern;
-
 import com.google.common.base.Throwables;
 
 /**
@@ -13,8 +11,6 @@ import com.google.common.base.Throwables;
  */
 public class ExceptionUtils {
 	
-	private static final Pattern CHINESE_CHAR_PATTERN = Pattern.compile("[\u4e00-\u9fa5]");
-
 	/**
 	 * 获取根源异常
 	 * @param th
@@ -42,18 +38,6 @@ public class ExceptionUtils {
 	 */
 	public static String getStackTrace(Throwable th) {
 		return Throwables.getStackTraceAsString(th);
-	}
-	
-	/**
-	 * 异常信息是否包含中文字符
-	 * @param message
-	 * @return
-	 */
-	public static boolean isContainsChineseChar(String message){
-		if(message != null && CHINESE_CHAR_PATTERN.matcher(message).find()){
-			return true;
-		}
-		return false;
 	}
 	
 }

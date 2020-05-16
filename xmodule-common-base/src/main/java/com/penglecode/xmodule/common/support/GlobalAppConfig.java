@@ -8,11 +8,20 @@ package com.penglecode.xmodule.common.support;
  */
 public class GlobalAppConfig {
 
+	/** 业务ID */
+	private Integer businessId = 1;
+	
+	/** 某个业务的某个实例ID */
+	private Integer instanceId = 1;
+	
 	/** 整个应用的web服务url(例如基于Nginx)，例如: http://127.0.0.1 */
 	private String webServerUrl;
 	
 	/** 整个应用的静态文件服务url(例如基于Nginx)，例如: http://127.0.0.1/static */
 	private String fileServerUrl;
+	
+	/** 上传文件的本地临时存储目录,默认为Servlet应用的webapp的根: / */
+	private String localTempBaseDirectory = "/";
 	
 	/** 基于本地文件服务器(单机模式: 本机上Nginx + 本机上Servlet容器), 用于#DefaultXUploadFileHelper的实现 */
 	private LocalFileServer localFileServer;
@@ -20,6 +29,22 @@ public class GlobalAppConfig {
 	/** 基于独立文件服务器(例如vsftpd + Nginx/Apache搭建的文件服务器), 用于#FtpXUploadFileHelper的实现 */
 	private FtpFileServer ftpFileServer;
 	
+	public Integer getBusinessId() {
+		return businessId;
+	}
+
+	public void setBusinessId(Integer businessId) {
+		this.businessId = businessId;
+	}
+
+	public Integer getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(Integer instanceId) {
+		this.instanceId = instanceId;
+	}
+
 	public String getWebServerUrl() {
 		return webServerUrl;
 	}
@@ -34,6 +59,14 @@ public class GlobalAppConfig {
 
 	public void setFileServerUrl(String fileServerUrl) {
 		this.fileServerUrl = fileServerUrl;
+	}
+
+	public String getLocalTempBaseDirectory() {
+		return localTempBaseDirectory;
+	}
+
+	public void setLocalTempBaseDirectory(String localTempBaseDirectory) {
+		this.localTempBaseDirectory = localTempBaseDirectory;
 	}
 
 	public LocalFileServer getLocalFileServer() {
@@ -51,7 +84,6 @@ public class GlobalAppConfig {
 	public void setFtpFileServer(FtpFileServer ftpFileServer) {
 		this.ftpFileServer = ftpFileServer;
 	}
-
 
 	/**
 	 * 本地文件服务器配置

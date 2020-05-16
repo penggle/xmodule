@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.function.Consumer;
 
 import org.apache.commons.net.ftp.FTP;
@@ -243,6 +244,52 @@ public class FTPUtils {
 						try (FileOutputStream os = new FileOutputStream(new File(localFullFileName))){
 							return ftpClient.retrieveFile(file.getName(), os);
 						}
+					}
+				}
+			}
+			return false;
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new FTPAccessException(e.getMessage(), e);
+		} finally {
+			if(releaseClientFinally) {
+				releaseFtpClient(ftpClient);
+			}
+		}
+	}
+	
+	/**
+	 * 下载FTP服务器上的文件到指定文件输出流
+	 * 
+	 * @param ftpHost	- FTP服务器host地址
+	 * @param ftpPort	- FTP服务器端口，默认21
+	 * @param username	- FTP服务器登录用户名
+	 * @param password	- FTP服务器登录密码
+	 * @param remoteFullFileName	- 远端待下载的全路径文件名
+	 * @param outputStream			- 文件输出流
+	 * @return
+	 */
+	public static boolean downloadFile(String ftpHost, Integer ftpPort, String username, String password, String remoteFullFileName, OutputStream outputStream) {
+		return downloadFile(createFtpClient(ftpHost, ftpPort, username, password), remoteFullFileName, outputStream, true);
+	}
+	
+	/**
+	 * 下载FTP服务器上的文件到指定文件输出流
+	 * @param ftpClient				- FTP客户端
+	 * @param remoteFullFileName	- 远端待下载的全路径文件名
+	 * @param outputStream			- 文件输出流
+	 * @param releaseClientFinally	- 是否释放ftpClient
+	 * @return
+	 */
+	public static boolean downloadFile(FTPClient ftpClient, String remoteFullFileName, OutputStream outputStream, boolean releaseClientFinally) {
+		try {
+			String filePath = FileUtils.getFileDirectory(remoteFullFileName);
+			String fileName = FileUtils.getFileName(remoteFullFileName);
+			if(ftpClient.changeWorkingDirectory(filePath)) {
+				FTPFile[] ftpFiles = ftpClient.listFiles();
+				for (FTPFile file : ftpFiles) {
+					if (fileName.equalsIgnoreCase(file.getName())) {
+						return ftpClient.retrieveFile(file.getName(), outputStream);
 					}
 				}
 			}

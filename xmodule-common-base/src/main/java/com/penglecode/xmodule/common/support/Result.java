@@ -1,7 +1,7 @@
 package com.penglecode.xmodule.common.support;
 
 import com.penglecode.xmodule.common.consts.GlobalConstants;
-import com.penglecode.xmodule.common.exception.ApplicationServiceApiException;
+import com.penglecode.xmodule.common.exception.ApplicationApiException;
 
 /**
  * 通用返回结果类
@@ -85,7 +85,7 @@ public class Result<T> implements DtoModel {
 				message = "Unkown Error";
 			}
 		}
-		throw new ApplicationServiceApiException(message);
+		throw new ApplicationApiException(message);
 	}
 	
 	public static Builder success() {

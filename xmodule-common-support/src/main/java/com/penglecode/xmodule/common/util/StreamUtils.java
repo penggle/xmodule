@@ -20,4 +20,5 @@ public class StreamUtils {
         Iterable<T> iterable = () -> sourceIterator;
         return StreamSupport.stream(iterable.spliterator(), parallel);
     }
+    
 }

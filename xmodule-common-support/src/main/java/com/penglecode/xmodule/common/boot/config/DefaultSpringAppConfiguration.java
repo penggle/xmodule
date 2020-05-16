@@ -1,7 +1,6 @@
 package com.penglecode.xmodule.common.boot.config;
 
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +15,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import com.penglecode.xmodule.common.consts.GlobalConstants;
 import com.penglecode.xmodule.common.initializer.DefaultWebServerPreStartupListener;
@@ -31,8 +27,7 @@ import com.penglecode.xmodule.common.util.ReflectionUtils;
  * @date	2019年8月28日 下午2:27:49
  */
 @Configuration
-@EnableScheduling
-public class DefaultSpringAppConfiguration extends AbstractSpringConfiguration implements SchedulingConfigurer {
+public class DefaultSpringAppConfiguration extends AbstractSpringConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSpringAppConfiguration.class);
 	
@@ -79,11 +74,6 @@ public class DefaultSpringAppConfiguration extends AbstractSpringConfiguration i
         registrar.registerFormatters((FormatterRegistry) conversionService);
         LOGGER.info(">>> 初始化Spring应用的默认类型转换服务配置! conversionService = {}", conversionService.getClass());
         return conversionService;
-	}
-	
-	@Override
-	public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-		taskRegistrar.setScheduler(Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 4));
 	}
 	
 }

@@ -18,7 +18,6 @@ public abstract class SecurityHttpApiResourceSupport extends HttpApiResourceSupp
 	 * 获取当前登录用户
 	 * @return
 	 */
-	
 	protected <T extends UserDetails> T getCurrentAuthenticatedUser() {
 		return (T) SpringSecurityUtils.getCurrentAuthenticatedUser();
 	}

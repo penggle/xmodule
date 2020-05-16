@@ -32,19 +32,14 @@ public class GlobalConstants {
 	public static final String DEFAULT_UPLOAD_TEMP_SAVE_PATH = "/upload/temp/";
 	
 	/**
-	 * 系统默认的上传文件临时存储路径
-	 */
-	public static final String DEFAULT_USER_ICON_SAVE_PATH = "/images/usericon/";
-	
-	/**
-	 * 用户默认头像
-	 */
-	public static final String DEFAULT_USER_AVATAR = "/static/images/default-user-avatar.png";
-	
-	/**
 	 * 系统默认的允许上传图片格式
 	 */
 	public static final List<String> DEFAULT_UPLOAD_IMAGE_FORMATS = Arrays.asList("jpg", "jpeg", "png");
+	
+	/**
+	 * 系统默认的允许上传EXCEL格式
+	 */
+	public static final List<String> DEFAULT_UPLOAD_EXCEL_FORMATS = Arrays.asList("xls", "xlsx");
 	
 	/**
 	 * 默认的上传图片长宽允许的误差(默认10px)

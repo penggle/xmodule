@@ -1,21 +1,26 @@
 package com.penglecode.xmodule.common.boot.config;
 
 import java.nio.charset.Charset;
+import java.time.Duration;
 
 import javax.servlet.Servlet;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -25,6 +30,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import com.penglecode.xmodule.common.consts.GlobalConstants;
+import com.penglecode.xmodule.common.support.GlobalAppConfig;
+import com.penglecode.xmodule.common.util.FileUtils;
+import com.penglecode.xmodule.common.util.ObjectUtils;
 import com.penglecode.xmodule.common.web.springmvc.handler.DefaultSpringMvcExceptionHandler;
 import com.penglecode.xmodule.common.web.springmvc.support.EnhancedRequestMappingHandlerAdapter;
 import com.penglecode.xmodule.common.web.springmvc.support.ResultEntityResponseServletConfiguration;
@@ -46,8 +54,17 @@ public class DefaultServletWebMvcConfiguration extends ResultEntityResponseServl
 	
 	private final RequestMappingHandlerAdapter defaultRequestMappingHandlerAdapter = new EnhancedRequestMappingHandlerAdapter();
 	
-	public DefaultServletWebMvcConfiguration() {
+	private final WebMvcProperties webMvcProperties;
+	
+	private final GlobalAppConfig globalAppConfig;
+	
+	private final AsyncTaskExecutor asyncTaskExecutor;
+	
+	public DefaultServletWebMvcConfiguration(WebMvcProperties webMvcProperties, GlobalAppConfig globalAppConfig, ObjectProvider<AsyncTaskExecutor> taskExecutorProvider) {
 		super();
+		this.webMvcProperties = webMvcProperties;
+		this.globalAppConfig = globalAppConfig;
+		this.asyncTaskExecutor = taskExecutorProvider.getIfAvailable();
 	}
 
 	@Bean
@@ -80,7 +97,10 @@ public class DefaultServletWebMvcConfiguration extends ResultEntityResponseServl
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		//上传文件的保存目录：C:/Users/Pengle/AppData/Local/Temp/tomcat-docbase.5548171285913942755.8080/upload，需要将其作为静态资源进行过滤(不走Controller)
-		registry.addResourceHandler("/upload/**").addResourceLocations("/upload/");
+		//registry.addResourceHandler("/upload/**").addResourceLocations("/upload/");
+		String uploadResourceLocation = FileUtils.normalizePath(globalAppConfig.getLocalTempBaseDirectory() + "/upload/");
+		//System.out.println("uploadResourceLocation = " + uploadResourceLocation);
+		registry.addResourceHandler("/upload/**").addResourceLocations(uploadResourceLocation);
 	}
 	
 	/**
@@ -93,6 +113,18 @@ public class DefaultServletWebMvcConfiguration extends ResultEntityResponseServl
     }
 	
 	/**
+	 * 配置Servlet3+的异步执行特性
+	 */
+	@Override
+	public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+		Duration timeout = ObjectUtils.defaultIfNull(webMvcProperties.getAsync().getRequestTimeout(), Duration.ofSeconds(60));
+		configurer.setDefaultTimeout(timeout.toMillis());
+		if(asyncTaskExecutor != null) {
+			configurer.setTaskExecutor(asyncTaskExecutor);
+		}
+	}
+
+	/**
 	 * 自定义RequestMappingHandlerAdapter
 	 */
 	@Override
@@ -100,6 +132,18 @@ public class DefaultServletWebMvcConfiguration extends ResultEntityResponseServl
 		return defaultRequestMappingHandlerAdapter;
 	}
 	
+	protected GlobalAppConfig getGlobalAppConfig() {
+		return globalAppConfig;
+	}
+
+	protected WebMvcProperties getWebMvcProperties() {
+		return webMvcProperties;
+	}
+
+	protected AsyncTaskExecutor getAsyncTaskExecutor() {
+		return asyncTaskExecutor;
+	}
+
 	@Configuration
 	@ControllerAdvice
 	@ConditionalOnWebApplication(type = Type.SERVLET)

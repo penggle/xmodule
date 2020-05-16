@@ -1,5 +1,6 @@
 package com.penglecode.xmodule.common.consts;
 
+import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -12,7 +13,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.MediaType;
 
+import com.penglecode.xmodule.common.support.NamedThreadFactory;
 import com.penglecode.xmodule.common.util.SpringUtils;
+import com.penglecode.xmodule.common.util.ThreadPoolUtils;
 
 /**
  * 应用的全局常量,其中包括：Spring上下文对象、Servlet上下文对象、应用的上下文路径、应用系统默认字符集、默认Locale、默认日期格式等常量
@@ -22,7 +25,12 @@ import com.penglecode.xmodule.common.util.SpringUtils;
  * @version 1.0
  */
 public abstract class ApplicationConstants {
-
+	
+	/**
+	 * 事件发布默认的线程池
+	 */
+	public static final Executor DEFAULT_EXECUTOR = ThreadPoolUtils.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4, new NamedThreadFactory("DEFAULT-PUBLISHER"));
+	
 	/**
 	 * 应用默认的响应类型
 	 */

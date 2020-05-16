@@ -2,6 +2,7 @@ package com.penglecode.xmodule.common.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 字符串工具类
@@ -12,6 +13,8 @@ import java.util.List;
  */
 public class StringUtils {
 
+	public static final Pattern CHINESE_CHAR_PATTERN = Pattern.compile("[\u4e00-\u9fa5]");
+	
 	public static final String DEFAULT_EMPTY_STRING = "";
 
     public static final String DEFAULT_NULL_STRING = "null";
@@ -577,5 +580,17 @@ public class StringUtils {
     	}
     	return null;
     }
+    
+    /**
+	 * 检测指定字符串中是否包含中文字符
+	 * @param str
+	 * @return
+	 */
+	public static boolean containsChineseChar(String str){
+		if(str != null && CHINESE_CHAR_PATTERN.matcher(str).find()){
+			return true;
+		}
+		return false;
+	}
     
 }

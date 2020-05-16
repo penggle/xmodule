@@ -11,9 +11,17 @@ import java.util.regex.Pattern;
  */
 public class CommonValidateUtils {
 
-	public static final Pattern PATTERN_MOBILE_PHONE = Pattern.compile("1[3-9]{1}[0-9]{1}[0-9]{8}");
+	public static final String REGEX_MOBILE_PHONE = "1[3-9]{1}[0-9]{1}[0-9]{8}";
 	
-	public static final Pattern PATTERN_EMAIL = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+	public static final String REGEX_EMAIL = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
+	
+	public static final String REGEX_IDCARD = "(\\d{15})|(\\d{17}(\\d|X|x))";
+	
+	public static final Pattern PATTERN_MOBILE_PHONE = Pattern.compile(REGEX_MOBILE_PHONE);
+	
+	public static final Pattern PATTERN_EMAIL = Pattern.compile(REGEX_EMAIL);
+	
+	public static final Pattern PATTERN_IDCARD = Pattern.compile(REGEX_IDCARD);
 	
 	/**
 	 * 判断手机号码是否合法
@@ -38,6 +46,23 @@ public class CommonValidateUtils {
 		}
 		// Pattern p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,3}"); //简单匹配
 		return PATTERN_EMAIL.matcher(email).matches();
+	}
+	
+	/**
+	 * 检测身份证号码是否有效
+	 * @param idcard
+	 * @return
+	 */
+	public static boolean isIdcard(String idcard) {
+		if(StringUtils.isEmpty(idcard)) {
+			return false;
+		}
+		return PATTERN_IDCARD.matcher(idcard).matches();
+	}
+	
+	public static void main(String[] args) {
+		String idcard = "342425198607284712";
+		System.out.println(idcard.substring(idcard.length() - 6));
 	}
 	
 }

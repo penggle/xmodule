@@ -49,6 +49,9 @@ public class UpmsUser implements BaseModel<UpmsUser> {
     /** 用户头像 */
     private String userIcon;
 
+    /** 所属组织机构ID：null-未设置，0-所有组织，其他值则为具体的组织机构ID */
+    private Long orgId;
+    
     /** 用户状态:0-冻结,1-正常 */
     private Integer status;
 
@@ -57,7 +60,7 @@ public class UpmsUser implements BaseModel<UpmsUser> {
 
     /** 登录次数 */
     private Integer loginTimes;
-
+    
     /** 创建时间 */
     private String createTime;
 
@@ -84,7 +87,7 @@ public class UpmsUser implements BaseModel<UpmsUser> {
     
     /** 用户在线状态 */
     private Boolean online;
-
+    
     public Long getUserId() {
         return userId;
     }
@@ -157,7 +160,15 @@ public class UpmsUser implements BaseModel<UpmsUser> {
         this.userIcon = userIcon;
     }
 
-    public Integer getStatus() {
+    public Long getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(Long orgId) {
+		this.orgId = orgId;
+	}
+
+	public Integer getStatus() {
         return status;
     }
 
@@ -181,7 +192,7 @@ public class UpmsUser implements BaseModel<UpmsUser> {
         this.loginTimes = loginTimes;
     }
 
-    public String getCreateTime() {
+	public String getCreateTime() {
         return createTime;
     }
 
@@ -347,6 +358,11 @@ public class UpmsUser implements BaseModel<UpmsUser> {
             return this;
         }
 
+        public MapBuilder withOrgId(Long ... orgId) {
+            modelProperties.put("orgId", BaseModel.first(orgId, getOrgId()));
+            return this;
+        }
+        
         public MapBuilder withStatus(Integer ... status) {
             modelProperties.put("status", BaseModel.first(status, getStatus()));
             return this;
@@ -361,7 +377,7 @@ public class UpmsUser implements BaseModel<UpmsUser> {
             modelProperties.put("loginTimes", BaseModel.first(loginTimes, getLoginTimes()));
             return this;
         }
-
+        
         public MapBuilder withCreateTime(String ... createTime) {
             modelProperties.put("createTime", BaseModel.first(createTime, getCreateTime()));
             return this;

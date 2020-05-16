@@ -3,7 +3,11 @@ package com.penglecode.xmodule.common.util;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -296,13 +300,20 @@ public class FileUtils {
      * @param destFullFileName - 目标文件名
      * @throws Exception
      */
-    public static void copyFile(String srcFullFileName, String destFullFileName) throws Exception {
+    public static void copyFile(String srcFullFileName, String destFullFileName) throws IOException {
     	Assert.hasText(srcFullFileName, "Parameter 'srcFullFileName' can not be empty!");
     	Assert.hasText(destFullFileName, "Parameter 'destFullFileName' can not be empty!");
     	copyFile(getFile(srcFullFileName), getFile(destFullFileName));
     }
     
-    public static void copyFile(File srcFile, File destFile) throws Exception {
+    /**
+     * <p>文件复制</p>
+     * 
+     * @param srcFile
+     * @param destFile
+     * @throws Exception
+     */
+    public static void copyFile(File srcFile, File destFile) throws IOException {
     	com.google.common.io.Files.copy(srcFile, destFile);
     }
     
@@ -357,7 +368,7 @@ public class FileUtils {
     public static void deleteDirectory(File dir) {
     	if(dir != null && dir.isDirectory()) {
     		File[] files = dir.listFiles();
-    		if(files != null) {
+    		if(files != null && files.length > 0) {
     			for(File file : files) {
     				if(file.isDirectory()) {
     					deleteDirectory(file);
@@ -366,6 +377,7 @@ public class FileUtils {
     				}
     			}
     		}
+    		dir.delete();
     	}
     }
     
@@ -406,10 +418,30 @@ public class FileUtils {
     	}
     }
     
-    public static void main(String[] args) {
-    	String path = "/usr";
-    	String parentPath = path.substring(0, path.lastIndexOf('/'));
-    	System.out.println(parentPath.equals(""));
-	}
+    /**
+     * 创建文件的输入流
+     * @param file
+     * @return
+     */
+    public static InputStream createInputStream(File file) {
+    	try {
+			return new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+    }
+    
+    /**
+     * 创建文件的输出流
+     * @param file
+     * @return
+     */
+    public static OutputStream createOutputStream(File file) {
+    	try {
+			return new FileOutputStream(file);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+    }
     
 }

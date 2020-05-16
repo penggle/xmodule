@@ -45,7 +45,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 			if(SecurityContextHolder.getContext().getAuthentication() == null) {
 				JwtToken jwtToken = jwtTokenService.getValidToken(request); //从请求中解析有效的JWT令牌对象
 				if(jwtToken != null) {
-					UserDetails userDetails = jwtTokenService.loadUserByUsername(jwtToken.getUsername()); //优先从Redis缓存中加载登录用户信息,如果没有则走数据库
+					UserDetails userDetails = jwtTokenService.loadUserByUsername(jwtToken.getUsername(), false); //优先从Redis缓存中加载登录用户信息,如果没有则走数据库
 					// 将用户信息存入 authentication，方便后续校验
 	                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

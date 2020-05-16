@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,20 +20,25 @@ import org.apache.coyote.http11.Http11Nio2Protocol;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.server.AbstractServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import com.penglecode.xmodule.common.consts.ApplicationConstants;
 import com.penglecode.xmodule.common.util.ArrayUtils;
+import com.penglecode.xmodule.common.util.CollectionUtils;
 import com.penglecode.xmodule.common.util.StringUtils;
 
 /**
@@ -50,6 +56,11 @@ public class DefaultServletWebServerConfiguration extends AbstractSpringConfigur
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServletWebServerConfiguration.class);
 	
 	public static final String CONFIGURATION_ENABLED = "server.tomcat.customized.enabled";
+	
+	@Bean
+	public ServerPropertiesBeanPostProcessor serverPropertiesBeanPostProcessor() {
+		return new ServerPropertiesBeanPostProcessor();
+	}
 	
 	@Bean
 	public AbstractServletWebServerFactory tomcatServletWebServerFactory() {
@@ -136,6 +147,27 @@ public class DefaultServletWebServerConfiguration extends AbstractSpringConfigur
 				LOGGER.error(e.getMessage(), e);
 			}
 			return locations;
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	class ServerPropertiesBeanPostProcessor implements BeanPostProcessor {
+
+		@Override
+		public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+			if(bean instanceof ServerProperties) {
+				ServerProperties serverProperties = (ServerProperties) bean;
+				Session session = serverProperties.getServlet().getSession();
+				/**
+				 * 在不显示指定Servlet会话跟踪模式(session.trackingModes)的情况下，将其设置为空集合，
+				 * 以解决无状态应用中HTTP请求仍然出现基于URL重写的JSESSIONID或基于Cookie的JSESSIONID的问题
+				 */
+				if(CollectionUtils.isEmpty(session.getTrackingModes())) {
+					session.setTrackingModes(Collections.EMPTY_SET);
+				}
+			}
+			return BeanPostProcessor.super.postProcessAfterInitialization(bean, beanName);
 		}
 		
 	}

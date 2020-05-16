@@ -4,6 +4,7 @@ import com.penglecode.xmodule.common.consts.ApplicationConstants;
 import com.penglecode.xmodule.common.consts.GlobalConstants;
 import com.penglecode.xmodule.common.exception.ApplicationException;
 import com.penglecode.xmodule.common.util.ExceptionUtils;
+import com.penglecode.xmodule.common.util.StringUtils;
 
 /**
  * 模块内异常解析逻辑
@@ -32,7 +33,7 @@ public class ExceptionDescriptorResolver {
 				} catch (Exception e) {
 				}
 				message = cause.getMessage();
-				if(ExceptionUtils.isContainsChineseChar(message)){
+				if(StringUtils.containsChineseChar(message)){
 					found = true;
 					break;
 				}
@@ -42,7 +43,7 @@ public class ExceptionDescriptorResolver {
 		if(!found){
 			target = ExceptionUtils.getRootCause(ex);
 			message = target.getMessage();
-			if(!ExceptionUtils.isContainsChineseChar(message)){
+			if(!StringUtils.containsChineseChar(message)){
 				message = ApplicationConstants.DEFAULT_MESSAGE_SOURCE_ACCESSOR.get().getMessage(messageCode, new Object[] {message}, message); // 未知的异常消息,需要转换成统一的,以增强用户体验
 			}
 		}

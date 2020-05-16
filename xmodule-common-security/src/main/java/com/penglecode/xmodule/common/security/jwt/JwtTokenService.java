@@ -74,8 +74,9 @@ public interface JwtTokenService<I,O> {
 	 * 根据用户名获取登录用户信息
 	 * 该接口用于替代#UserDetailsService.loadUserByUsername()
 	 * @param username
+	 * @param forceReload		- 强制从数据库加载用户信息?
 	 * @return
 	 */
-	public UserDetails loadUserByUsername(String username);
+	public UserDetails loadUserByUsername(String username, boolean forceReload);
 	
 }

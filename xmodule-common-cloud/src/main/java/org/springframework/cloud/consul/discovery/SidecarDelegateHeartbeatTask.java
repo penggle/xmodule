@@ -4,7 +4,6 @@ import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.consul.discovery.ConsulDiscoveryClient;
 import org.springframework.util.Assert;
 
 import com.ecwid.consul.v1.ConsulClient;

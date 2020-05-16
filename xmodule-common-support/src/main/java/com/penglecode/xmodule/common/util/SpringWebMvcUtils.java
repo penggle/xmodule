@@ -152,7 +152,9 @@ public class SpringWebMvcUtils {
 			for (MediaType acceptedMediaType : acceptedMediaTypes) {
 				for(HttpMessageConverter httpMessageConverter : httpMessageConverters) {
 					if(httpMessageConverter.canWrite(responseBody.getClass(), acceptedMediaType)) {
-						httpMessageConverter.write(responseBody, acceptedMediaType, new ServletServerHttpResponse(response));
+						try (ServletServerHttpResponse serverResponse = new ServletServerHttpResponse(response)) {
+							httpMessageConverter.write(responseBody, acceptedMediaType, serverResponse);
+						}
 						return;
 					}
 				}

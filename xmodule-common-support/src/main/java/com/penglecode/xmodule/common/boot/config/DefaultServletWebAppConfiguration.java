@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.RequestContextListener;
 
 import com.penglecode.xmodule.common.web.servlet.support.EnabledFilterRegistrationBeanLogger;
-import com.penglecode.xmodule.common.web.support.DefaultXUploadFileTransfer;
-import com.penglecode.xmodule.common.web.support.XUploadFileHelper;
+import com.penglecode.xmodule.common.web.support.DefaultSmartFileServerService;
+import com.penglecode.xmodule.common.web.support.SmartFileServerService;
 
 /**
  * 默认的WEB应用配置
@@ -21,11 +21,11 @@ import com.penglecode.xmodule.common.web.support.XUploadFileHelper;
 public class DefaultServletWebAppConfiguration extends AbstractSpringConfiguration {
 
 	/**
-	 * 小文件上传助手
+	 * 小型文件服务器的文件服务
 	 */
-	@Bean(name="defaultXUploadFileHelper")
-	public XUploadFileHelper defaultXUploadFileHelper() {
-		return new DefaultXUploadFileTransfer();
+	@Bean
+	public SmartFileServerService smartFileServerService() {
+		return new DefaultSmartFileServerService();
 	}
 	
 	/**

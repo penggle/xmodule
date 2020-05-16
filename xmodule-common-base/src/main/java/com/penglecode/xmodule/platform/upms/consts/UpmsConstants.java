@@ -19,16 +19,16 @@ public class UpmsConstants {
 	/**
 	 * 用户默认头像
 	 */
-	public static final Constant<String> DEFAULT_USER_AVATAR = new SpringEnvConstant<String>("venus.upms.defaultUserAvatar", "/img/default-user-avatar.png") {};
+	public static final Constant<String> DEFAULT_USER_AVATAR = new SpringEnvConstant<String>("visp.upms.defaultUserAvatar", "/img/default-user-avatar.png") {};
 	
 	/**
 	 * 默认的资源ICON
 	 */
-	public static final Constant<String> DEFAULT_RESOURCE_ICON = new SpringEnvConstant<String>("venus.upms.defaultResourceIcon" ,"fas fa-dot") {};
+	public static final Constant<String> DEFAULT_RESOURCE_ICON = new SpringEnvConstant<String>("visp.upms.defaultResourceIcon" ,"fas fa-dot") {};
 	
 	/**
 	 * 默认的应用ICON
 	 */
-	public static final Constant<String> DEFAULT_APPLICATION_ICON = new SpringEnvConstant<String>("venus.upms.defaultApplicationIcon" ,"fas fa-cloud") {};
+	public static final Constant<String> DEFAULT_APPLICATION_ICON = new SpringEnvConstant<String>("visp.upms.defaultApplicationIcon" ,"fas fa-cloud") {};
 	
 }
