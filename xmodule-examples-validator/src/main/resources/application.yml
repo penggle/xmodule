@@ -91,20 +91,24 @@ spring:
             password: 123456
             roles: ACTUATOR
                 
-    #Druid数据源连接池配置
+    #Hikari 连接池配置
     datasource:
-        druid:
-            initialSize: 10
-            minIdle: 10
-            maxActive: 250
-            maxWait: 60000
-            timeBetweenEvictionRunsMillis: 60000
-            minEvictableIdleTimeMillis: 300000
-            validationQuery: SELECT 'x'
-            testWhileIdle: true
-            testOnBorrow: false
-            testOnReturn: false
-            poolPreparedStatements: false
-            maxPoolPreparedStatementPerConnectionSize: 20
-            connectionInitSqls: set names utf8;
-            filters: stat,slf4j
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        hikari:
+            #连接池名字
+            pool-name: defaultHikariCP
+            #最小空闲连接数量
+            minimum-idle: 5
+            #空闲连接存活最大时间，默认600000(10分钟)
+            idle-timeout: 180000
+            #连接池最大连接数，默认是10
+            maximum-pool-size: 10
+            #池中连接的默认自动提交行为，默认值true
+            auto-commit: true
+            #池中连接的最长生命周期，0表示无限生命周期，默认1800000(30分钟)
+            max-lifetime: 1800000
+            #等待来自池的连接的最大毫秒数，默认30000(30秒)
+            connection-timeout: 30000
+            #连接测试语句
+            connection-test-query: SELECT 1

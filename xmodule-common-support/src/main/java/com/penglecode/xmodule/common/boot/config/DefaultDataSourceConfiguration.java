@@ -1,12 +1,7 @@
 package com.penglecode.xmodule.common.boot.config;
 
-import java.util.Map;
-import java.util.Properties;
-
 import javax.sql.DataSource;
 
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,53 +11,51 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
- * springboot-druid多数据源配置
+ * springboot-hikari多数据源配置
  * 
  * @author 	pengpeng
  * @date	2018年2月3日 下午1:54:23
  */
 @Configuration
-@ConditionalOnClass(DruidDataSource.class)
-@ConditionalOnMissingBean(DruidDataSource.class)
+@ConditionalOnClass(HikariDataSource.class)
+@ConditionalOnMissingBean(DataSource.class)
 @ConditionalOnProperty(prefix="spring.datasource.default", name={"username", "password", "url"})
 public class DefaultDataSourceConfiguration extends AbstractSpringConfiguration {
 
 	/**
-	 * 未指定具体数据库url,username,password的连接池配置
-	 * @return
+	 * 公共的连接池配置
 	 */
-	@Bean(name="druidPoolConfig")
-	@ConfigurationProperties(prefix = "spring.datasource.druid")
-	protected Properties druidPoolConfig() {
-		return new Properties();
+	@Bean(name="commonHikariConfig")
+	@ConfigurationProperties(prefix = "spring.datasource.hikari")
+	protected HikariConfig commonHikariConfig() {
+		return new HikariConfig();
 	}
 	
-	@Bean(name="defaultDruidConfig")
+	/**
+	 * 默认库的连接池配置
+	 */
+	@Bean(name="defaultHikariConfig")
 	@ConfigurationProperties(prefix = "spring.datasource.default")
-	protected Properties defaultDruidConfig() {
-		return new Properties();
+	protected HikariConfig defaultHikariConfig(@Qualifier("commonHikariConfig") HikariConfig commonHikariConfig) {
+		HikariConfig hikariConfig = new HikariConfig();
+		commonHikariConfig.copyStateTo(hikariConfig);
+		return hikariConfig;
 	}
 	
+	/**
+	 * 默认数据源
+	 */
 	@Bean(name="defaultDataSource", destroyMethod="close", initMethod="init")
-	public DataSource defaultDataSource(@Qualifier("druidPoolConfig") Properties druidPoolConfig, @Qualifier("defaultDruidConfig") Properties defaultDruidConfig) throws Exception {
-		BeanWrapper druidDataSource = new BeanWrapperImpl(new DruidDataSource());
-		Properties druidConfigProperties = new Properties();
-		druidConfigProperties.putAll(druidPoolConfig);
-		druidConfigProperties.putAll(defaultDruidConfig);
-		for(Map.Entry<Object,Object> entry : druidConfigProperties.entrySet()) {
-			String name = (String) entry.getKey();
-			String value = (String) entry.getValue();
-			druidDataSource.setPropertyValue(name, value);
-		}
-		DataSource dataSource = (DataSource) druidDataSource.getWrappedInstance();
-		return dataSource;
+	public DataSource defaultDataSource(@Qualifier("defaultHikariConfig") HikariConfig defaultHikariConfig) {
+		return new HikariDataSource(defaultHikariConfig);
 	}
 	
 	@Bean(name="defaultJdbcTemplate")
-	public JdbcTemplate defaultJdbcTemplate(@Qualifier("defaultDataSource") DataSource dataSource) throws Exception {
+	public JdbcTemplate defaultJdbcTemplate(@Qualifier("defaultDataSource") DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
 	
