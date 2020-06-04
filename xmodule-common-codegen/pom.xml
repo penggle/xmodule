@@ -19,29 +19,40 @@
 			<artifactId>xmodule-common-base</artifactId>
 			<version>${xmodule.version}</version>
 		</dependency>
+		
 		<!-- xmodule-common-support -->
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-common-support</artifactId>
 			<version>${xmodule.version}</version>
 		</dependency>
+		
+		<!-- spring-boot-starter-jdbc -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
 			<version>${mybatis.version}</version>
 		</dependency>
+		
 		<!-- mybatis-spring -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
 			<version>${mybatis-spring.version}</version>
 		</dependency>
+		
 		<!-- mybatis-generator-core -->
 		<dependency>
 			<groupId>org.mybatis.generator</groupId>
 			<artifactId>mybatis-generator-core</artifactId>
 		</dependency>
+		
 		<!-- freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>

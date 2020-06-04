@@ -209,5 +209,6 @@
 		<module>xmodule-examples-springcloud</module>
 		<module>xmodule-examples-codegen</module>
 		<module>xmodule-examples-validator</module>
+		<module>xmodule-examples-rabbitmq</module>
 	</modules>
 </project>

@@ -1,0 +1,13 @@
+spring:
+    #rabbitmq配置
+    rabbitmq:
+        host: 172.16.83.132
+        port: 5672
+        username: flexedge-admin
+        password: 123456
+        virtual-host: flexedge
+        #异步监听配置
+        listener:
+            type: SIMPLE
+            simple:
+                acknowledge-mode: MANUAL

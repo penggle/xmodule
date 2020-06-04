@@ -1,0 +1,84 @@
+#SpringBoot自动配置开启debug模式
+debug: false
+
+#应用日志配置
+logging:
+    config: classpath:logback-spring.xml
+    file: 
+        name: ${spring.application.name}
+        path: /usr/local/xmodule/logs
+
+#Spring上下文初始化程序
+context:
+    initializer:
+        classes: com.penglecode.xmodule.common.initializer.DefaultSpringAppPreInitializer
+
+#Servlet容器配置
+server:
+    port: 8282
+    servlet:
+        context-path: /
+        application-display-name: ${spring.application.name}
+        session:
+            timeout: 1800
+
+#SpringBoot应用监控模块
+management:
+    endpoints:
+        web:
+            exposure:
+                include: '*'
+    endpoint:
+        shutdown:
+            enabled: false
+        health:
+            show-details: always
+    health:
+        defaults:
+            enabled: false
+
+info:
+    app:
+        name: '@project.name@'
+        description: '@project.description@'
+        version: '@project.version@'
+        spring-boot-version: '@project.parent.parent.version@'
+#SpringBoot应用的名称
+spring:
+    application:
+        name: xmodule-examples-rabbitmq-tutorials
+    #被排除的自动配置
+    autoconfigure:
+        exclude:
+          - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+          - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+    
+    profiles:
+        active: dev
+
+    #Spring国际化配置
+    messages:
+        basename: config/i18n/messages
+        cache-duration: -1
+        encoding: UTF-8
+        
+    #SpringMvc上传文件配置
+    servlet:
+        multipart:
+            enabled: true
+            max-file-size: 5MB
+            max-request-size: 20MB
+    #SpringMvc配置
+    mvc:
+        servlet:
+            load-on-startup: 1
+            #SpringMvc控制器路径配置
+            path: /
+    #SpringSecurity配置
+    security:
+        filter:
+            order: -2147483628
+        user:
+            name: admin
+            password: 123456
+            roles: ACTUATOR

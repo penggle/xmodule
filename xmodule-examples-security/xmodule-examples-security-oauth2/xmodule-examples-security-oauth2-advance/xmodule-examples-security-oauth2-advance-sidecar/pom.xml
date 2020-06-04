@@ -37,6 +37,18 @@
 			<artifactId>xmodule-examples-security-oauth2-advance-api</artifactId>
 			<version>${xmodule.version}</version>
 		</dependency>
+		
+		<!-- spring-boot-starter-jdbc -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		
+		<!-- spring-boot-starter-actuator -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 
 		<!-- spring-boot-starter-webflux -->
 		<dependency>

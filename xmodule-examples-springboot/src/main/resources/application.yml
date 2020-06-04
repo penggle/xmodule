@@ -61,15 +61,7 @@ spring:
         basename: config/i18n/messages
         cache-duration: -1
         encoding: UTF-8
-    #关闭JMX监控
-    jmx:
-        enabled: false
-    #开启Web#CharacterEncodingFilter
-    http:
-        encoding:
-            enabled: true
-            charset: UTF-8
-            force: true
+        
     #SpringMvc上传文件配置
     servlet:
         multipart:
