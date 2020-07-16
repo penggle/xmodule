@@ -17,14 +17,14 @@
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-common-base</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 		
 		<!-- xmodule-common-support -->
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-common-support</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 		
 		<!-- spring-boot-starter-jdbc -->

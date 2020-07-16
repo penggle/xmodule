@@ -16,28 +16,28 @@
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-common-oauth2</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- xmodule-common-keycloak -->
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-common-keycloak</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- xmodule-common-cloud -->
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-common-cloud</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 		
 		<!-- xmodule-examples-security-oauth2-advance-api -->
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-examples-security-oauth2-advance-api</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- spring-boot-starter-web -->

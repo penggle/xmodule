@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-common-keycloak</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 

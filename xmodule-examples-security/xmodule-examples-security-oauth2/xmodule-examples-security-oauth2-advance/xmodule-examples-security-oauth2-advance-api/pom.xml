@@ -16,14 +16,14 @@
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-common-cloud</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 		
 		<!-- xmodule-examples-security-oauth2-common -->
 		<dependency>
 			<groupId>com.penglecode</groupId>
 			<artifactId>xmodule-examples-security-oauth2-common</artifactId>
-			<version>${xmodule.version}</version>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 
