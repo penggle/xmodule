@@ -210,5 +210,7 @@
 		<module>xmodule-examples-codegen</module>
 		<module>xmodule-examples-validator</module>
 		<module>xmodule-examples-rabbitmq</module>
+		<module>xmodule-master4j-jvm</module>
+		<module>xmodule-examples-scrapy4j</module>
 	</modules>
 </project>

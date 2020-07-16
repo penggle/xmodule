@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.penglecode</groupId>
+		<artifactId>xmodule</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>xmodule-examples-scrapy4j</artifactId>
+	<packaging>pom</packaging>
+	<name>xmodule-examples-scrapy4j</name>
+	<description>基于selenium、ocr等技术的Java爬虫示例</description>
+	<build>
+		<finalName>xmodule-examples-scrapy4j</finalName>
+	</build>
+	<modules>
+		<module>xmodule-examples-scrapy4j-ocr</module>
+	</modules>
+</project>

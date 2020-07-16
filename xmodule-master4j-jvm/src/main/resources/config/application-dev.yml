@@ -1,0 +1,6 @@
+spring:
+    #数据源连接池配置
+    datasource:
+        username: root
+        password: 123456
+        url: jdbc:mysql://192.168.137.105:3306/xmodule?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false&rewriteBatchedStatements=true

@@ -1,0 +1,66 @@
+#SpringBoot自动配置开启debug模式
+debug: false
+
+#应用日志配置
+logging:
+    config: classpath:logback-spring.xml
+    file: 
+        name: ${spring.application.name}
+        path: /usr/local/apps/logs
+
+#Spring上下文初始化程序
+context:
+    initializer:
+        classes: com.penglecode.xmodule.common.initializer.DefaultSpringAppPreInitializer
+   
+#Servlet容器配置
+server:
+    port: 8181
+
+#SpringBoot应用的名称
+spring:
+    #被排除的自动配置
+    autoconfigure:
+        exclude:
+          #- org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+          
+    application:
+        name: xmodule-master4j-jvm
+    #配置文件激活配置
+    profiles:
+        active: prd
+
+    #Spring国际化配置
+    messages:
+        basename: config/i18n/messages
+        cache-duration: -1
+        encoding: UTF-8
+    #Hikari 连接池配置
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        hikari:
+            #连接池名字
+            pool-name: defaultHikariCP
+            #最小空闲连接数量
+            minimum-idle: 5
+            #空闲连接存活最大时间，默认600000(10分钟)
+            idle-timeout: 180000
+            #连接池最大连接数，默认是10
+            maximum-pool-size: 10
+            #池中连接的默认自动提交行为，默认值true
+            auto-commit: true
+            #池中连接的最长生命周期，0表示无限生命周期，默认1800000(30分钟)
+            max-lifetime: 1800000
+            #等待来自池的连接的最大毫秒数，默认30000(30秒)
+            connection-timeout: 30000
+            #连接测试语句
+            connection-test-query: SELECT 1
+    #Thymeleaf模板配置
+    thymeleaf:
+        #模板的模式，支持 HTML, XML TEXT JAVASCRIPT
+        mode: HTML5
+        #编码配置
+        encoding: UTF-8
+        #false-启用热更新
+        cache: false

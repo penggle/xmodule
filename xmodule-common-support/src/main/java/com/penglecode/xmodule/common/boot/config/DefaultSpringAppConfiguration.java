@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.convert.ApplicationConversionService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 
 import com.penglecode.xmodule.common.consts.GlobalConstants;
+import com.penglecode.xmodule.common.support.GlobalAppConfig;
 import com.penglecode.xmodule.common.util.ReflectionUtils;
 
 /**
@@ -29,6 +31,16 @@ import com.penglecode.xmodule.common.util.ReflectionUtils;
 public class DefaultSpringAppConfiguration extends AbstractSpringConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSpringAppConfiguration.class);
+	
+	/**
+	 * 全局应用配置
+	 * @return
+	 */
+	@Bean
+	@ConfigurationProperties(prefix="global.app-config")
+	public GlobalAppConfig globalAppConfig() {
+		return GlobalConstants.GLOBAL_APP_CONFIG;
+	}
 	
 	/**
 	 * 全局默认的MessageSourceAccessor

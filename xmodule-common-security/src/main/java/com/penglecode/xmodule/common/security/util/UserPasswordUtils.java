@@ -14,7 +14,10 @@ import com.penglecode.xmodule.common.util.SpringUtils;
 public class UserPasswordUtils {
 
 	protected static PasswordEncoder getPasswordEncoder() {
-		PasswordEncoder passwordEncoder = SpringUtils.getBean(PasswordEncoder.class);
+		PasswordEncoder passwordEncoder = null;
+		if(SpringUtils.getApplicationContext() != null) {
+			passwordEncoder = SpringUtils.getBean(PasswordEncoder.class);
+		}
 		return passwordEncoder == null ? SecurityApplicationConstants.DEFAULT_PASSWORD_ENCODER : passwordEncoder;
 	}
 	

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="icon" th:href="@{/favicon.png}"/>
+    <title>服务实时线程信息</title>
+    <style type="text/css">
+		* {
+			padding: 0;
+			margin: 0;
+			outline: none;
+		}
+		
+		html, body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+				Microsoft YaHei, SimSun, sans-serif;
+		}
+		
+		.stacktrace {
+			display: block;
+		    position: relative;
+		    margin: 0 auto;
+		    width: 90%;
+		}
+		
+		.stacktrace-item:hover {
+			background-color: #efefef;
+		}
+		
+		h5 {
+			font-weight: bold;
+			font-size: 16px;
+			line-height: 32px;
+		}
+		
+		ul {
+			list-style-type: none;
+			padding-bottom: 10px;
+		}
+		
+		li, pre, code {
+			display: block;
+			position: relative;
+			height: 16px;
+			line-height: 16px;
+		}
+		
+	</style>
+</head>
+<body>
+	<div class="stacktrace">
+		<div class="stacktrace-item" th:each="stackTraceEntry, stackTraceStat : ${allStackTraces}">
+			<h5 th:text="${stackTraceEntry.key.name}"></h5>
+			<ul>
+				<li th:each="stackTraceElement : ${stackTraceEntry.value}">
+					<pre><code th:text="${stackTraceElement}"></code></pre>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>
