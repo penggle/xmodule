@@ -1,6 +1,9 @@
 .settings/
 .project
 .classpath
+.idea/
+*.iml
 target/
 logPath_IS_UNDEFINED
 *.log
+hs_err_pid*
