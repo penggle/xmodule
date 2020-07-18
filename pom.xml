@@ -157,6 +157,7 @@
 				<includes>
 					<include>**/*.xml</include>
 					<include>**/*.ftl</include>
+					<include>**/*.jpg</include>
 				</includes>
 				<!-- false:不进行maven属性替换 -->
 				<filtering>false</filtering>
