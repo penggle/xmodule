@@ -155,7 +155,7 @@ public class OAuth2ClientUtils {
 		if(AuthorizationGrantType.PASSWORD.equals(clientRegistration.getAuthorizationGrantType())) {
 			if(principal == null) {
 				//使用具名的Authentication而不是默认的AnonymousAuthenticationToken，使得获得到的新的OAuth2AuthorizedClient存储在同一位置(@see #AuthenticatedPrincipalOAuth2AuthorizedClientRepository.loadAuthorizedClient)
-				Set<String> scopes = (Set<String>) CollectionUtils.defaultIfEmpty(clientRegistration.getScopes(), OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_SCOPES.get(clientRegistration.getAuthorizationGrantType()));
+				Set<String> scopes = CollectionUtils.defaultIfEmpty(clientRegistration.getScopes(), OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_SCOPES.get(clientRegistration.getAuthorizationGrantType()));
 				return new OAuth2PrincipalNameAuthentication(principalName, scopes.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet()));
 			} else if (principal instanceof AnonymousAuthenticationToken) {
 				AnonymousAuthenticationToken anonAuthentication = (AnonymousAuthenticationToken) principal;
@@ -177,7 +177,7 @@ public class OAuth2ClientUtils {
 		if(AuthorizationGrantType.CLIENT_CREDENTIALS.equals(clientRegistration.getAuthorizationGrantType())) {
 			if(principal == null) {
 				//使用具名的Authentication而不是默认的AnonymousAuthenticationToken，使得获得到的新的OAuth2AuthorizedClient存储在同一位置(@see #AuthenticatedPrincipalOAuth2AuthorizedClientRepository.loadAuthorizedClient)
-				Set<String> scopes = (Set<String>) CollectionUtils.defaultIfEmpty(clientRegistration.getScopes(), OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_SCOPES.get(clientRegistration.getAuthorizationGrantType()));
+				Set<String> scopes = CollectionUtils.defaultIfEmpty(clientRegistration.getScopes(), OAuth2ApplicationConstants.DEFAULT_OAUTH2_CLIENT_SCOPES.get(clientRegistration.getAuthorizationGrantType()));
 				return new OAuth2PrincipalNameAuthentication(principalName, scopes.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet()));
 			} else if (principal instanceof AnonymousAuthenticationToken) {
 				AnonymousAuthenticationToken anonAuthentication = (AnonymousAuthenticationToken) principal;
@@ -201,8 +201,7 @@ public class OAuth2ClientUtils {
 		//构造一个欺骗令牌，使其能通过#RefreshTokenOAuth2AuthorizedClientProvider.hasTokenExpired(...)的校验认为该欺骗令牌是失效的，从而达到强制刷新令牌
 		OAuth2AccessToken trickAccessToken = new OAuth2AccessToken(realAccessToken.getTokenType(), realAccessToken.getTokenValue(), realAccessToken.getIssuedAt(), expiresAt, realAccessToken.getScopes());
 		//构造一个欺骗OAuth2AuthorizedClient，从而达到强制刷新令牌
-		OAuth2AuthorizedClient trickAuthorizedClient = new OAuth2AuthorizedClient(realAuthorizedClient.getClientRegistration(), realAuthorizedClient.getPrincipalName(), trickAccessToken, realAuthorizedClient.getRefreshToken());
-		return trickAuthorizedClient;
+		return new OAuth2AuthorizedClient(realAuthorizedClient.getClientRegistration(), realAuthorizedClient.getPrincipalName(), trickAccessToken, realAuthorizedClient.getRefreshToken());
 	}
 	
 }

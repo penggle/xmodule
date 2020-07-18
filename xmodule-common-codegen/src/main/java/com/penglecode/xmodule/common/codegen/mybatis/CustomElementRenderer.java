@@ -1,11 +1,9 @@
 package com.penglecode.xmodule.common.codegen.mybatis;
 
+import java.util.Comparator;
 import java.util.stream.Stream;
 
-import org.mybatis.generator.api.dom.xml.ElementVisitor;
-import org.mybatis.generator.api.dom.xml.TextElement;
-import org.mybatis.generator.api.dom.xml.VisitableElement;
-import org.mybatis.generator.api.dom.xml.XmlElement;
+import org.mybatis.generator.api.dom.xml.*;
 import org.mybatis.generator.api.dom.xml.render.AttributeRenderer;
 import org.mybatis.generator.internal.util.CustomCollectors;
 
@@ -41,7 +39,7 @@ public class CustomElementRenderer implements ElementVisitor<Stream<String>> {
 
     protected String renderAttributes(XmlElement element) {
         return element.getAttributes().stream()
-                .sorted((a1, a2) -> a1.getName().compareTo(a2.getName()))
+                .sorted(Comparator.comparing(Attribute::getName))
                 .map(attributeRenderer::render)
                 .collect(CustomCollectors.joining(" ", " ", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }

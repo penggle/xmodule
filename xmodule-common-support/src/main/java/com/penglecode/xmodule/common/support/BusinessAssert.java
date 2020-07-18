@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.penglecode.xmodule.common.exception.ApplicationBusinessException;
+import com.penglecode.xmodule.common.util.StringUtils;
 
 /**
  * 业务验证的Assert,所有抛出异常均为{@code BusinessException}
@@ -314,7 +315,7 @@ public class BusinessAssert {
 		if(object == null){
 			return true;
 		}else if(object instanceof String){
-			return ((String)object).trim().equals("") || ((String)object).trim().equals("null");
+			return StringUtils.isEmpty((String) object);
 		}else if(object instanceof Collection<?>){
 			return ((Collection<?>)object).isEmpty();
 		}else if(object instanceof Map<?,?>){

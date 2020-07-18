@@ -116,9 +116,7 @@ public class EnhancedRequestParamMethodArgumentResolver extends RequestParamMeth
 		Map<String,Object> parameters = new HashMap<String,Object>();
 		Map<String,String[]> paramMap = request.getParameterMap();
 		if(!CollectionUtils.isEmpty(paramMap)) {
-			paramMap.forEach((key, values) -> {
-				parameters.put(key, ArrayUtils.isEmpty(values) ? null : (values.length == 1 ? values[0] : values));
-			});
+			paramMap.forEach((key, values) -> parameters.put(key, ArrayUtils.isEmpty(values) ? null : (values.length == 1 ? values[0] : values)));
 		}
 		return parameters;
 	}

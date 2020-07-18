@@ -37,7 +37,7 @@ public class ClassScanningUtils {
 	 */
 	public static Set<String> scanPackageClassNames(Class<?>... basePackages) {
 		Assert.notEmpty(basePackages, "Parameter 'basePackages' can not be empty!");
-		return scanPackageClassNames(Stream.of(basePackages).map(pkg -> pkg.getPackage().getName()).toArray(l -> new String[l]));
+		return scanPackageClassNames(Stream.of(basePackages).map(pkg -> pkg.getPackage().getName()).toArray(String[]::new));
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class ClassScanningUtils {
 	public static <T> Set<Class<? extends T>> scanPackageClasses(Class<? extends T> superType, Class<?>... basePackages) {
 		Assert.notNull(superType, "Parameter 'superType' can not be empty!");
 		Assert.notEmpty(basePackages, "Parameter 'basePackages' can not be empty!");
-		return scanPackageClasses(superType, Stream.of(basePackages).map(pkg -> pkg.getPackage().getName()).toArray(l -> new String[l]));
+		return scanPackageClasses(superType, Stream.of(basePackages).map(pkg -> pkg.getPackage().getName()).toArray(String[]::new));
 	}
 	
 	/**
@@ -111,7 +111,7 @@ public class ClassScanningUtils {
 	public static Set<Class<?>> scanPackageAnnotatedClasses(Class<? extends Annotation> classAnnotation, Class<? extends Annotation> methodAnnotation, Class<?>... basePackages) {
 		Assert.isTrue(classAnnotation != null || methodAnnotation != null, "Parameter 'classAnnotation' or 'methodAnnotation' must be required at least one!");
 		Assert.notEmpty(basePackages, "Parameter 'basePackages' can not be empty!");
-		return scanPackageAnnotatedClasses(classAnnotation, methodAnnotation, Stream.of(basePackages).map(pkg -> pkg.getPackage().getName()).toArray(l -> new String[l]));
+		return scanPackageAnnotatedClasses(classAnnotation, methodAnnotation, Stream.of(basePackages).map(pkg -> pkg.getPackage().getName()).toArray(String[]::new));
 	}
 	
 	/**
@@ -142,7 +142,7 @@ public class ClassScanningUtils {
 		for(String basePackage : basePackages) {
 			Set<BeanDefinition> candidateBeanDefinitions = scanningProvider.findCandidateComponents(basePackage);
 			for(BeanDefinition candidateBeanDefinition : candidateBeanDefinitions) {
-				classes.add((Class<?>) ClassUtils.forName(candidateBeanDefinition.getBeanClassName()));
+				classes.add(ClassUtils.forName(candidateBeanDefinition.getBeanClassName()));
 			}
 		}
 		return classes;

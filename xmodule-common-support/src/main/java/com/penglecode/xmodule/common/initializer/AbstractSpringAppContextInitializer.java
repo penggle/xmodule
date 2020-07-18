@@ -12,13 +12,13 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public abstract class AbstractSpringAppContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-	private static volatile boolean initialized = false;
+	private volatile boolean initialized = false;
 	
-	private static final Object mutex = new Object();
+	private static final Object LOCK = new Object();
 	
 	public final void initialize(ConfigurableApplicationContext applicationContext) {
 		if(!initialized) {
-			synchronized(mutex) {
+			synchronized(LOCK) {
 				if(!initialized) {
 					try {
 						doInitialize(applicationContext);

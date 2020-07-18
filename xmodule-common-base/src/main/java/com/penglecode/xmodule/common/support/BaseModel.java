@@ -31,5 +31,5 @@ public interface BaseModel<T extends BaseModel<T>> extends DtoModel {
 		}
 		return defaultValue;
 	}
-	
+
 }

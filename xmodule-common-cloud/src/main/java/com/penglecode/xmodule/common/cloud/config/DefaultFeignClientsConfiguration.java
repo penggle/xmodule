@@ -1,8 +1,13 @@
 package com.penglecode.xmodule.common.cloud.config;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.penglecode.xmodule.common.boot.config.AbstractSpringConfiguration;
+import com.penglecode.xmodule.common.cloud.feign.ObjectRequestParamToStringConverter;
+import com.penglecode.xmodule.common.cloud.feign.StringToObjectRequestParamConverter;
+import com.penglecode.xmodule.common.cloud.feign.hystrix.DefaultHystrixFallbackHandlerFactory;
+import feign.Feign;
+import feign.Logger;
+import feign.codec.Encoder;
+import feign.form.spring.SpringFormEncoder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -21,15 +26,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.penglecode.xmodule.common.boot.config.AbstractSpringConfiguration;
-import com.penglecode.xmodule.common.cloud.feign.ObjectRequestParamToStringConverter;
-import com.penglecode.xmodule.common.cloud.feign.StringToObjectRequestParamConverter;
-import com.penglecode.xmodule.common.cloud.feign.hystrix.DefaultHystrixFallbackHandlerFactory;
-
-import feign.Feign;
-import feign.Logger;
-import feign.codec.Encoder;
-import feign.form.spring.SpringFormEncoder;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 默认的Feign自定义配置
@@ -81,7 +79,7 @@ public class DefaultFeignClientsConfiguration extends AbstractSpringConfiguratio
 	 */
 	@Bean
 	public List<FeignFormatterRegistrar> feignFormatterRegistrar() {
-		return Arrays.asList(new DefaultFeignFormatterRegistrar());
+		return Collections.singletonList(new DefaultFeignFormatterRegistrar());
 	}
 	
 	/**
@@ -104,9 +102,7 @@ public class DefaultFeignClientsConfiguration extends AbstractSpringConfiguratio
 	@Configuration
 	@ConditionalOnWebApplication(type = Type.REACTIVE)
 	public static class DefaultFeignClientsWebFluxConfiguration {
-		
 		//TODO
-		
 	}
 	
 	public static class DefaultFeignFormatterRegistrar implements FeignFormatterRegistrar {

@@ -52,7 +52,7 @@ public class DefaultHystrixConfiguration extends AbstractSpringConfiguration {
 	public static class ServletDefaultHystrixConfiguration {
 		
 		public ServletDefaultHystrixConfiguration(ObjectProvider<HystrixConcurrencyStrategy> existingConcurrencyStrategy) {
-			registerConcurrencyStrategy(existingConcurrencyStrategy.getIfAvailable(), concurrencyStrategy -> new ServletDefaultHystrixConcurrencyStrategy(concurrencyStrategy));
+			registerConcurrencyStrategy(existingConcurrencyStrategy.getIfAvailable(), ServletDefaultHystrixConcurrencyStrategy::new);
 		}
 		
 	}
@@ -63,7 +63,7 @@ public class DefaultHystrixConfiguration extends AbstractSpringConfiguration {
 	public static class ServletSecurityHystrixConfiguration {
 		
 		public ServletSecurityHystrixConfiguration(ObjectProvider<HystrixConcurrencyStrategy> existingConcurrencyStrategy) {
-			registerConcurrencyStrategy(existingConcurrencyStrategy.getIfAvailable(), concurrencyStrategy -> new ServletSecurityHystrixConcurrencyStrategy(concurrencyStrategy));
+			registerConcurrencyStrategy(existingConcurrencyStrategy.getIfAvailable(), ServletSecurityHystrixConcurrencyStrategy::new);
 		}
 		
 	}
@@ -74,7 +74,7 @@ public class DefaultHystrixConfiguration extends AbstractSpringConfiguration {
 	public static class ReactiveDefaultHystrixConfiguration {
 		
 		public ReactiveDefaultHystrixConfiguration(ObjectProvider<HystrixConcurrencyStrategy> existingConcurrencyStrategy) {
-			registerConcurrencyStrategy(existingConcurrencyStrategy.getIfAvailable(), concurrencyStrategy -> new ReactiveDefaultHystrixConcurrencyStrategy(concurrencyStrategy));
+			registerConcurrencyStrategy(existingConcurrencyStrategy.getIfAvailable(), ReactiveDefaultHystrixConcurrencyStrategy::new);
 		}
 		
 	}
@@ -85,7 +85,7 @@ public class DefaultHystrixConfiguration extends AbstractSpringConfiguration {
 	public static class ReactiveSecurityHystrixConfiguration {
 		
 		public ReactiveSecurityHystrixConfiguration(ObjectProvider<HystrixConcurrencyStrategy> existingConcurrencyStrategy) {
-			registerConcurrencyStrategy(existingConcurrencyStrategy.getIfAvailable(), concurrencyStrategy -> new ReactiveSecurityHystrixConcurrencyStrategy(concurrencyStrategy));
+			registerConcurrencyStrategy(existingConcurrencyStrategy.getIfAvailable(), ReactiveSecurityHystrixConcurrencyStrategy::new);
 		}
 		
 	}

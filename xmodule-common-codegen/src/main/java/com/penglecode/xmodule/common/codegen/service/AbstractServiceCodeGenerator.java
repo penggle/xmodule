@@ -86,7 +86,7 @@ public abstract class AbstractServiceCodeGenerator extends AbstractCodeGenerator
 				generatedCodeFilePaths.add(generateServiceImplementCode(modelClass));
 			}
 		} catch (Exception e) {
-			generatedCodeFilePaths.stream().forEach(FileUtils::deleteFileQuietly); //rollback for exception
+			generatedCodeFilePaths.forEach(FileUtils::deleteFileQuietly); //rollback for exception
 			throw e;
 		}
 	}
@@ -218,9 +218,7 @@ public abstract class AbstractServiceCodeGenerator extends AbstractCodeGenerator
 		
 		Class<?> modelMapBuilderClass = ClassUtils.forName(modelClass.getName() + ".MapBuilder");
 		Method[] modelMethods = modelMapBuilderClass.getDeclaredMethods();
-		List<String> modelMapWithMethods = Stream.of(modelMethods).filter(m -> {
-			return Modifier.isPublic(m.getModifiers()) && m.getName().startsWith("with");
-		}).map(m -> m.getName()).collect(Collectors.toList());
+		List<String> modelMapWithMethods = Stream.of(modelMethods).filter(m -> Modifier.isPublic(m.getModifiers()) && m.getName().startsWith("with")).map(Method::getName).collect(Collectors.toList());
 		serviceCodeParameter.put("modelMapWithMethods", modelMapWithMethods);
 		
 		List<Field> modelIdFields = CodegenUtils.getModelIdFields(modelClass);

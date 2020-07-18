@@ -29,7 +29,7 @@ public class ExceptionDescriptorResolver {
 			if (cause instanceof ApplicationException) { // 已知的异常信息
 				target = cause;
 				try {
-					code = Integer.valueOf(((ApplicationException) cause).getCode());
+					code = Integer.parseInt(((ApplicationException) cause).getCode());
 				} catch (Exception e) {
 				}
 				message = cause.getMessage();

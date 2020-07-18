@@ -1,12 +1,11 @@
 package com.penglecode.xmodule.common.web.support;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
+import com.penglecode.xmodule.common.util.CollectionUtils;
 import org.springframework.util.Assert;
 
-import com.penglecode.xmodule.common.util.CollectionUtils;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 
 public class MvcResourceMethodMapping {
 	
@@ -26,7 +25,7 @@ public class MvcResourceMethodMapping {
 		this.resourceClass = resourceClass;
 		this.resourceMethod = resourceMethod;
 		this.resourceUriPatterns = resourceUriPatterns;
-		this.requestMethods = CollectionUtils.isEmpty(requestMethods) ? Arrays.asList("GET") : requestMethods;
+		this.requestMethods = CollectionUtils.isEmpty(requestMethods) ? Collections.singletonList("GET") : requestMethods;
 	}
 
 	public Class<?> getResourceClass() {

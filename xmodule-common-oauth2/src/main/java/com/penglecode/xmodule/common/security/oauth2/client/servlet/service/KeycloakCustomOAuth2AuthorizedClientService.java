@@ -1,7 +1,5 @@
 package com.penglecode.xmodule.common.security.oauth2.client.servlet.service;
 
-import java.util.Arrays;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -10,6 +8,8 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import java.util.Collections;
 
 /**
  * 基于Keycloak OAuth2认证服务器的CustomOAuth2AuthorizedClientService
@@ -32,7 +32,7 @@ public class KeycloakCustomOAuth2AuthorizedClientService extends AbstractCustomO
 		body.add("refresh_token", authorizedClient.getRefreshToken().getTokenValue());
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		headers.set("Authorizatio", "Bearer " + authorizedClient.getAccessToken().getTokenValue());
 		HttpEntity<Object> requestEntity = new HttpEntity<>(body, headers);
 		getRestTemplate().exchange(revokeEndpointUrl, HttpMethod.POST, requestEntity, String.class);

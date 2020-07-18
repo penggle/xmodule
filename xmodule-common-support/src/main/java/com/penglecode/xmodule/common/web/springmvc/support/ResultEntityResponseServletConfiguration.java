@@ -69,7 +69,7 @@ public class ResultEntityResponseServletConfiguration extends AbstractSpringConf
 		}
 
 		@Override
-		public Object read(Class<? extends Object> clazz, HttpInputMessage inputMessage)
+		public Object read(Class<?> clazz, HttpInputMessage inputMessage)
 				throws IOException, HttpMessageNotReadableException {
 			return delegate.read(clazz, inputMessage);
 		}
@@ -83,7 +83,7 @@ public class ResultEntityResponseServletConfiguration extends AbstractSpringConf
 
 		@SuppressWarnings("unchecked")
 		protected void prepareOutputMessage(Object t, HttpOutputMessage outputMessage) {
-			if(t != null && t instanceof Result && outputMessage instanceof ServerHttpResponse) {
+			if(t instanceof Result && outputMessage instanceof ServerHttpResponse) {
 				Result<Object> result = (Result<Object>) t;
 				ServerHttpResponse serverHttpResponse = (ServerHttpResponse) outputMessage;
 				HttpStatus status = HttpStatus.resolve(result.getCode());

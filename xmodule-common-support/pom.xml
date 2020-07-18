@@ -115,24 +115,6 @@
 			<artifactId>pinyin4j</artifactId>
 		</dependency>
 
-		<!-- protostuff -->
-		<dependency>
-			<groupId>io.protostuff</groupId>
-			<artifactId>protostuff-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.protostuff</groupId>
-			<artifactId>protostuff-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.protostuff</groupId>
-			<artifactId>protostuff-runtime</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.protostuff</groupId>
-			<artifactId>protostuff-collectionschema</artifactId>
-		</dependency>
-
 		<!-- okhttp -->
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>

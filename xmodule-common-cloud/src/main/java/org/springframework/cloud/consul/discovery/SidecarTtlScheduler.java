@@ -1,17 +1,14 @@
 package org.springframework.cloud.consul.discovery;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-
-import org.springframework.cloud.consul.discovery.HeartbeatProperties;
-import org.springframework.cloud.consul.discovery.TtlScheduler;
+import com.ecwid.consul.v1.ConsulClient;
+import com.ecwid.consul.v1.agent.model.NewService;
+import com.penglecode.xmodule.common.util.ThreadPoolUtils;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
-import com.ecwid.consul.v1.ConsulClient;
-import com.ecwid.consul.v1.agent.model.NewService;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * sidecar服务代理异构微服务进行TTL健康检查的调度任务
@@ -25,7 +22,7 @@ public class SidecarTtlScheduler extends TtlScheduler {
 	private final Map<String, ScheduledFuture> serviceHeartbeats = new ConcurrentHashMap<>();
 
 	private final TaskScheduler scheduler = new ConcurrentTaskScheduler(
-			Executors.newSingleThreadScheduledExecutor());
+			ThreadPoolUtils.newSingleThreadScheduledExecutor());
 
 	private final HeartbeatProperties configuration;
 

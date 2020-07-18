@@ -21,9 +21,7 @@ public class ModelDecodeUtils {
 	}
 	
 	public static <T extends BaseModel<T>> List<T> decodeModel(List<T> modelList) {
-		Optional.ofNullable(modelList).ifPresent(models -> {
-			models.stream().forEach(model -> model.decode());
-		});
+		Optional.ofNullable(modelList).ifPresent(models -> models.forEach(BaseModel::decode));
 		return modelList;
 	}
 	
@@ -33,9 +31,7 @@ public class ModelDecodeUtils {
 	}
 
 	public static <T> List<T> decodeModel(List<T> modelList, Consumer<T> consumer) {
-		Optional.ofNullable(modelList).ifPresent(models -> {
-			models.stream().forEach(consumer);
-		});
+		Optional.ofNullable(modelList).ifPresent(models -> models.forEach(consumer));
 		return modelList;
 	}
 

@@ -26,7 +26,7 @@ public class SpringConstantPool<T> implements ConstantPool<T> {
 			}
 			return ObjectUtils.defaultIfNull(bean, constant.defaultValue);
 		} else {
-			return (T)SpringUtils.getEnvProperty(constant.name, constant.type, constant.defaultValue);
+			return SpringUtils.getEnvProperty(constant.name, constant.type, constant.defaultValue);
 		}
 	}
 	

@@ -1,13 +1,8 @@
 package com.penglecode.xmodule.common.util;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.springframework.util.Assert;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,10 +10,6 @@ import java.text.DecimalFormat;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.springframework.util.Assert;
-
-import com.google.common.io.Closeables;
 
 /**
  * 文件操作工具类
@@ -55,10 +46,8 @@ public class FileUtils {
      * @return
      */
 	public static String getTextFileEncoding(String fullFilePath) {
-		BufferedInputStream in = null;
 		String code;
-		try {
-			in = new BufferedInputStream(new FileInputStream(fullFilePath));    
+		try(BufferedInputStream in = new BufferedInputStream(new FileInputStream(fullFilePath))) {
 			int p = (in.read() << 8) + in.read();
 			code = null;
 			switch (p) {
@@ -76,8 +65,6 @@ public class FileUtils {
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally {
-			Closeables.closeQuietly(in);
 		}
         return code;
 	}
@@ -101,9 +88,9 @@ public class FileUtils {
         		path = path.substring(protocol.length());
         	}
         	// 将一个或多个“\”转化成“/”
-        	path = path.replaceAll("\\\\{1,}", "/");
+        	path = path.replaceAll("\\\\+", "/");
             // 将多个“/”转化成一个“/”
-        	path = path.replaceAll("\\/{2,}", "/");
+        	path = path.replaceAll("/{2,}", "/");
         	if(!StringUtils.isEmpty(protocol)) {
         		path = protocol + path;
         	}
@@ -286,10 +273,11 @@ public class FileUtils {
         String suffix = originalName.substring(originalName.lastIndexOf('.') + 1);
         String fileName = originalName.substring(0, originalName.lastIndexOf('.'));
         String randomName = UUID.randomUUID().toString().replace("-", "");
+        String finalName = renameAll ? randomName : fileName + "_" + randomName.substring(0, 8);
         if (!StringUtils.isEmpty(appendStr)) {
-            return String.format("%s_%s.%s", renameAll ? randomName : fileName + "_" + randomName.substring(0, 8), appendStr, suffix);
+            return String.format("%s_%s.%s", finalName, appendStr, suffix);
         } else {
-            return String.format("%s.%s", renameAll ? randomName : fileName + "_" + randomName.substring(0, 8), suffix);
+            return String.format("%s.%s", finalName, suffix);
         }
     }
     

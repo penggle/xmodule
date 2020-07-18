@@ -56,9 +56,7 @@ public class ObjectRequestParamToStringConverter implements ConditionalGenericCo
 		if(STRING_TYPE_DESCRIPTOR.equals(targetType)) {
 			Class<?> clazz = sourceType.getObjectType();
 			if(!BeanUtils.isSimpleProperty(clazz)) {
-				if(sourceType.hasAnnotation(RequestParam.class)) {
-					return true;
-				}
+				return sourceType.hasAnnotation(RequestParam.class);
 			}
 		}
 		return false;

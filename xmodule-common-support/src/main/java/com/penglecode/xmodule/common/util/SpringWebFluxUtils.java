@@ -59,9 +59,7 @@ public class SpringWebFluxUtils {
 				return body;
 			}).cast(EntityResponse.class).flatMap(entityResponse -> entityResponse.writeTo(exchange, context));
 		} else if (responseBody instanceof Flux) {
-			return ((Flux<Object>) responseBody).collectList().map(objects -> {
-				return EntityResponse.fromObject(objects).status(exchange.getResponse().getStatusCode()).contentType(contentType).build();
-			}).cast(EntityResponse.class).flatMap(entityResponse -> entityResponse.writeTo(exchange, context));
+			return ((Flux<Object>) responseBody).collectList().map(objects -> EntityResponse.fromObject(objects).status(exchange.getResponse().getStatusCode()).contentType(contentType).build()).cast(EntityResponse.class).flatMap(entityResponse -> entityResponse.writeTo(exchange, context));
 		} else {
 			Mono<EntityResponse<Object>> monoEntityResponse = EntityResponse.fromObject(responseBody).status(exchange.getResponse().getStatusCode()).contentType(contentType).build();
 			return monoEntityResponse.flatMap(entityResponse -> entityResponse.writeTo(exchange, context));

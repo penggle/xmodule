@@ -1,14 +1,13 @@
 package com.penglecode.xmodule.common.security.oauth2.client.support;
 
-import java.time.Clock;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.beans.factory.InitializingBean;
-
 import com.penglecode.xmodule.common.util.SpringUtils;
 import com.penglecode.xmodule.common.util.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.time.Clock;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * OAuth2客户端的相关配置
@@ -53,7 +52,7 @@ public class OAuth2ClientConfigProperties implements InitializingBean {
 	/**
 	 * 应用之间相互调用API无须鉴权的URL集合
 	 */
-	private List<String> appAuthExcludesUrl = Arrays.asList("/api/oauth2/login");
+	private List<String> appAuthExcludesUrl = Collections.singletonList("/api/oauth2/login");
 
 	public Duration getClockSkew() {
 		return clockSkew;

@@ -18,30 +18,56 @@ import org.springframework.util.Assert;
  */
 public class TwitterSnowflakeIdGenerator implements IdGenerator<Long> {
 
-	private final static long twepoch = 1288834974657L;
-	// 机器标识位数
-	private final static long workerIdBits = 5L;
-	// 数据中心标识位数
-	private final static long datacenterIdBits = 5L;
-	// 机器ID最大值
-	private final static long MAX_WORKER_ID = -1L ^ (-1L << workerIdBits);
-	// 数据中心ID最大值
-	private final static long MAX_DATA_CENTER_ID = -1L ^ (-1L << datacenterIdBits);
-	// 毫秒内自增位
-	private final static long sequenceBits = 12L;
-	// 机器ID偏左移12位
-	private final static long workerIdShift = sequenceBits;
-	// 数据中心ID左移17位
-	private final static long datacenterIdShift = sequenceBits + workerIdBits;
-	// 时间毫秒左移22位
-	private final static long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+	private final static long TWEPOCH = 1288834974657L;
 
-	private final static long sequenceMask = -1L ^ (-1L << sequenceBits);
+	/**
+	 * 机器标识位数
+	 */
+	private final static long WORKER_ID_BITS = 5L;
+
+	/**
+	 * 数据中心标识位数
+	 */
+	private final static long DATACENTER_ID_BITS = 5L;
+
+	/**
+	 * 机器ID最大值
+	 */
+	private final static long MAX_WORKER_ID = -1L ^ (-1L << WORKER_ID_BITS);
+
+	/**
+	 * 数据中心ID最大值
+	 */
+	private final static long MAX_DATA_CENTER_ID = -1L ^ (-1L << DATACENTER_ID_BITS);
+
+	/**
+	 * 毫秒内自增位
+	 */
+	private final static long SEQUENCE_BITS = 12L;
+
+	/**
+	 * 机器ID偏左移12位
+	 */
+	private final static long WORKER_ID_SHIFT = SEQUENCE_BITS;
+
+	/**
+	 * 数据中心ID左移17位
+	 */
+	private final static long DATACENTER_ID_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS;
+
+	/**
+	 * 时间毫秒左移22位
+	 */
+	private final static long TIMESTAMP_LEFT_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS + DATACENTER_ID_BITS;
+
+	private final static long SEQUENCE_MASK = -1L ^ (-1L << SEQUENCE_BITS);
 
 	private static long lastTimestamp = -1L;
 
 	private long sequence = 0L;
+
 	private final long datacenterId;
+
 	private final long workerId;
 
 	/**
@@ -76,7 +102,7 @@ public class TwitterSnowflakeIdGenerator implements IdGenerator<Long> {
 
 		if (lastTimestamp == timestamp) {
 			// 当前毫秒内，则+1
-			sequence = (sequence + 1) & sequenceMask;
+			sequence = (sequence + 1) & SEQUENCE_MASK;
 			if (sequence == 0) {
 				// 当前毫秒内计数满了，则等待下一秒
 				timestamp = tilNextMillis(lastTimestamp);
@@ -86,11 +112,10 @@ public class TwitterSnowflakeIdGenerator implements IdGenerator<Long> {
 		}
 		lastTimestamp = timestamp;
 		// ID偏移组合生成最终的ID，并返回ID
-		long nextId = ((timestamp - twepoch) << timestampLeftShift)
-				| (datacenterId << datacenterIdShift)
-				| (workerId << workerIdShift) | sequence;
 
-		return nextId;
+		return ((timestamp - TWEPOCH) << TIMESTAMP_LEFT_SHIFT)
+				| (datacenterId << DATACENTER_ID_SHIFT)
+				| (workerId << WORKER_ID_SHIFT) | sequence;
 	}
 
 	private long tilNextMillis(final long lastTimestamp) {

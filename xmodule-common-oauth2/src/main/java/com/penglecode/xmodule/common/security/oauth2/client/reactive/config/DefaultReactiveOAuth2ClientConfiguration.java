@@ -98,31 +98,29 @@ public class DefaultReactiveOAuth2ClientConfiguration extends AbstractSpringConf
 	}
 
 	private Function<OAuth2AuthorizeRequest, Mono<Map<String, Object>>> contextAttributesMapper(final ReactiveClientRegistrationRepository clientRegistrationRepository) {
-		return authorizeRequest -> {
-			return clientRegistrationRepository.findByRegistrationId(authorizeRequest.getClientRegistrationId()).flatMap(registration -> {
-				ServerWebExchange exchange = authorizeRequest.getAttribute(ServerWebExchange.class.getName());
-				Map<String,Object> contextAttributes = new HashMap<String,Object>();
-				return Mono.just(contextAttributes).flatMap(attrs -> { //默认所有grantType均带上scope
-					String scope = exchange.getRequest().getQueryParams().getFirst(OAuth2ParameterNames.SCOPE);
-					if(StringUtils.hasText(scope)) {
-						attrs.put(OAuth2AuthorizationContext.REQUEST_SCOPE_ATTRIBUTE_NAME,
-								StringUtils.delimitedListToStringArray(scope, " "));
+		return authorizeRequest -> clientRegistrationRepository.findByRegistrationId(authorizeRequest.getClientRegistrationId()).flatMap(registration -> {
+			ServerWebExchange exchange = authorizeRequest.getAttribute(ServerWebExchange.class.getName());
+			Map<String,Object> contextAttributes = new HashMap<String,Object>();
+			return Mono.just(contextAttributes).flatMap(attrs -> { //默认所有grantType均带上scope
+				String scope = exchange.getRequest().getQueryParams().getFirst(OAuth2ParameterNames.SCOPE);
+				if(StringUtils.hasText(scope)) {
+					attrs.put(OAuth2AuthorizationContext.REQUEST_SCOPE_ATTRIBUTE_NAME,
+							StringUtils.delimitedListToStringArray(scope, " "));
+				}
+				return Mono.just(attrs);
+			}).filter(attrs -> registration.getAuthorizationGrantType().equals(AuthorizationGrantType.PASSWORD)).flatMap(attrs -> { //password模式带上username/password
+				return exchange.getFormData().flatMap(form -> {
+					String username = form.getFirst(OAuth2ParameterNames.USERNAME);
+					String password = form.getFirst(OAuth2ParameterNames.PASSWORD);
+					if(StringUtils.hasText(username) && StringUtils.hasText(password)) {
+						// `PasswordOAuth2AuthorizedClientProvider` requires both attributes
+						attrs.put(OAuth2AuthorizationContext.USERNAME_ATTRIBUTE_NAME, username);
+						attrs.put(OAuth2AuthorizationContext.PASSWORD_ATTRIBUTE_NAME, password);
 					}
 					return Mono.just(attrs);
-				}).filter(attrs -> registration.getAuthorizationGrantType().equals(AuthorizationGrantType.PASSWORD)).flatMap(attrs -> { //password模式带上username/password
-					return exchange.getFormData().flatMap(form -> {
-						String username = form.getFirst(OAuth2ParameterNames.USERNAME);
-						String password = form.getFirst(OAuth2ParameterNames.PASSWORD);
-						if(StringUtils.hasText(username) && StringUtils.hasText(password)) {
-							// `PasswordOAuth2AuthorizedClientProvider` requires both attributes
-							attrs.put(OAuth2AuthorizationContext.USERNAME_ATTRIBUTE_NAME, username);
-							attrs.put(OAuth2AuthorizationContext.PASSWORD_ATTRIBUTE_NAME, password);
-						}
-						return Mono.just(attrs);
-					}).switchIfEmpty(Mono.defer(() -> Mono.just(attrs)));
-				}).switchIfEmpty(Mono.defer(() -> Mono.just(contextAttributes)));
-			});
-		};
+				}).switchIfEmpty(Mono.defer(() -> Mono.just(attrs)));
+			}).switchIfEmpty(Mono.defer(() -> Mono.just(contextAttributes)));
+		});
 	}
 	
 }

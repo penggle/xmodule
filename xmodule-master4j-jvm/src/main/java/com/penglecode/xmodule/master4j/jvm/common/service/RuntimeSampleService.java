@@ -1,21 +1,19 @@
 package com.penglecode.xmodule.master4j.jvm.common.service;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import com.penglecode.xmodule.common.util.CollectionUtils;
 import com.penglecode.xmodule.master4j.jvm.common.model.RuntimeSample;
 import com.sun.management.OperatingSystemMXBean;
+import org.springframework.stereotype.Service;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.List;
 
 @Service
 public class RuntimeSampleService {
 
 	private static final int MB_OF_BYTES = 1024 * 1024;
-	
+
 	public RuntimeSample collectRuntimeSample() {
 		RuntimeSample sample = new RuntimeSample();
 		Runtime runtime = Runtime.getRuntime();
@@ -46,7 +44,7 @@ public class RuntimeSampleService {
 		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
 		List<String> vmArgs = runtimeMxBean.getInputArguments();
 		if(!CollectionUtils.isEmpty(vmArgs)) {
-			sample.setVmArgs(vmArgs.stream().collect(Collectors.joining(";")));
+			sample.setVmArgs(String.join(";", vmArgs));
 		}
 		return sample;
 	}

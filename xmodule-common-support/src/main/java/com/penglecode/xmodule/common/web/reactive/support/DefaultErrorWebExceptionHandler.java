@@ -70,7 +70,7 @@ public class DefaultErrorWebExceptionHandler extends org.springframework.boot.au
 
 	@Override
 	protected RequestPredicate acceptsTextHtml() {
-		RequestPredicate excludePredicate = (serverRequest) -> SpringWebFluxUtils.isAsyncRequest(serverRequest); //排除异步请求
+		RequestPredicate excludePredicate = SpringWebFluxUtils::isAsyncRequest; //排除异步请求
 		return super.acceptsTextHtml().and(excludePredicate.negate());
 	}
 	

@@ -38,7 +38,7 @@ public class PaginationInterceptor implements Interceptor {
 			Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
 			Dialect.Type databaseType = null;
 			String d = configuration.getVariables().getProperty("dialect");
-			if(d == null || d.trim().equals("")){
+			if(d == null || "".equals(d.trim())){
 				throw new IllegalStateException("No property named with 'dialect' defined in mybatis configuration xml file.");
 			}
 			try {
@@ -54,6 +54,8 @@ public class PaginationInterceptor implements Interceptor {
 			  	case ORACLE: // Oracle分页
 			  		dialect = new OracleDialect();
 			  		break;
+				default: // 默认为MySQL分页
+					dialect = new MySQLDialect();
 			}
 			if(dialect == null){
 				throw new IllegalStateException(String.format("No %s dialect found!", databaseType));

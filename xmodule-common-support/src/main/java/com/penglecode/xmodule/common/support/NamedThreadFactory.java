@@ -13,21 +13,21 @@ public class NamedThreadFactory implements ThreadFactory {
 
 	public static final String DEFAULT_THREAD_NAME_PREFIX = "threadPool";
 	
-	private static final AtomicInteger threadPoolNumber = new AtomicInteger(1);
+	private static final AtomicInteger THREAD_POOL_NUMBER = new AtomicInteger(1);
+
+	private static final String NAME_PATTERN = "%s-%d-thread";
 	
 	private final ThreadGroup group;
 	
 	private final AtomicInteger threadNumber = new AtomicInteger(1);
 	
-	private final String NAME_PATTERN = "%s-%d-thread";
-
 	private final String threadNamePrefix;
 	
 	public NamedThreadFactory(String threadNamePrefix) {
 		super();
 		final SecurityManager sm = System.getSecurityManager();
 		this.group = (sm != null) ? sm.getThreadGroup() : Thread.currentThread().getThreadGroup();
-		this.threadNamePrefix = String.format(NAME_PATTERN, checkThreadNamePrefix(threadNamePrefix), threadPoolNumber.getAndIncrement());
+		this.threadNamePrefix = String.format(NAME_PATTERN, checkThreadNamePrefix(threadNamePrefix), THREAD_POOL_NUMBER.getAndIncrement());
 	}
 
 	public String checkThreadNamePrefix(String threadNamePrefix) {

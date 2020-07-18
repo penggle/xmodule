@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class CommonValidateUtils {
 
-	public static final String REGEX_MOBILE_PHONE = "1[3-9]{1}[0-9]{1}[0-9]{8}";
+	public static final String REGEX_MOBILE_PHONE = "1[3-9][0-9]{1}[0-9]{8}";
 	
 	public static final String REGEX_EMAIL = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
 	

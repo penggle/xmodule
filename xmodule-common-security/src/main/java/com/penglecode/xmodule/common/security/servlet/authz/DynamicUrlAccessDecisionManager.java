@@ -1,13 +1,13 @@
 package com.penglecode.xmodule.common.security.servlet.authz;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.core.Authentication;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * 自定义的动态URL-ROLE权限拦截AccessDecisionManager
@@ -24,7 +24,7 @@ public class DynamicUrlAccessDecisionManager extends AffirmativeBased {
 	}
 
 	public DynamicUrlAccessDecisionManager() {
-        super(Arrays.asList(new RoleVoter()));
+        super(Collections.singletonList(new RoleVoter()));
         setAllowIfAllAbstainDecisions(false);
     }
 

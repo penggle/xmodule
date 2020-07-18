@@ -286,7 +286,7 @@ public class UpmsUser implements BaseModel<UpmsUser> {
                 setUserTypeName(em.getTypeName());
             }
         }
-        if (userIcon != null && !userIcon.trim().equals("")) {
+        if (userIcon != null && !"".equals(userIcon.trim())) {
         	String userIconUrl = userIcon;
         	if(userIconUrl.toLowerCase().startsWith("http")){ //默认的头像或者以http开头的全url路径头像
         		//nothing to do

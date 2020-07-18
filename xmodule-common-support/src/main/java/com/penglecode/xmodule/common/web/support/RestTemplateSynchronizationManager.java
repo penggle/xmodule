@@ -11,20 +11,20 @@ import org.springframework.web.client.ResponseErrorHandler;
  */
 public class RestTemplateSynchronizationManager {
 
-	private static final ThreadLocal<Class<? extends ResponseErrorHandler>> responseErrorHandlerType =
+	private static final ThreadLocal<Class<? extends ResponseErrorHandler>> RESPONSE_ERROR_HANDLER_TYPE =
 			new NamedThreadLocal<>("The type of ResponseErrorHandler for RestTemplate");
 	
 	
 	public static void setCurrentResponseErrorHandlerType(Class<? extends ResponseErrorHandler> errorHandlerType) {
-		responseErrorHandlerType.set(errorHandlerType);
+		RESPONSE_ERROR_HANDLER_TYPE.set(errorHandlerType);
 	}
 	
 	public static Class<? extends ResponseErrorHandler> getCurrentResponseErrorHandlerType() {
-		return responseErrorHandlerType.get();
+		return RESPONSE_ERROR_HANDLER_TYPE.get();
 	}
 	
 	public static void removeCurrentResponseErrorHandlerType() {
-		responseErrorHandlerType.remove();
+		RESPONSE_ERROR_HANDLER_TYPE.remove();
 	}
 	
 }

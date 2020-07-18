@@ -1,16 +1,14 @@
 package com.penglecode.xmodule.common.web.springmvc.support;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import com.penglecode.xmodule.common.support.DtoModel;
+import com.penglecode.xmodule.common.util.ReflectionUtils;
 import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
-import com.penglecode.xmodule.common.support.DtoModel;
-import com.penglecode.xmodule.common.util.ReflectionUtils;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class EnhancedRequestMappingHandlerAdapter extends RequestMappingHandlerAdapter {
 
@@ -35,7 +33,7 @@ public class EnhancedRequestMappingHandlerAdapter extends RequestMappingHandlerA
 			if(argumentResolver.getClass().equals(RequestParamMethodArgumentResolver.class)) {
 				Boolean useDefaultResolution = ReflectionUtils.getFieldValue(argumentResolver, "useDefaultResolution");
 				EnhancedRequestParamMethodArgumentResolver enhancedArgumentResolver = new EnhancedRequestParamMethodArgumentResolver(getBeanFactory(), useDefaultResolution);
-				enhancedArgumentResolver.setResolvableParameterTypes(Arrays.asList(DtoModel.class));
+				enhancedArgumentResolver.setResolvableParameterTypes(Collections.singletonList(DtoModel.class));
 				Collections.replaceAll(methodArgumentResolvers, argumentResolver, enhancedArgumentResolver);
 			}
 		});

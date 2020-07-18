@@ -1,8 +1,12 @@
 package com.penglecode.xmodule.common.security.oauth2.client.reactive.service;
 
-import java.time.Duration;
-import java.time.Instant;
-
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
+import com.penglecode.xmodule.common.redis.GlobalRedisKeys;
+import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2ClientJsonSerializers;
+import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
+import com.penglecode.xmodule.common.util.JsonUtils;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -13,16 +17,10 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.util.Assert;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
-import com.penglecode.xmodule.common.redis.GlobalRedisKeys;
-import com.penglecode.xmodule.common.security.oauth2.client.support.OAuth2ClientJsonSerializers;
-import com.penglecode.xmodule.common.security.oauth2.consts.OAuth2ApplicationConstants;
-import com.penglecode.xmodule.common.util.JsonUtils;
-
 import reactor.core.publisher.Mono;
+
+import java.time.Duration;
+import java.time.Instant;
 
 /**
  * 基于Redis存储的ReactiveOAuth2AuthorizedClientService
@@ -81,7 +79,7 @@ public class RedisReactiveOAuth2AuthorizedClientService implements ReactiveOAuth
 		Assert.hasText(principalName, "principalName cannot be empty");
 		return this.clientRegistrationRepository.findByRegistrationId(clientRegistrationId)
 				.map(clientRegistration -> oauth2AuthorizedClientKey(clientRegistrationId, principalName))
-				.doOnNext(key -> redisTemplate.delete(key))
+				.doOnNext(redisTemplate::delete)
 				.then(Mono.empty());
 	}
 	

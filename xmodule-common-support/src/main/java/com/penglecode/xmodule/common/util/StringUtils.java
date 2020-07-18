@@ -2,6 +2,7 @@ package com.penglecode.xmodule.common.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -50,7 +51,7 @@ public class StringUtils {
      * @return
      */
     public static boolean hasLength(String str) {
-        return str == null ? false : str.length() > 0;
+        return str != null && str.length() > 0;
     }
 	
     /**
@@ -215,7 +216,7 @@ public class StringUtils {
      * @return
      */
     public static boolean equals(String str1, String str2) {
-        return str1 == null ? str2 == null : str1.equals(str2);
+        return Objects.equals(str1, str2);
     }
     
     /**
@@ -255,7 +256,7 @@ public class StringUtils {
      */
     public static boolean trimEquals(String str1, String str2) {
     	if(str1 == null || str2 == null){
-    		return str1 == str2;
+    		return str1 == null && str2 == null;
     	}
         return str1.trim().equals(str2.trim());
     }
@@ -278,7 +279,7 @@ public class StringUtils {
      */
     public static boolean trimEqualsIgnoreCase(String str1, String str2) {
     	if(str1 == null || str2 == null){
-    		return str1 == str2;
+            return str1 == null && str2 == null;
     	}
         return str1.trim().equalsIgnoreCase(str2.trim());
     }
@@ -396,9 +397,11 @@ public class StringUtils {
             return null;
         }
         int len = targetStr.length();
+        StringBuilder targetStrBuilder = new StringBuilder(targetStr);
         while (len++ < length) {
-            targetStr = appendChar + targetStr;
+            targetStrBuilder.insert(0, appendChar);
         }
+        targetStr = targetStrBuilder.toString();
         return targetStr;
     }
 
@@ -416,9 +419,11 @@ public class StringUtils {
             return null;
         }
         int len = targetStr.length();
+        StringBuilder targetStrBuilder = new StringBuilder(targetStr);
         while (len++ < length) {
-            targetStr += appendChar;
+            targetStrBuilder.append(appendChar);
         }
+        targetStr = targetStrBuilder.toString();
         return targetStr;
     }
 
@@ -443,7 +448,7 @@ public class StringUtils {
         }
         int sz = str.length();
         for (int i = 0; i < sz; i++) {
-            if (Character.isLetter(str.charAt(i)) == false) {
+            if (!Character.isLetter(str.charAt(i))) {
                 return false;
             }
         }
@@ -462,7 +467,7 @@ public class StringUtils {
         }
         int sz = str.length();
         for (int i = 0; i < sz; i++) {
-            if (Character.isLetterOrDigit(str.charAt(i)) == false) {
+            if (!Character.isLetterOrDigit(str.charAt(i))) {
                 return false;
             }
         }
@@ -481,7 +486,7 @@ public class StringUtils {
         }
         int sz = str.length();
         for (int i = 0; i < sz; i++) {
-            if (Character.isDigit(str.charAt(i)) == false) {
+            if (!Character.isDigit(str.charAt(i))) {
                 return false;
             }
         }
@@ -530,7 +535,7 @@ public class StringUtils {
 			sb.append(strs[i]);
 			if(i < len - 1){
 				if(wrapChar != null) {
-					sb.append(wrapChar + delimiter + wrapChar);
+					sb.append(wrapChar).append(delimiter).append(wrapChar);
 				} else {
 					sb.append(delimiter);
 				}
@@ -587,10 +592,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static boolean containsChineseChar(String str){
-		if(str != null && CHINESE_CHAR_PATTERN.matcher(str).find()){
-			return true;
-		}
-		return false;
-	}
+        return str != null && CHINESE_CHAR_PATTERN.matcher(str).find();
+    }
     
 }

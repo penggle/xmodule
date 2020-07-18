@@ -64,10 +64,8 @@ public class ServletOAuth2AuthorizedClientExchangeFilter implements ExchangeFilt
 	}
 	
 	public Consumer<WebClient.Builder> oauth2Configuration() {
-		return builder -> {
-			builder.defaultRequest(defaultRequest()) //WebClient的全局默认请求设置
-				   .filter(this);
-		};
+		return builder -> builder.defaultRequest(defaultRequest()) //WebClient的全局默认请求设置
+			   .filter(this);
 	}
 	
 	/**
@@ -215,12 +213,10 @@ public class ServletOAuth2AuthorizedClientExchangeFilter implements ExchangeFilt
 		ClientRegistration clientRegistration = OAuth2ClientUtils.getClientRegistrationById(clientRegistrationId);
 		Assert.notNull(clientRegistration, "No ClientRegistration found for clientRegistrationId: " + clientRegistrationId);
 		if (AuthorizationGrantType.PASSWORD.equals(clientRegistration.getAuthorizationGrantType())) { //OAuth2 password认证授权模式
-			JwtAuthenticationToken authentication = SpringSecurityUtils.getCurrentAuthentication(); //当前已登录用户(此语句强制约束了：用户已登录且登录身份是JwtAuthenticationToken，否则报错)
-			return authentication;
+			return SpringSecurityUtils.<JwtAuthenticationToken>getCurrentAuthentication();
 		} else if (AuthorizationGrantType.AUTHORIZATION_CODE.equals(clientRegistration.getAuthorizationGrantType()) 
 				|| AuthorizationGrantType.IMPLICIT.equals(clientRegistration.getAuthorizationGrantType())) { //OAuth2 authorization_code|implicit认证授权模式
-			OAuth2AuthenticationToken authentication = SpringSecurityUtils.getCurrentAuthentication(); //当前已登录用户(此语句强制约束了：用户已登录且登录身份是OAuth2AuthenticationToken，否则报错)
-			return authentication;
+			return SpringSecurityUtils.<OAuth2AuthenticationToken>getCurrentAuthentication();
 		} else { //OAuth2 client_credentials认证授权模式 (如果当前处于未登录状态只能走此分支)
 			/**
 			 * AccessToken中的sub字段值与#OAuth2PrincipalNameAuthentication.name及#JwtAuthenticationToken.name的值保持一致(至于为什么要保持一致，究其原因是#JwtAuthenticationToken.name硬编码取自令牌的sub字段),
@@ -228,8 +224,7 @@ public class ServletOAuth2AuthorizedClientExchangeFilter implements ExchangeFilt
 			 * (因为OAuth2AuthorizedClientRepository.loadAuthorizedClient()方法查找逻辑是根据key(clientRegistrationId + principal.name)作为唯一键来查找的)
 			 */
 			String principalName = clientRegistration.getClientId(); //此处不能轻易改动，必须约定好了
-			Authentication authentication = OAuth2ClientUtils.prepareClientCredentialsOAuth2Authentication(clientRegistration, null, principalName);
-			return authentication;
+			return OAuth2ClientUtils.prepareClientCredentialsOAuth2Authentication(clientRegistration, null, principalName);
 		}
 	}
 	

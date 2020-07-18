@@ -22,7 +22,7 @@ import org.springframework.util.PropertiesPersister;
  */
 public class PropertiesUtils extends PropertiesLoaderUtils {
 
-	private static final PropertiesPersister defaultPropertiesPersister = new DefaultPropertiesPersister();
+	private static final PropertiesPersister DEFAULT_PROPERTIES_PERSISTER = new DefaultPropertiesPersister();
 	
 	/**
 	 * 保存properties数据到指定的properties文件
@@ -52,20 +52,13 @@ public class PropertiesUtils extends PropertiesLoaderUtils {
 				properties = oldProperties;
 			}
 		}
-		storeProperties(properties, propsFile, defaultPropertiesPersister);
+		storeProperties(properties, propsFile, DEFAULT_PROPERTIES_PERSISTER);
 	}
 	
 	static void storeProperties(Properties properties, File propFile, PropertiesPersister persister)
 			throws IOException {
-		OutputStream stream = null;
-		try {
-			stream = new FileOutputStream(propFile);
+		try (OutputStream stream = new FileOutputStream(propFile)) {
 			persister.store(properties, stream, "");
-		}
-		finally {
-			if (stream != null) {
-				stream.close();
-			}
 		}
 	}
 	

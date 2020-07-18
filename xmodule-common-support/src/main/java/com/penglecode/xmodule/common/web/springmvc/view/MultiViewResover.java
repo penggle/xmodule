@@ -35,8 +35,7 @@ public class MultiViewResover implements ViewResolver, InitializingBean, Ordered
 			viewName = viewName.substring(0, index);
 		}
 		ViewResolver viewResolver = this.viewResolvers.get(viewType);
-		View view = viewResolver.resolveViewName(viewName, locale);
-		return view;
+		return viewResolver.resolveViewName(viewName, locale);
 	}
 	
 	public Map<String, ViewResolver> getViewResolvers() {

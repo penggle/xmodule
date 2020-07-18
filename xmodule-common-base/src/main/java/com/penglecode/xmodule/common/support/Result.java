@@ -81,7 +81,7 @@ public class Result<T> implements DtoModel {
 			return data;
 		} else {
 			String message = this.message;
-			if(message == null || message.trim().equals("")) {
+			if(message == null || "".equals(message.trim())) {
 				message = "Unkown Error";
 			}
 		}

@@ -2,6 +2,7 @@ package com.penglecode.xmodule.common.cloud.sidecar.consul;
 
 import java.net.URL;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -180,28 +181,16 @@ public class ConsulSidecarApplicationProperties {
 		}
 
 		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((instanceUrl == null) ? 0 : instanceUrl.hashCode());
-			return result;
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			ServiceInstance that = (ServiceInstance) o;
+			return instanceUrl.equals(that.instanceUrl);
 		}
 
 		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			ServiceInstance other = (ServiceInstance) obj;
-			if (instanceUrl == null) {
-				if (other.instanceUrl != null)
-					return false;
-			} else if (!instanceUrl.equals(other.instanceUrl))
-				return false;
-			return true;
+		public int hashCode() {
+			return Objects.hash(instanceUrl);
 		}
 
 		@Override

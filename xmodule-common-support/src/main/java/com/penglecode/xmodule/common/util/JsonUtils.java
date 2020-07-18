@@ -22,7 +22,7 @@ public class JsonUtils {
 	
 	public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	
-	private static final ObjectMapper defaultObjectMapper = createDefaultObjectMapper();
+	private static final ObjectMapper DEFAULT_OBJECT_MAPPER = createDefaultObjectMapper();
 	
 	/**
 	 * 对象转json字符串
@@ -30,7 +30,7 @@ public class JsonUtils {
 	 * @return
 	 */
 	public static String object2Json(Object object) {
-		return object2Json(defaultObjectMapper, object);
+		return object2Json(DEFAULT_OBJECT_MAPPER, object);
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public class JsonUtils {
 	 * @return
 	 */
 	public static <T> T json2Object(String json, Class<T> clazz) {
-		return json2Object(defaultObjectMapper, json, clazz);
+		return json2Object(DEFAULT_OBJECT_MAPPER, json, clazz);
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class JsonUtils {
 	 * @return
 	 */
 	public static <T> T json2Object(String json, TypeReference<T> typeReference) {
-		return json2Object(defaultObjectMapper, json, typeReference);
+		return json2Object(DEFAULT_OBJECT_MAPPER, json, typeReference);
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public class JsonUtils {
 	 * @return
 	 */
 	public static JsonNode createRootJsonNode(String json) {
-		return createRootJsonNode(defaultObjectMapper, json);
+		return createRootJsonNode(DEFAULT_OBJECT_MAPPER, json);
 	}
 	
 	/**
@@ -209,7 +209,7 @@ public class JsonUtils {
 	}
 	
 	public static ObjectMapper getDefaultObjectMapper() {
-		return defaultObjectMapper;
+		return DEFAULT_OBJECT_MAPPER;
 	}
 
 	public static class JacksonJsonException extends RuntimeException {

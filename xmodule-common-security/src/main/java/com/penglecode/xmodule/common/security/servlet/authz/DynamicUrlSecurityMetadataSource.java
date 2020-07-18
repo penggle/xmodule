@@ -97,11 +97,7 @@ public class DynamicUrlSecurityMetadataSource implements FilterInvocationSecurit
 		if(!CollectionUtils.isEmpty(allResourceRoles)) {
 			for(RbacRoleResource roleResource : allResourceRoles) {
 				RequestMatcher requestMatcher = getRequestMatcher(roleResource.getResourceUrl(), roleResource.getHttpMethod());
-				Set<ConfigAttribute> configAttrs = securityPermissions.get(requestMatcher);
-				if(configAttrs == null) {
-					configAttrs = new LinkedHashSet<ConfigAttribute>();
-					securityPermissions.put(requestMatcher, configAttrs);
-				}
+				Set<ConfigAttribute> configAttrs = securityPermissions.computeIfAbsent(requestMatcher, k -> new LinkedHashSet<ConfigAttribute>());
 				configAttrs.add(new SecurityConfig(prefixRole(StringUtils.defaultIfEmpty(roleResource.getRoleCode(), supremeRole))));
 			}
 		}

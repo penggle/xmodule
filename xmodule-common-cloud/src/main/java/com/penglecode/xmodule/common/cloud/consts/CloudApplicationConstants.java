@@ -1,11 +1,11 @@
 package com.penglecode.xmodule.common.cloud.consts;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import com.penglecode.xmodule.common.consts.Constant;
 import com.penglecode.xmodule.common.consts.SpringEnvConstant;
 import com.penglecode.xmodule.common.support.NamedThreadFactory;
+import com.penglecode.xmodule.common.util.ThreadPoolUtils;
+
+import java.util.concurrent.Executor;
 
 public class CloudApplicationConstants {
 
@@ -17,6 +17,6 @@ public class CloudApplicationConstants {
 	/**
 	 * 事件发布默认的线程池
 	 */
-	public static final Executor DEFAULT_EVENT_PUBLISH_EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4, new NamedThreadFactory("DEFAULT-EVENT-PUBLISHER"));
+	public static final Executor DEFAULT_EVENT_PUBLISH_EXECUTOR = ThreadPoolUtils.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4, new NamedThreadFactory("DEFAULT-EVENT-PUBLISHER"));
 	
 }

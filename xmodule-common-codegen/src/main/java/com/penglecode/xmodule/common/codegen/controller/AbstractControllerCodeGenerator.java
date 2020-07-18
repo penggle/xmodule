@@ -82,7 +82,7 @@ public class AbstractControllerCodeGenerator extends AbstractCodeGenerator<Contr
 				generatedCodeFilePaths.add(generateControllerCode(modelClass));
 			}
 		} catch (Exception e) {
-			generatedCodeFilePaths.stream().forEach(FileUtils::deleteFileQuietly); //rollback for exception
+			generatedCodeFilePaths.forEach(FileUtils::deleteFileQuietly); //rollback for exception
 			throw e;
 		}
 	}
@@ -150,7 +150,7 @@ public class AbstractControllerCodeGenerator extends AbstractCodeGenerator<Contr
 			StringBuilder idPathVariables = new StringBuilder();
 			for(int i = 0, len = modelIdFields.size(); i < len; i++) {
 				Field modelIdField = modelIdFields.get(i);
-				idPathVariables.append("{" + modelIdField.getName() + "}");
+				idPathVariables.append("{").append(modelIdField.getName()).append("}");
 				if(i != len - 1) {
 					idPathVariables.append("/");
 				}

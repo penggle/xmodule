@@ -200,7 +200,7 @@ public class CodegenUtils {
 			try {
 				serviceClass = ClassUtils.forName(className);
 				String createModelMethodName = "create" + modelAliasName;
-				Method createModelMethod = ReflectionUtils.findMethod(serviceClass, createModelMethodName, new Class<?>[] {modelClass});
+				Method createModelMethod = ReflectionUtils.findMethod(serviceClass, createModelMethodName, modelClass);
 				if(createModelMethod != null) {
 					value.setValue(serviceClass);
 				}

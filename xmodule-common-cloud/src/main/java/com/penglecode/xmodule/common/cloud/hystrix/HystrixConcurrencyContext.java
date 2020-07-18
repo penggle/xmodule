@@ -26,7 +26,7 @@ public class HystrixConcurrencyContext extends HashMap<String,Object> {
 		super(initialCapacity);
 	}
 
-	public HystrixConcurrencyContext(Map<? extends String, ? extends Object> m) {
+	public HystrixConcurrencyContext(Map<? extends String, ?> m) {
 		super(m);
 	}
 	

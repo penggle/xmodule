@@ -274,9 +274,7 @@ public class SpringUtils {
 	 */
 	public static void setBeanProperty(List<Object> beans, Map<String,Object> properties, ConversionService conversionService) {
 		Assert.notEmpty(beans, "Parameter 'bean' can not be empty!");
-		beans.forEach(bean -> {
-			setBeanProperty(bean, properties, conversionService);
-		});
+		beans.forEach(bean -> setBeanProperty(bean, properties, conversionService));
 	}
 	
 	/**

@@ -60,15 +60,15 @@ import com.penglecode.xmodule.common.web.support.MvcResourceMethodMapping;
 @SuppressWarnings("unchecked")
 public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilter implements ApplicationContextAware {
 
-	public static final Pattern MESSAGE_SOURCE_CODE_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9_.]+)\\}");
+	public static final Pattern MESSAGE_SOURCE_CODE_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9_.]+)}");
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHttpAccessLoggingFilter.class);
 	
-	private static final ExecutorService httpAccessLogHandlerExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new NamedThreadFactory("HTTP-REQUEST-LOGGER"));
+	private static final ExecutorService HTTP_ACCESS_LOG_HANDLER_EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new NamedThreadFactory("HTTP-REQUEST-LOGGER"));
 	
 	private static final String DEFAULT_LOG_TITLE = "用户访问日志";
 	
-	private static final Map<HttpAccessLogging.LoggingMode,HttpAccessLogDAO> httpAccessLogDAOCacheMap = new HashMap<HttpAccessLogging.LoggingMode,HttpAccessLogDAO>();
+	private static final Map<HttpAccessLogging.LoggingMode,HttpAccessLogDAO> HTTP_ACCESS_LOGDAO_CACHE_MAP = new HashMap<HttpAccessLogging.LoggingMode,HttpAccessLogDAO>();
 	
 	private ApplicationContext applicationContext;
 	
@@ -97,11 +97,11 @@ public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilt
 	}
 
 	public static ExecutorService getHttpAccessLogHandlerExecutor() {
-		return httpAccessLogHandlerExecutor;
+		return HTTP_ACCESS_LOG_HANDLER_EXECUTOR;
 	}
 	
 	public static Map<HttpAccessLogging.LoggingMode, HttpAccessLogDAO> getHttpAccessLogDAOCacheMap() {
-		return httpAccessLogDAOCacheMap;
+		return HTTP_ACCESS_LOGDAO_CACHE_MAP;
 	}
 
 	public AntPathMatcher getPathMatcher() {
@@ -447,7 +447,7 @@ public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilt
 						return new String(bytes, charset);
 					}
 				} else {
-					LOGGER.warn(">>> Found unsupport Content-Type({}) response and ignored!");
+					LOGGER.warn(">>> Found unsupport Content-Type({}) response and ignored!", contentType);
 				}
 			}
 		}
@@ -460,7 +460,7 @@ public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilt
 	 * @return
 	 */
 	protected HttpAccessLogDAO getHttpAccessLogDAO(HttpAccessLogContext context) {
-		HttpAccessLogDAO httpAccessLogDAO = httpAccessLogDAOCacheMap.get(context.getHttpAccessLogging().loggingMode());
+		HttpAccessLogDAO httpAccessLogDAO = HTTP_ACCESS_LOGDAO_CACHE_MAP.get(context.getHttpAccessLogging().loggingMode());
 		Assert.state(httpAccessLogDAO != null, "No bean found of type : " + HttpAccessLogDAO.class.getName());
 		return httpAccessLogDAO;
 	}
@@ -529,18 +529,12 @@ public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilt
 	@SuppressWarnings("unused")
 	public class DefaultHttpAccessLoggingTask implements Runnable {
 
-		private final HttpServletRequest request;
-		
-		private final HttpServletResponse response;
-		
 		private final HttpAccessLogContext context;
 		
 		private final HttpAccessLogDAO httpAccessLogDAO;
 		
 		public DefaultHttpAccessLoggingTask(HttpServletRequest request, HttpServletResponse response, HttpAccessLogContext context, HttpAccessLogDAO httpAccessLogDAO) {
 			super();
-			this.request = request;
-			this.response = response;
 			this.context = context;
 			this.httpAccessLogDAO = httpAccessLogDAO;
 		}
@@ -550,7 +544,7 @@ public abstract class AbstractHttpAccessLoggingFilter extends OncePerRequestFilt
 				HttpAccessLog<?> httpAccessLog = context.getHttpAccessLog();
 				if (httpAccessLog != null) {
 					logger.debug(">>> Http access log : " + httpAccessLog);
-					httpAccessLogDAO.saveLog((HttpAccessLog<?>) httpAccessLog);
+					httpAccessLogDAO.saveLog(httpAccessLog);
 				} 
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);

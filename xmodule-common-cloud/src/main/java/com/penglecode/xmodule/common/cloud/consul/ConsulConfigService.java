@@ -88,7 +88,7 @@ public class ConsulConfigService implements EnvironmentAware {
 		
 		StringBuilder sb = new StringBuilder();
 		for(Map.Entry<Object,Object> entry : propsConfig.entrySet()) {
-			sb.append(entry.getKey() + "=" + entry.getValue() + "\n");
+			sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
 		}
 		
 		String newPropsConfigContent = sb.toString();

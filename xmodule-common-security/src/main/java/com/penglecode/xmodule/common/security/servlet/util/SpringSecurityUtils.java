@@ -25,7 +25,7 @@ import com.penglecode.xmodule.common.util.SpringUtils;
 @SuppressWarnings("unchecked")
 public class SpringSecurityUtils {
 
-	private static final Object mutex = new Object();
+	private static final Object MUTEX = new Object();
 	
 	private static volatile HttpSecurity primaryHttpSecurity;
 	
@@ -52,7 +52,7 @@ public class SpringSecurityUtils {
 	public static HttpSecurity getPrimaryHttpSecurity() {
 		WebSecurityConfigurerAdapter primarySecurityConfigurer = getPrimarySecurityConfigurer();
 		if(primaryHttpSecurity == null) {
-			synchronized (mutex) {
+			synchronized (MUTEX) {
 				if(primaryHttpSecurity == null) {
 					Method method = ReflectionUtils.findMethod(WebSecurityConfigurerAdapter.class, "getHttp");
 					method.setAccessible(true);

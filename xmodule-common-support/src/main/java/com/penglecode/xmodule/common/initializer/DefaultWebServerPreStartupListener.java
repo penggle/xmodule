@@ -64,7 +64,7 @@ public class DefaultWebServerPreStartupListener implements BeanPostProcessor, Ap
 				try {
 					initializer.initialize(applicationContext);
 				} catch (Throwable e) {
-					LOGGER.error(String.format(">>> 执行Spring Web应用启动初始化程序(%s)失败：%s", initializer.getClass().getSimpleName(), e.getMessage(), e));
+					LOGGER.error(String.format(">>> 执行Spring Web应用启动初始化程序(%s)失败：%s", initializer.getClass().getSimpleName(), e.getMessage()), e);
 					throw new ApplicationInitializeException(e);
 				}
 			}

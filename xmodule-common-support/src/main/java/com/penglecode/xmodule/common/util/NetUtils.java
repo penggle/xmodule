@@ -1,16 +1,15 @@
 package com.penglecode.xmodule.common.util;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 /**
  * 获取ip地址、mac地址等信息的工具类
  * 
@@ -40,7 +39,7 @@ public class NetUtils {
 		if (ipAddress == null || ipAddress.length() == 0
 				|| "unknown".equalsIgnoreCase(ipAddress)) {
 			ipAddress = request.getRemoteAddr();
-			if (ipAddress.equals("127.0.0.1")) {
+			if ("127.0.0.1".equals(ipAddress)) {
 				// 根据网卡取本机配置的IP
 				InetAddress inet = null;
 				try {
@@ -53,7 +52,7 @@ public class NetUtils {
 
 		}
 		// 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
-		if (ipAddress != null && ipAddress.split(".").length > 3) { // "***.***.***.***"
+		if (ipAddress != null && ipAddress.split("\\.").length > 3) { // "***.***.***.***"
 			if (ipAddress.indexOf(",") > 0) {
 				ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
 			}
@@ -75,28 +74,27 @@ public class NetUtils {
 	 * @param ip
 	 * @return
 	 */
-	public String getMACAddress(String ip) {  
-        String str = "";  
-        String macAddress = "";  
-        try {  
-            Process p = Runtime.getRuntime().exec("nbtstat -A " + ip);  
-            InputStreamReader ir = new InputStreamReader(p.getInputStream());  
-            LineNumberReader input = new LineNumberReader(ir);  
-            for (int i = 1; i < 100; i++) {  
-                str = input.readLine();  
-                if (str != null) {  
-                    if (str.indexOf("MAC Address") > 1) {  
-                        macAddress = str.substring(  
-                                str.indexOf("MAC Address") + 14, str.length());  
-                        break;  
-                    }  
-                }  
-            }  
-        } catch (IOException e) {  
-            e.printStackTrace();  
-        }  
-        return macAddress;  
-    }
+	public String getMACAddress(String ip) {
+		String str = "";
+		String macAddress = "";
+		try {
+			Process p = Runtime.getRuntime().exec("nbtstat -A " + ip);
+			InputStreamReader ir = new InputStreamReader(p.getInputStream());
+			LineNumberReader input = new LineNumberReader(ir);
+			for (int i = 1; i < 100; i++) {
+				str = input.readLine();
+				if (str != null) {
+					if (str.indexOf("MAC Address") > 1) {
+						macAddress = str.substring(str.indexOf("MAC Address") + 14);
+						break;
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return macAddress;
+	}
 	
 	/**
 	 * 根据条件查找本机地址
@@ -149,10 +147,10 @@ public class NetUtils {
 		address = getLocalAddress(true, null);
 		System.out.println(address.getHostAddress() + " , " + address.getHostName());
 		
-		address = getLocalAddress(false, Arrays.asList("172.16"));
+		address = getLocalAddress(false, Collections.singletonList("172.16"));
 		System.out.println(address.getHostAddress() + " , " + address.getHostName());
 		
-		address = getLocalAddress(true, Arrays.asList("172.16"));
+		address = getLocalAddress(true, Collections.singletonList("172.16"));
 		System.out.println(address.getHostAddress() + " , " + address.getHostName());
 	}
 

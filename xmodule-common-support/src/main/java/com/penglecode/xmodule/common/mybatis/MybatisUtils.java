@@ -1,5 +1,7 @@
 package com.penglecode.xmodule.common.mybatis;
 
+import com.penglecode.xmodule.common.util.StringUtils;
+
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
@@ -27,7 +29,7 @@ public class MybatisUtils {
         }
         if (paramObj instanceof String) {
             String str = (String) paramObj;
-            return !str.trim().equals("");
+            return !StringUtils.isEmpty(str);
         }
         if (paramObj.getClass().isArray()) {
             return Array.getLength(paramObj) > 0;
@@ -47,10 +49,7 @@ public class MybatisUtils {
         if (paramObj == null) {
             return false;
         }
-        if (paramObj instanceof Collection || paramObj.getClass().isArray()) {
-            return true;
-        }
-        return false;
+        return paramObj instanceof Collection || paramObj.getClass().isArray();
     }
     
     public static boolean isContainsParameter(Map<String,Object> paramMap, String paramName) {

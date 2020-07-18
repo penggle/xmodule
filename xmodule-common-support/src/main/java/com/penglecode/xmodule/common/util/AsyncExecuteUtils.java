@@ -20,9 +20,7 @@ public class AsyncExecuteUtils {
 	}
 	
 	public static void asyncLazyExecute(Runnable task, int delay, TimeUnit unit) {
-		CompletableFuture.completedFuture(delay).thenRunAsync(() -> {
-			LockSupport.parkNanos(unit.toNanos(delay));
-		}, DEFAULT_EXECUTOR).thenRun(task);
+		CompletableFuture.completedFuture(delay).thenRunAsync(() -> LockSupport.parkNanos(unit.toNanos(delay)), DEFAULT_EXECUTOR).thenRun(task);
 	}
 	
 }

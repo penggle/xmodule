@@ -56,9 +56,7 @@ public class SidecarConsulDiscoveryProperties extends ConsulDiscoveryProperties 
 	public void afterPropertiesSet() throws Exception {
 		if(sidecar != null && !CollectionUtils.isEmpty(sidecar.getServiceInstances())) {
 			LOGGER.info("Sidecar application registration configuration : {}", sidecar);
-			sidecar.getServiceInstances().forEach(serviceInstance -> {
-				sidecarConsulDiscoveryConfigs.add(createSidecarConsulDiscoveryProperties(serviceInstance));
-			});
+			sidecar.getServiceInstances().forEach(serviceInstance -> sidecarConsulDiscoveryConfigs.add(createSidecarConsulDiscoveryProperties(serviceInstance)));
 		}
 		Assert.notEmpty(sidecarConsulDiscoveryConfigs, "No sidecar service provider configuration found! Please check property: spring.cloud.consul.discovery.sidecar.*");
 	}

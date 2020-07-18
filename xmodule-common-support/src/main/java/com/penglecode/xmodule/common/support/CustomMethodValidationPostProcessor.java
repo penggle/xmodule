@@ -48,9 +48,7 @@ public class CustomMethodValidationPostProcessor extends MethodValidationPostPro
 			Method method = invocation.getMethod();
 			List<Validated> validatedAnnoList = new ArrayList<Validated>();
 			//提取方法参数上的@Validated注解
-			Stream.of(method.getAnnotatedParameterTypes()).forEach(at -> {
-				Optional.ofNullable(AnnotationUtils.getAnnotation(at, Validated.class)).ifPresent(validatedAnnoList::add);
-			});
+			Stream.of(method.getAnnotatedParameterTypes()).forEach(at -> Optional.ofNullable(AnnotationUtils.getAnnotation(at, Validated.class)).ifPresent(validatedAnnoList::add));
 			//提取方法上的@Validated注解
 			Optional.ofNullable(AnnotationUtils.findAnnotation(method, Validated.class)).ifPresent(validatedAnnoList::add);
 			
@@ -59,9 +57,7 @@ public class CustomMethodValidationPostProcessor extends MethodValidationPostPro
 				try {
 					method = invocation.getThis().getClass().getMethod(method.getName(), method.getParameterTypes());
 					//提取方法参数上的@Validated注解
-					Stream.of(method.getAnnotatedParameterTypes()).forEach(at -> {
-						Optional.ofNullable(AnnotationUtils.getAnnotation(at, Validated.class)).ifPresent(validatedAnnoList::add);
-					});
+					Stream.of(method.getAnnotatedParameterTypes()).forEach(at -> Optional.ofNullable(AnnotationUtils.getAnnotation(at, Validated.class)).ifPresent(validatedAnnoList::add));
 					//提取方法上的@Validated注解
 					Optional.ofNullable(AnnotationUtils.findAnnotation(method, Validated.class)).ifPresent(validatedAnnoList::add);
 				} catch (NoSuchMethodException e) {

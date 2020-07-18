@@ -1,11 +1,8 @@
 package com.penglecode.xmodule.common.web.servlet.support;
 
-import java.beans.Introspector;
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.servlet.Filter;
-
+import com.penglecode.xmodule.common.util.CollectionUtils;
+import com.penglecode.xmodule.common.util.ReflectionUtils;
+import com.penglecode.xmodule.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.context.ConfigurableWebServerApplicationContext;
@@ -14,9 +11,10 @@ import org.springframework.boot.web.servlet.ServletContextInitializerBeans;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import com.penglecode.xmodule.common.util.CollectionUtils;
-import com.penglecode.xmodule.common.util.ReflectionUtils;
-import com.penglecode.xmodule.common.util.StringUtils;
+import javax.servlet.Filter;
+import java.beans.Introspector;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * 打印SpringBoot自动注册的Filter的顺序
@@ -47,7 +45,7 @@ public class EnabledFilterRegistrationBeanLogger implements ApplicationListener<
 								filterName = filterRegBean.toString();
 							}
 						}
-						Collection<String> filterUrls = CollectionUtils.defaultIfEmpty(filterRegBean.getUrlPatterns(), Arrays.asList("/*"));
+						Collection<String> filterUrls = CollectionUtils.defaultIfEmpty(filterRegBean.getUrlPatterns(), Collections.singletonList("/*"));
 						LOGGER.info(">>> Register filter: {} urls={}, with order: {}", filterName, filterUrls, filterRegBean.getOrder());
 					}
 				}

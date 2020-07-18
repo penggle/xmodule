@@ -39,12 +39,12 @@ public abstract class ApplicationConstants {
 	/**
 	 * Spring的ROOT上下文,由#ContextLoaderListener加载出来的spring上下文
 	 */
-	public static final Supplier<ApplicationContext> APPLICATION_CONTEXT = () -> SpringUtils.getApplicationContext();
+	public static final Supplier<ApplicationContext> APPLICATION_CONTEXT = SpringUtils::getApplicationContext;
 	
 	/**
 	 * Spring的环境变量上下文
 	 */
-	public static final Supplier<Environment> ENVIRONMENT = () -> SpringUtils.getEnvironment();
+	public static final Supplier<Environment> ENVIRONMENT = SpringUtils::getEnvironment;
 
 	/**
 	 * Spring管理的资源文件访问器

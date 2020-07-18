@@ -2,6 +2,7 @@ package com.penglecode.xmodule.common.util;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -132,7 +133,7 @@ public class SpringWebMvcUtils {
 				if(CollectionUtils.isEmpty(acceptedMediaTypes)) { //使用ResponseEntity中指定的响应MediaType
 					HttpHeaders headers = responseEntity.getHeaders();
 					if(headers != null && headers.getContentType() != null) {
-						acceptedMediaTypes = Arrays.asList(headers.getContentType());
+						acceptedMediaTypes = Collections.singletonList(headers.getContentType());
 					}
 				}
 				responseBody = responseEntity.getBody();
@@ -141,12 +142,12 @@ public class SpringWebMvcUtils {
 				try {
 					MediaType mediaType = MediaType.parseMediaType(response.getContentType()); //
 					if(mediaType != null) {
-						acceptedMediaTypes = Arrays.asList(mediaType);
+						acceptedMediaTypes = Collections.singletonList(mediaType);
 					}
 				} catch (Exception e) {}
 			}
 			if(CollectionUtils.isEmpty(acceptedMediaTypes)) { 
-				acceptedMediaTypes = Arrays.asList(ApplicationConstants.DEFAULT_RESPONSE_CONTENT_TYPE);
+				acceptedMediaTypes = Collections.singletonList(ApplicationConstants.DEFAULT_RESPONSE_CONTENT_TYPE);
 			}
 			
 			for (MediaType acceptedMediaType : acceptedMediaTypes) {
@@ -162,7 +163,6 @@ public class SpringWebMvcUtils {
 		} else {
 			response.setStatus(HttpStatus.NO_CONTENT.value());
 			response.flushBuffer();
-			return;
 		}
 	}
 	

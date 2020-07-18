@@ -31,7 +31,6 @@
 		<json.version>20190722</json.version>
 		<jwt.version>8.4</jwt.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
-		<protostuff.version>1.6.2</protostuff.version>
 		<mysql.version>8.0.20</mysql.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -119,29 +118,6 @@
 				<artifactId>pinyin4j</artifactId>
 				<version>${pinyin4j.version}</version>
 			</dependency>
-
-			<!-- protostuff -->
-			<dependency>
-				<groupId>io.protostuff</groupId>
-				<artifactId>protostuff-core</artifactId>
-				<version>${protostuff.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.protostuff</groupId>
-				<artifactId>protostuff-api</artifactId>
-				<version>${protostuff.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.protostuff</groupId>
-				<artifactId>protostuff-runtime</artifactId>
-				<version>${protostuff.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.protostuff</groupId>
-				<artifactId>protostuff-collectionschema</artifactId>
-				<version>${protostuff.version}</version>
-			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 

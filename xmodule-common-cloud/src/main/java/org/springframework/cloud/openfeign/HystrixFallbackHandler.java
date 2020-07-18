@@ -35,23 +35,23 @@ public abstract class HystrixFallbackHandler implements InvocationHandler {
 		String methodExpression = method.toGenericString();
 		Class<?>[] methodParams = method.getParameterTypes();
 		if(JAVA_OBJECT_METHODS.contains(methodName)){
-	    	if(methodName.equals("equals") && methodParams.length == 1){
+	    	if("equals".equals(methodName) && methodParams.length == 1){
 		    	return false;
-		    }else if(methodName.equals("hashCode") && methodParams.length == 0){
-		    	return new Integer((feignClientClassName + "." + methodExpression).hashCode());
-		    }else if(methodName.equals("toString") && methodParams.length == 0){
+		    }else if("hashCode".equals(methodName) && methodParams.length == 0){
+		    	return (feignClientClassName + "." + methodExpression).hashCode();
+		    }else if("toString".equals(methodName) && methodParams.length == 0){
 		    	return "HystrixFallbackProxy[" + feignClientClassName + "." + methodExpression + "]";
-		    }else if(methodName.equals("clone") && methodParams.length == 0){
+		    }else if("clone".equals(methodName) && methodParams.length == 0){
 		    	return null;
-		    }else if(methodName.equals("finalize") && methodParams.length == 0){
+		    }else if("finalize".equals(methodName) && methodParams.length == 0){
 		    	throw new UnsupportedOperationException("Operation Not Supported!");
-		    }else if(methodName.equals("getClass") && methodParams.length == 0){
+		    }else if("getClass".equals(methodName) && methodParams.length == 0){
 		    	return feignClientClass;
-		    }else if(methodName.equals("notify") && methodParams.length == 0){
+		    }else if("notify".equals(methodName) && methodParams.length == 0){
 		    	throw new UnsupportedOperationException("Operation Not Supported!");
-		    }else if(methodName.equals("notifyAll") && methodParams.length == 0){
+		    }else if("notifyAll".equals(methodName) && methodParams.length == 0){
 		    	throw new UnsupportedOperationException("Operation Not Supported!");
-		    }else if(methodName.equals("wait")){
+		    }else if("wait".equals(methodName)){
 		    	throw new UnsupportedOperationException("Operation Not Supported!");
 		    }
 	    }

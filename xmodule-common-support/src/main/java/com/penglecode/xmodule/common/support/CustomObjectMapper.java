@@ -113,8 +113,7 @@ public class CustomObjectMapper extends ObjectMapper {
 
 	@Override
 	protected JsonNode _readTreeAndClose(JsonParser p0) throws IOException {
-		JavaType valueType = JSON_NODE_TYPE;
-		autoconfigureFeatures(valueType);
+		autoconfigureFeatures(JSON_NODE_TYPE);
 		return super._readTreeAndClose(p0);
 	}
 

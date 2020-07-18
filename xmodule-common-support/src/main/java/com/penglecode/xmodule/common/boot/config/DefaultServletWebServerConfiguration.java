@@ -1,14 +1,9 @@
 package com.penglecode.xmodule.common.boot.config;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.penglecode.xmodule.common.consts.ApplicationConstants;
+import com.penglecode.xmodule.common.util.ArrayUtils;
+import com.penglecode.xmodule.common.util.CollectionUtils;
+import com.penglecode.xmodule.common.util.StringUtils;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
@@ -36,10 +31,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
-import com.penglecode.xmodule.common.consts.ApplicationConstants;
-import com.penglecode.xmodule.common.util.ArrayUtils;
-import com.penglecode.xmodule.common.util.CollectionUtils;
-import com.penglecode.xmodule.common.util.StringUtils;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * Servlet容器普通配置(see web.xml)
@@ -66,7 +61,7 @@ public class DefaultServletWebServerConfiguration extends AbstractSpringConfigur
 	public AbstractServletWebServerFactory tomcatServletWebServerFactory() {
 		TomcatServletWebServerFactory tomcatContainerFactory = new TomcatServletWebServerFactory();
 		tomcatContainerFactory.setProtocol("org.apache.coyote.http11.Http11Nio2Protocol");
-		tomcatContainerFactory.setUriEncoding(Charset.forName("UTF-8"));
+		tomcatContainerFactory.setUriEncoding(StandardCharsets.UTF_8);
 		tomcatContainerFactory.addConnectorCustomizers(new CustomTomcatConnectorCustomizer());
 		tomcatContainerFactory.addContextCustomizers(new CustomTomcatContextCustomizer());
 		return tomcatContainerFactory;

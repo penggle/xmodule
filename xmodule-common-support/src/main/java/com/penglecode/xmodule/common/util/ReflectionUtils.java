@@ -219,7 +219,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return 
 	 */
 	public static boolean isGetClassMethod(@Nullable Method method) {
-		return (method != null && method.getName().equals("getClass") && method.getParameterCount() == 0);
+		return (method != null && "getClass".equals(method.getName()) && method.getParameterCount() == 0);
 	}
 	
 	/**
@@ -229,7 +229,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return 
 	 */
 	public static boolean isCloneMethod(@Nullable Method method) {
-		return (method != null && method.getName().equals("clone") && method.getParameterCount() == 0);
+		return (method != null && "clone".equals(method.getName()) && method.getParameterCount() == 0);
 	}
 	
 	/**
@@ -239,7 +239,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return 
 	 */
 	public static boolean isNotifyMethod(@Nullable Method method) {
-		return (method != null && method.getName().equals("notify") && method.getParameterCount() == 0);
+		return (method != null && "notify".equals(method.getName()) && method.getParameterCount() == 0);
 	}
 	
 	/**
@@ -249,7 +249,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return 
 	 */
 	public static boolean isNotifyAllMethod(@Nullable Method method) {
-		return (method != null && method.getName().equals("notifyAll") && method.getParameterCount() == 0);
+		return (method != null && "notifyAll".equals(method.getName()) && method.getParameterCount() == 0);
 	}
 	
 	/**
@@ -259,7 +259,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return 
 	 */
 	public static boolean isWaitMethod(@Nullable Method method) {
-		return (method != null && method.getName().equals("wait") && (method.getParameterCount() == 0 || method.getParameterCount() == 1 || method.getParameterCount() == 2));
+		return (method != null && "wait".equals(method.getName()) && (method.getParameterCount() == 0 || method.getParameterCount() == 1 || method.getParameterCount() == 2));
 	}
 	
 	/**
@@ -269,7 +269,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return 
 	 */
 	public static boolean isFinalizeMethod(@Nullable Method method) {
-		return (method != null && method.getName().equals("finalize") && method.getParameterCount() == 0);
+		return (method != null && "finalize".equals(method.getName()) && method.getParameterCount() == 0);
 	}
 	
 	public static class ReflectionException extends RuntimeException {

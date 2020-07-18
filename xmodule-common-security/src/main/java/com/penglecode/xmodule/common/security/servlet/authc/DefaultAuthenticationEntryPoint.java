@@ -40,7 +40,6 @@ public class DefaultAuthenticationEntryPoint implements AuthenticationEntryPoint
 		LOGGER.error(">>> 认证出错, path = {}, {} = {}", request.getRequestURI(), authException.getClass().getName(), authException.getMessage());
 		request.setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, authException);
 		request.getRequestDispatcher(unauthenticatedHandlerUrl).forward(request, response);
-		return;
 	}
 
 	protected String getUnauthenticatedHandlerUrl() {

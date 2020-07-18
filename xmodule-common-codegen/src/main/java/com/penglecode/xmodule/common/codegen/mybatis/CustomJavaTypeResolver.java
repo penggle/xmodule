@@ -30,10 +30,10 @@ public class CustomJavaTypeResolver extends JavaTypeResolverDefaultImpl {
 	@Override
 	public void addConfigurationProperties(Properties properties) {
 		super.addConfigurationProperties(properties);
-		this.forceDateTimeStampAsString = Boolean.valueOf(properties.getProperty("forceDateTimeStampAsString", "false"));
-		this.forceTinyintAsInteger = Boolean.valueOf(properties.getProperty("forceTinyintAsInteger", "false"));
-		this.forceNumber1AsBoolean = Boolean.valueOf(properties.getProperty("forceNumber1AsBoolean", "false"));
-		this.forceDecimalNumericAsDouble = Boolean.valueOf(properties.getProperty("forceDecimalNumericAsDouble", "false"));
+		this.forceDateTimeStampAsString = Boolean.parseBoolean(properties.getProperty("forceDateTimeStampAsString", "false"));
+		this.forceTinyintAsInteger = Boolean.parseBoolean(properties.getProperty("forceTinyintAsInteger", "false"));
+		this.forceNumber1AsBoolean = Boolean.parseBoolean(properties.getProperty("forceNumber1AsBoolean", "false"));
+		this.forceDecimalNumericAsDouble = Boolean.parseBoolean(properties.getProperty("forceDecimalNumericAsDouble", "false"));
 		overrideTypeMap();
 	}
 

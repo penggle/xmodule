@@ -1,6 +1,6 @@
 package com.penglecode.xmodule.common.cloud.support;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class CloudSecurityConfigProperties {
 
-	private List<String> authExcludesUrl = Arrays.asList("/oauth/**");
+	private List<String> authExcludesUrl = Collections.singletonList("/oauth/**");
 
 	public List<String> getAuthExcludesUrl() {
 		return authExcludesUrl;

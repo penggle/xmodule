@@ -1,11 +1,7 @@
 package com.penglecode.xmodule.common.util;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.util.Assert;
 
@@ -39,7 +35,24 @@ public class ThreadPoolUtils {
 	public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
         return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(50), threadFactory, new CallerRunsPolicy());
     }
-	
+
+	/**
+	 * 创建具有单个线程的定时任务线程池
+	 * @return
+	 */
+	public static ScheduledExecutorService newSingleThreadScheduledExecutor() {
+		return new ScheduledThreadPoolExecutor(1);
+	}
+
+	/**
+	 * 创建具有单个线程的定时任务线程池
+	 * @param threadFactory
+	 * @return
+	 */
+	public static ScheduledExecutorService newSingleThreadScheduledExecutor(ThreadFactory threadFactory) {
+		return new ScheduledThreadPoolExecutor(1, threadFactory);
+	}
+
 	/**
 	 * 创建具有固定数量的线程池
 	 * 注：该线程池设置了最大等待队列大小(1000)，reject策略为#CallerRunsPolicy (即超过等待队列已满时将任务直接在调用者线程上执行)

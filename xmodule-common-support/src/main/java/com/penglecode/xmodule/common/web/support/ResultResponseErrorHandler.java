@@ -44,9 +44,7 @@ public class ResultResponseErrorHandler extends DefaultResponseErrorHandler {
 			String json = new String(getResponseBody(response), getCharset(response));
 			if(JsonUtils.isJsonObject(json)) {
 				JSONObject jsonObject = new JSONObject(json);
-				if(jsonObject.has("success") && jsonObject.has("code") && jsonObject.has("message") && jsonObject.has("data")) {
-					return true;
-				}
+				return jsonObject.has("success") && jsonObject.has("code") && jsonObject.has("message") && jsonObject.has("data");
 			}
 		}
 		return false;

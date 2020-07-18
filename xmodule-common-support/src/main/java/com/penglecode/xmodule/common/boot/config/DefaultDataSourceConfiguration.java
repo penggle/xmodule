@@ -49,7 +49,7 @@ public class DefaultDataSourceConfiguration extends AbstractSpringConfiguration 
 	/**
 	 * 默认数据源
 	 */
-	@Bean(name="defaultDataSource", destroyMethod="close", initMethod="init")
+	@Bean(name="defaultDataSource")
 	public DataSource defaultDataSource(@Qualifier("defaultHikariConfig") HikariConfig defaultHikariConfig) {
 		return new HikariDataSource(defaultHikariConfig);
 	}

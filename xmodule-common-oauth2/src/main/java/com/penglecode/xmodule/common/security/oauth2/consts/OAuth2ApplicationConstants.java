@@ -1,10 +1,6 @@
 package com.penglecode.xmodule.common.security.oauth2.consts;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
@@ -24,10 +20,10 @@ public class OAuth2ApplicationConstants {
 	public static final Map<AuthorizationGrantType,Set<String>> DEFAULT_OAUTH2_CLIENT_SCOPES = new HashMap<>();
 	
 	static {
-		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.AUTHORIZATION_CODE, new HashSet<String>(Arrays.asList("user")));
-		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.PASSWORD, new HashSet<String>(Arrays.asList("user")));
-		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.IMPLICIT, new HashSet<String>(Arrays.asList("user")));
-		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.CLIENT_CREDENTIALS, new HashSet<String>(Arrays.asList("app")));
+		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.AUTHORIZATION_CODE, new HashSet<String>(Collections.singletonList("user")));
+		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.PASSWORD, new HashSet<String>(Collections.singletonList("user")));
+		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.IMPLICIT, new HashSet<String>(Collections.singletonList("user")));
+		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.CLIENT_CREDENTIALS, new HashSet<String>(Collections.singletonList("app")));
 		DEFAULT_OAUTH2_CLIENT_SCOPES.put(AuthorizationGrantType.REFRESH_TOKEN, new HashSet<String>(Arrays.asList("user", "app")));
 	}
 	

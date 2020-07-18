@@ -137,15 +137,15 @@ public class ResultEntityResponseReativeConfiguration implements BeanPostProcess
 		}
 
 		@Override
-		public Mono<Void> write(Publisher<? extends Object> inputStream, ResolvableType elementType,
-				MediaType mediaType, ReactiveHttpOutputMessage message, Map<String, Object> hints) {
+		public Mono<Void> write(Publisher<?> inputStream, ResolvableType elementType,
+								MediaType mediaType, ReactiveHttpOutputMessage message, Map<String, Object> hints) {
 			return delegate.write(prepareOutputMessage(inputStream, message), elementType, mediaType, message, hints);
 		}
 
 		@Override
-		public Mono<Void> write(Publisher<? extends Object> inputStream, ResolvableType actualType,
-				ResolvableType elementType, MediaType mediaType, ServerHttpRequest request, ServerHttpResponse response,
-				Map<String, Object> hints) {
+		public Mono<Void> write(Publisher<?> inputStream, ResolvableType actualType,
+								ResolvableType elementType, MediaType mediaType, ServerHttpRequest request, ServerHttpResponse response,
+								Map<String, Object> hints) {
 			return delegate.write(prepareOutputMessage(inputStream, response), actualType, elementType, mediaType, request, response, hints);
 		}
 
@@ -154,9 +154,9 @@ public class ResultEntityResponseReativeConfiguration implements BeanPostProcess
 		}
 		
 		@SuppressWarnings("unchecked")
-		protected Publisher<? extends Object> prepareOutputMessage(Publisher<? extends Object> inputStream, ReactiveHttpOutputMessage outputMessage) {
+		protected Publisher<?> prepareOutputMessage(Publisher<?> inputStream, ReactiveHttpOutputMessage outputMessage) {
 			return Mono.from(inputStream).flatMap(t -> {
-				if(t != null && t instanceof Result && outputMessage instanceof ServerHttpResponse) {
+				if(t instanceof Result && outputMessage instanceof ServerHttpResponse) {
 					Result<Object> result = (Result<Object>) t;
 					ServerHttpResponse serverHttpResponse = (ServerHttpResponse) outputMessage;
 					HttpStatus status = HttpStatus.resolve(result.getCode());

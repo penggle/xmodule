@@ -59,10 +59,8 @@ public class ServerOAuth2AuthorizedClientExchangeFilter implements ExchangeFilte
 	}
 	
 	public Consumer<WebClient.Builder> oauth2Configuration() {
-		return builder -> {
-			builder.defaultRequest(defaultRequest()) //WebClient的全局默认请求设置
-				   .filter(this);
-		};
+		return builder -> builder.defaultRequest(defaultRequest()) //WebClient的全局默认请求设置
+			   .filter(this);
 	}
 	
 	/**
@@ -70,9 +68,7 @@ public class ServerOAuth2AuthorizedClientExchangeFilter implements ExchangeFilte
 	 * @return
 	 */
 	public Consumer<WebClient.RequestHeadersSpec<?>> defaultRequest() {
-		return spec -> spec.attributes(attrs -> {
-			applyDefaultClientRegistration(attrs);
-		});
+		return spec -> spec.attributes(this::applyDefaultClientRegistration);
 	}
 	
 	/**
