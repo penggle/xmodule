@@ -57,6 +57,13 @@
     		<version>3.3.0</version>
 		</dependency>
 
+		<!-- jol-core -->
+		<dependency>
+			<groupId>org.openjdk.jol</groupId>
+			<artifactId>jol-core</artifactId>
+			<version>0.11</version>
+		</dependency>
+
 		<!-- mysql driver -->
 		<dependency>
 			<groupId>mysql</groupId>
