@@ -14,7 +14,12 @@ public abstract class AbstractCodegenConfigProperties {
 	 * 默认代码src目录：当前项目下的src/main/java
 	 */
 	public static final String DEFAULT_TARGET_PROJECT = "src/main/java";
-	
+
+	/**
+	 * 生成代码所在项目的项目根目录
+	 */
+	private String runtimeProjectDir;
+
 	/**
 	 * 项目的基础包名,比如com.xxx
 	 */
@@ -24,6 +29,14 @@ public abstract class AbstractCodegenConfigProperties {
 	 * 作者
 	 */
 	private String author = "AutoGenerator";
+
+	public String getRuntimeProjectDir() {
+		return runtimeProjectDir;
+	}
+
+	public void setRuntimeProjectDir(String runtimeProjectDir) {
+		this.runtimeProjectDir = runtimeProjectDir;
+	}
 
 	public String getBasePackage() {
 		return basePackage;

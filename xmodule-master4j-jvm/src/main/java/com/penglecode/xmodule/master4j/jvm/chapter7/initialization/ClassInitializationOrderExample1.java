@@ -44,6 +44,11 @@ public class ClassInitializationOrderExample1 {
 
     public static void main(String[] args) {
         System.out.println(Sub.C); //调用Sub.C触发JVM对Sub类进行类加载
+        /**
+         * 对于静态字段，只有直接定义这个字段的类才会被初始化，因此通过其子类来引用父类中定义的静态字段，
+         * 只会触发父类的初始化而不会触发子类的初始化。
+         */
+        //System.out.println(Sub.A); //调用Sub.A不会触发JVM对Sub类进行类加载，因为A的定义出现在Parent类中
     }
 
 }

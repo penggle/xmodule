@@ -29,7 +29,26 @@ spring:
                         targetProject: src/main/java
                         #XxxMapper.java所在包名
                         targetPackage: com.penglecode.xmodule.ordercenter.mapper
-                        
+                    #模块表定义
+                    tables:
+                        -   tableName: cg_order
+                            domainObjectName: Order
+                            modelName: 订单
+                            modelAlias: Order
+                            modelCommentAuthor: Mybatis-Generator
+                            insertModelColumns: ['total_amount', 'freight_amount', 'order_time', 'customer_id', 'payment_type', 'status', 'remark']
+                            exampleQueryConditions: {total_amount: 'gte,lte', order_time: 'gte,lte', customer_id: 'eq', payment_type: 'eq', status: 'eq', remark: 'like'}
+
+                        -   tableName: cg_order_detail
+                            domainObjectName: OrderDetail
+                            modelName: 订单明细
+                            modelAlias: OrderDetail
+                            modelCommentAuthor: Mybatis-Generator
+                            insertModelColumns: ['order_id', 'product_id', 'product_name', 'product_url', 'unit_price', 'quantity', 'freight_amount', 'sub_total_amount']
+                            exampleQueryConditions: {'order_id': 'eq', 'product_id': 'eq', 'product_name': 'like', 'unit_price': 'gte,lte', 'sub_total_amount': 'gte,lte'}
+
+
+
         #Service代码
         service: 
             config:

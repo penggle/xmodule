@@ -17,7 +17,7 @@ public class ControllerCodegenConfigProperties extends CommonCodegenConfigProper
 	private String prefixOfApiUrl = "/api";
 	
 	/**
-	 * Controller中各个handler方法的URL的domain，默认取@Model(alias="xxx")注解中alias的小写形式
+	 * Controller中各个handler方法的URL的domain，默认取@Model(alias="xxx")注解中alias的小写形式，用于生成接口的URL
 	 * 例如：/api/${domain}/list
 	 */
 	private Map<String,String> domainOfApiUrlMapping = new HashMap<>();
@@ -26,6 +26,11 @@ public class ControllerCodegenConfigProperties extends CommonCodegenConfigProper
 	 * Controller的公共继承类
 	 */
 	private String extendsClass;
+
+	/**
+	 * 是否生成API文档
+	 */
+	private boolean generateApiDocs;
 
 	public String getExtendsClass() {
 		return extendsClass;

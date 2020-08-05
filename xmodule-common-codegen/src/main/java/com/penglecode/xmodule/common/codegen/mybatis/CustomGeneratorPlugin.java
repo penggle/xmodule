@@ -1,39 +1,5 @@
 package com.penglecode.xmodule.common.codegen.mybatis;
 
-import java.io.Serializable;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.mybatis.generator.api.GeneratedXmlFile;
-import org.mybatis.generator.api.IntrospectedColumn;
-import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.PluginAdapter;
-import org.mybatis.generator.api.dom.OutputUtilities;
-import org.mybatis.generator.api.dom.java.Field;
-import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
-import org.mybatis.generator.api.dom.java.InnerClass;
-import org.mybatis.generator.api.dom.java.Interface;
-import org.mybatis.generator.api.dom.java.JavaVisibility;
-import org.mybatis.generator.api.dom.java.Method;
-import org.mybatis.generator.api.dom.java.Parameter;
-import org.mybatis.generator.api.dom.java.TopLevelClass;
-import org.mybatis.generator.api.dom.xml.Attribute;
-import org.mybatis.generator.api.dom.xml.Document;
-import org.mybatis.generator.api.dom.xml.TextElement;
-import org.mybatis.generator.api.dom.xml.XmlElement;
-import org.mybatis.generator.internal.util.JavaBeansUtil;
-import org.springframework.util.Assert;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.penglecode.xmodule.common.codeden.consts.CodegenConstants;
 import com.penglecode.xmodule.common.codeden.support.CodegenUtils;
@@ -44,11 +10,25 @@ import com.penglecode.xmodule.common.mybatis.Dialect.Type;
 import com.penglecode.xmodule.common.mybatis.MybatisUtils;
 import com.penglecode.xmodule.common.mybatis.mapper.BaseMybatisMapper;
 import com.penglecode.xmodule.common.support.BaseModel;
-import com.penglecode.xmodule.common.util.ClassUtils;
-import com.penglecode.xmodule.common.util.CollectionUtils;
-import com.penglecode.xmodule.common.util.JsonUtils;
-import com.penglecode.xmodule.common.util.ObjectUtils;
-import com.penglecode.xmodule.common.util.StringUtils;
+import com.penglecode.xmodule.common.util.*;
+import org.mybatis.generator.api.GeneratedXmlFile;
+import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.PluginAdapter;
+import org.mybatis.generator.api.dom.OutputUtilities;
+import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.xml.Attribute;
+import org.mybatis.generator.api.dom.xml.Document;
+import org.mybatis.generator.api.dom.xml.TextElement;
+import org.mybatis.generator.api.dom.xml.XmlElement;
+import org.mybatis.generator.internal.util.JavaBeansUtil;
+import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.sql.Types;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CustomGeneratorPlugin extends PluginAdapter {
 
@@ -326,7 +306,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 			Method ofPrimaryKey = new Method("ofPrimaryKey");
 			ofPrimaryKey.setReturnType(new FullyQualifiedJavaType(compositePrimaryKeyClass));
 			ofPrimaryKey.setVisibility(JavaVisibility.PUBLIC);
-			ofPrimaryKey.addBodyLine("return new " + compositePrimaryKeyClass + "(" + pkClassConstructor1Args.stream().collect(Collectors.joining(", ")) + ");");
+			ofPrimaryKey.addBodyLine("return new " + compositePrimaryKeyClass + "(" + String.join(", ", pkClassConstructor1Args) + ");");
 			
 			topLevelClass.addMethod(ofPrimaryKey);
 			topLevelClass.addInnerClass(primaryKeyClass);
@@ -342,11 +322,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
 		//添加范围查询辅助字段
 		int modelPropertySize = topLevelClass.getFields().size();
-		Map<String,Set<WhereConditionOperator>> exampleQueryWhereColumnMap =  getExampleQueryWhereColumnMap(introspectedTable);
+		Map<String,Set<QueryConditionOperator>> exampleQueryWhereColumnMap =  getExampleQueryWhereColumnMap(introspectedTable);
 		if(!CollectionUtils.isEmpty(exampleQueryWhereColumnMap)) {
-			for(Map.Entry<String,Set<WhereConditionOperator>> entry : exampleQueryWhereColumnMap.entrySet()) {
+			for(Map.Entry<String,Set<QueryConditionOperator>> entry : exampleQueryWhereColumnMap.entrySet()) {
 				String columnName = entry.getKey();
-				Set<WhereConditionOperator> columnOps = entry.getValue();
+				Set<QueryConditionOperator> columnOps = entry.getValue();
 				if(columnOps.stream().anyMatch(this::isRangeWhereCondition)) {
 					allColumns.stream().filter(c -> c.getActualColumnName().toLowerCase().equals(columnName)).findFirst().ifPresent(column -> {
 						String rangeMinAdditionalPropertyName = getAdditionalPropertyName(CodegenConstants.RANGE_MIN_JAVA_PROPERTY_PREFIX, column.getJavaProperty());
@@ -562,10 +542,9 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 						columnNameList.add(i, pkColumns.get(i).getActualColumnName().toLowerCase()); //加入主键列
 					}
 				}
-				
-				for(String columnName : columnNameList) {
-					insertModelColumns.add(columnName); //去重
-				}
+
+				//去重
+				insertModelColumns.addAll(columnNameList);
 			}
 		}
 		
@@ -585,7 +564,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 			insertColumns.addAll(allColumns);
 		}
 		
-		IntrospectedColumn column = null;
+		IntrospectedColumn column;
 		
 		StringBuilder sb = new StringBuilder();
 		//OutputUtilities.javaIndent(sb, 1);
@@ -640,7 +619,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		element.addAttribute(new Attribute("parameterType", "java.util.Map"));
 		element.addAttribute(new Attribute("statementType", "PREPARED"));
 		
-		IntrospectedColumn updateColumn = null;
+		IntrospectedColumn updateColumn;
 		
 		StringBuilder sb = new StringBuilder();
 		//OutputUtilities.javaIndent(sb, 1);
@@ -701,7 +680,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		List<IntrospectedColumn> pkColumns = introspectedTable.getPrimaryKeyColumns();
 		Assert.notEmpty(pkColumns, String.format("No primary key found in table %s for mapper method: %s.deleteModelById", introspectedTable.getTableConfiguration().getTableName(), introspectedTable.getTableConfiguration().getDomainObjectName() + "Mapper"));
 		
-		String parameterType = null;
+		String parameterType;
 		if(pkColumns.size() == 1) { //单一主键?
 			parameterType = pkColumns.get(0).getFullyQualifiedJavaType().getFullyQualifiedNameWithoutTypeParameters();
 		} else { //复合主键?
@@ -797,7 +776,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		List<IntrospectedColumn> pkColumns = introspectedTable.getPrimaryKeyColumns();
 		Assert.notEmpty(pkColumns, String.format("No primary key found in table %s for mapper method: %s.selectModelById", introspectedTable.getTableConfiguration().getTableName(), introspectedTable.getTableConfiguration().getDomainObjectName() + "Mapper"));
 		
-		String parameterType = null;
+		String parameterType;
 		if(pkColumns.size() == 1) { //单一主键?
 			parameterType = pkColumns.get(0).getFullyQualifiedJavaType().getFullyQualifiedNameWithoutTypeParameters();
 		} else { //复合主键?
@@ -815,11 +794,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		//OutputUtilities.javaIndent(sb, 1);
 		sb.append("SELECT ");
 		List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
-		IntrospectedColumn column = null;
+		IntrospectedColumn column;
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
 			if(i == 0) {
-				sb.append("");
+				//nothing to do
 			} else {
 				sb.append("       ");
 				OutputUtilities.javaIndent(sb, 2);
@@ -857,7 +836,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	 * @return
 	 */
 	protected XmlElement createSelectModelByExampleElement(IntrospectedTable introspectedTable) {
-		Map<String,Set<WhereConditionOperator>> exampleQueryWhereColumnMap =  getExampleQueryWhereColumnMap(introspectedTable);
+		Map<String,Set<QueryConditionOperator>> exampleQueryWhereColumnMap =  getExampleQueryWhereColumnMap(introspectedTable);
 		
 		XmlElement element = new XmlElement("select");
 		element.addAttribute(new Attribute("id", "selectModelByExample"));
@@ -869,11 +848,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		//OutputUtilities.javaIndent(sb, 1);
 		sb.append("SELECT ");
 		List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
-		IntrospectedColumn column = null;
+		IntrospectedColumn column;
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
 			if(i == 0) {
-				sb.append("");
+				//nothing to do
 			} else {
 				sb.append("       ");
 				OutputUtilities.javaIndent(sb, 2);
@@ -893,11 +872,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		boolean allocatedWhereCondition = !exampleQueryWhereColumnMap.isEmpty();
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
-			Set<WhereConditionOperator> columnOps = exampleQueryWhereColumnMap.get(column.getActualColumnName().toLowerCase());
+			Set<QueryConditionOperator> columnOps = exampleQueryWhereColumnMap.get(column.getActualColumnName().toLowerCase());
 			if(allocatedWhereCondition && CollectionUtils.isEmpty(columnOps)) { //如果指定了where条件列
 				continue;
 			}
-			for(WhereConditionOperator columnOp : columnOps) {
+			for(QueryConditionOperator columnOp : columnOps) {
 				String javaPropertyName = getJavaPropertyNameOfOp(column, columnOp);
 				CodegenUtils.newLine(sb);
 				OutputUtilities.javaIndent(sb, 2);
@@ -945,11 +924,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		//OutputUtilities.javaIndent(sb, 1);
 		sb.append("SELECT ");
 		List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
-		IntrospectedColumn column = null;
+		IntrospectedColumn column;
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
 			if(i == 0) {
-				sb.append("");
+				//nothing to do
 			} else {
 				sb.append("       ");
 				OutputUtilities.javaIndent(sb, 2);
@@ -964,8 +943,10 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		sb.append("  FROM " + introspectedTable.getTableConfiguration().getTableName().toLowerCase() + " " + tableAliasName);
 		CodegenUtils.newLine(sb);
 		OutputUtilities.javaIndent(sb, 2);
-		
-		if(pkColumns.size() == 1) { //单一主键? 使用in查询
+
+		boolean singlePrimaryKey = pkColumns.size() == 1;
+
+		if(singlePrimaryKey) { //单一主键? 使用in查询
 			IntrospectedColumn pkColumn = pkColumns.get(0);
 			sb.append(" WHERE " + tableAliasName + "." + pkColumn.getActualColumnName().toLowerCase() + " in ");
 			CodegenUtils.newLine(sb);
@@ -997,11 +978,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 			OutputUtilities.javaIndent(sb, 2);
 			sb.append("</foreach>");
 		}
-		
+
 		CodegenUtils.newLine(sb);
 		OutputUtilities.javaIndent(sb, 2);
 		
-		if(pkColumns.size() == 1) { //单一主键?
+		if(singlePrimaryKey) { //单一主键?
 			sb.append(" ORDER BY " + tableAliasName + "." + pkColumns.get(0).getActualColumnName().toLowerCase() + " ASC");
 		} else { //复合主键?
 			sb.append(" ORDER BY ");
@@ -1036,11 +1017,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		//OutputUtilities.javaIndent(sb, 1);
 		sb.append("SELECT ");
 		List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
-		IntrospectedColumn column = null;
+		IntrospectedColumn column;
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
 			if(i == 0) {
-				sb.append("");
+				//noting to do
 			} else {
 				sb.append("       ");
 				OutputUtilities.javaIndent(sb, 2);
@@ -1121,7 +1102,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	}
 	
 	protected XmlElement createSelectModelListByExampleElement(IntrospectedTable introspectedTable, String statementId) {
-		Map<String,Set<WhereConditionOperator>> exampleQueryWhereColumnMap =  getExampleQueryWhereColumnMap(introspectedTable);
+		Map<String,Set<QueryConditionOperator>> exampleQueryWhereColumnMap =  getExampleQueryWhereColumnMap(introspectedTable);
 		
 		XmlElement element = new XmlElement("select");
 		element.addAttribute(new Attribute("id", statementId));
@@ -1133,11 +1114,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		//OutputUtilities.javaIndent(sb, 1);
 		sb.append("SELECT ");
 		List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
-		IntrospectedColumn column = null;
+		IntrospectedColumn column;
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
 			if(i == 0) {
-				sb.append("");
+				//noting to do
 			} else {
 				sb.append("       ");
 				OutputUtilities.javaIndent(sb, 2);
@@ -1158,11 +1139,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		boolean allocatedWhereCondition = !exampleQueryWhereColumnMap.isEmpty();
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
-			Set<WhereConditionOperator> columnOps = exampleQueryWhereColumnMap.get(column.getActualColumnName().toLowerCase());
+			Set<QueryConditionOperator> columnOps = exampleQueryWhereColumnMap.get(column.getActualColumnName().toLowerCase());
 			if(allocatedWhereCondition && CollectionUtils.isEmpty(columnOps)) { //如果指定了where条件列
 				continue;
 			}
-			for(WhereConditionOperator columnOp : columnOps) {
+			for(QueryConditionOperator columnOp : columnOps) {
 				String javaPropertyName = getJavaPropertyNameOfOp(column, columnOp);
 				
 				OutputUtilities.javaIndent(sb, 2);
@@ -1215,7 +1196,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	 * @return
 	 */
 	protected XmlElement createSelectModelPageCountByExampleElement(IntrospectedTable introspectedTable) {
-		Map<String,Set<WhereConditionOperator>> exampleQueryWhereColumnMap =  getExampleQueryWhereColumnMap(introspectedTable);
+		Map<String,Set<QueryConditionOperator>> exampleQueryWhereColumnMap =  getExampleQueryWhereColumnMap(introspectedTable);
 		
 		XmlElement element = new XmlElement("select");
 		element.addAttribute(new Attribute("id", "selectModelPageCountByExample"));
@@ -1227,7 +1208,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		//OutputUtilities.javaIndent(sb, 1);
 		sb.append("SELECT count(*)");
 		List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
-		IntrospectedColumn column = null;
+		IntrospectedColumn column;
 		CodegenUtils.newLine(sb);
 		OutputUtilities.javaIndent(sb, 2);
 		sb.append("  FROM " + introspectedTable.getTableConfiguration().getTableName().toLowerCase() + " " + tableAliasName);
@@ -1238,11 +1219,11 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		boolean allocatedWhereCondition = !exampleQueryWhereColumnMap.isEmpty();
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
-			Set<WhereConditionOperator> columnOps = exampleQueryWhereColumnMap.get(column.getActualColumnName().toLowerCase());
+			Set<QueryConditionOperator> columnOps = exampleQueryWhereColumnMap.get(column.getActualColumnName().toLowerCase());
 			if(allocatedWhereCondition && CollectionUtils.isEmpty(columnOps)) { //如果指定了where条件列
 				continue;
 			}
-			for(WhereConditionOperator columnOp : columnOps) {
+			for(QueryConditionOperator columnOp : columnOps) {
 				String javaPropertyName = getJavaPropertyNameOfOp(column, columnOp);
 				CodegenUtils.newLine(sb);
 				OutputUtilities.javaIndent(sb, 2);
@@ -1279,8 +1260,8 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	 * @param paramDomain 			- 参数域例如：example.
 	 * @param javaPropertyName		- 实体java字段名
 	 */
-	protected void applyExampleWhereCondition(StringBuilder sql, WhereConditionOperator op, IntrospectedColumn column, String paramDomain, String javaPropertyName) {
-		if(WhereConditionOperator.LIKE.equals(op)) {
+	protected void applyExampleWhereCondition(StringBuilder sql, QueryConditionOperator op, IntrospectedColumn column, String paramDomain, String javaPropertyName) {
+		if(QueryConditionOperator.LIKE.equals(op)) {
 			if(Type.ORACLE.equals(dialect)) { //Oracle数据库 like写法
 				sql.append(tableAliasName + "." + column.getActualColumnName().toLowerCase() + " " + op.getOpExpression() + " '%' || " + "#{" + paramDomain + javaPropertyName + ", jdbcType=" + getJdbcTypeName(column) + "} || '%'");
 			} else { //默认为MySQL写法
@@ -1350,19 +1331,19 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	 * @param introspectedTable
 	 * @return
 	 */
-	protected Map<String,Set<WhereConditionOperator>> getExampleQueryWhereColumnMap(IntrospectedTable introspectedTable) {
-		Map<String,Set<WhereConditionOperator>> exampleQueryWhereColumnMap = new LinkedHashMap<>();
-		String exampleQueryWhereColumns = introspectedTable.getTableConfiguration().getProperty("exampleQueryWhereColumns");
-		if(!StringUtils.isEmpty(exampleQueryWhereColumns)) {
-			Map<String,String> exampleQueryWhereColumnMap1 = JsonUtils.json2Object(exampleQueryWhereColumns, new TypeReference<Map<String,String>>(){});
+	protected Map<String,Set<QueryConditionOperator>> getExampleQueryWhereColumnMap(IntrospectedTable introspectedTable) {
+		Map<String,Set<QueryConditionOperator>> exampleQueryWhereColumnMap = new LinkedHashMap<>();
+		String exampleQueryConditions = introspectedTable.getTableConfiguration().getProperty("exampleQueryConditions");
+		if(!StringUtils.isEmpty(exampleQueryConditions)) {
+			Map<String,String> exampleQueryWhereColumnMap1 = JsonUtils.json2Object(exampleQueryConditions, new TypeReference<Map<String,String>>(){});
 			if(exampleQueryWhereColumnMap1 != null) {
-				String value = null;
+				String value;
 				for(Map.Entry<String,String> entry : exampleQueryWhereColumnMap1.entrySet()) {
 					value = entry.getValue();
 					if(!StringUtils.isEmpty(value)) {
 						value = value.toLowerCase();
 						String[] opa = StringUtils.strip(value.trim(), ",").split(",");
-						Set<WhereConditionOperator> ops = Stream.of(opa).map(s -> WhereConditionOperator.getOperator(s)).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
+						Set<QueryConditionOperator> ops = Stream.of(opa).map(QueryConditionOperator::getOperator).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 						if(!CollectionUtils.isEmpty(ops)) {
 							exampleQueryWhereColumnMap.put(entry.getKey().toLowerCase(), ops);
 						}
@@ -1378,6 +1359,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	 * @param introspectedTable
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	protected XmlElement createBaseColumnListElement(IntrospectedTable introspectedTable) {
 		XmlElement sqlElement = new XmlElement("sql");
 		String domainName = introspectedTable.getTableConfiguration().getDomainObjectName();
@@ -1387,7 +1369,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		
 		List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
 		StringBuilder sb = new StringBuilder();
-		IntrospectedColumn column = null;
+		IntrospectedColumn column;
 		for(int i = 0, len = allColumns.size(); i < len; i++) {
 			column = allColumns.get(i);
 			if(i == 0) {
@@ -1448,8 +1430,8 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	 * @param op
 	 * @return
 	 */
-	protected boolean isRangeWhereCondition(WhereConditionOperator op) {
-		return WhereConditionOperator.GT.equals(op) || WhereConditionOperator.LT.equals(op) || WhereConditionOperator.GTE.equals(op) || WhereConditionOperator.LTE.equals(op);
+	protected boolean isRangeWhereCondition(QueryConditionOperator op) {
+		return QueryConditionOperator.GT.equals(op) || QueryConditionOperator.LT.equals(op) || QueryConditionOperator.GTE.equals(op) || QueryConditionOperator.LTE.equals(op);
 	}
 	
 	/**
@@ -1457,17 +1439,17 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	 * @param op
 	 * @return
 	 */
-	protected boolean isGTRangeWhereCondition(WhereConditionOperator op) {
-		return WhereConditionOperator.GT.equals(op) || WhereConditionOperator.GTE.equals(op);
+	protected boolean isGTRangeWhereCondition(QueryConditionOperator op) {
+		return QueryConditionOperator.GT.equals(op) || QueryConditionOperator.GTE.equals(op);
 	}
 	
 	/**
-	 * 是否是>或>=区间where条件?
+	 * 是否是<或<=区间where条件?
 	 * @param op
 	 * @return
 	 */
-	protected boolean isLTRangeWhereCondition(WhereConditionOperator op) {
-		return WhereConditionOperator.LT.equals(op) || WhereConditionOperator.LTE.equals(op);
+	protected boolean isLTRangeWhereCondition(QueryConditionOperator op) {
+		return QueryConditionOperator.LT.equals(op) || QueryConditionOperator.LTE.equals(op);
 	}
 	
 	/**
@@ -1476,12 +1458,12 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	 * @param op
 	 * @return
 	 */
-	protected String getJavaPropertyNameOfOp(IntrospectedColumn column, WhereConditionOperator op) {
+	protected String getJavaPropertyNameOfOp(IntrospectedColumn column, QueryConditionOperator op) {
 		String javaPropertyName = column.getJavaProperty();
 		if(isRangeWhereCondition(op)) {
 			if(isGTRangeWhereCondition(op)) {
 				javaPropertyName = getAdditionalPropertyName(CodegenConstants.RANGE_MIN_JAVA_PROPERTY_PREFIX, javaPropertyName);
-			} else {
+			} else if (isLTRangeWhereCondition(op)) {
 				javaPropertyName = getAdditionalPropertyName(CodegenConstants.RANGE_MAX_JAVA_PROPERTY_PREFIX, javaPropertyName);
 			}
 		}

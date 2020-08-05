@@ -1,6 +1,7 @@
 package com.penglecode.xmodule.common.codegen.config;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -37,12 +38,12 @@ public class ServiceCodegenConfiguration extends AbstractCodegenConfiguration<Se
 			Assert.notNull(moduleProperties.getJimplement(), String.format("Service codegen config '%s.config.%s.jimplement' must be required!", CODEGEN_SERVICE_CONFIGURATION_PREFIX, moduleName));
 			Assert.hasText(moduleProperties.getJimplement().getTargetPackage(), String.format("Service codegen config '%s.config.%s.jimplement.targetPackage' must be required!", CODEGEN_SERVICE_CONFIGURATION_PREFIX, moduleName));
 			Assert.hasText(moduleProperties.getJimplement().getTargetProject(), String.format("Service codegen config '%s.config.%s.jimplement.targetProject' must be required!", CODEGEN_SERVICE_CONFIGURATION_PREFIX, moduleName));
-			
-			File interfaceTargetProjectDir = new File(moduleProperties.getJinterface().getTargetProject());
+
+			File interfaceTargetProjectDir = Paths.get(getRuntimeProjectDir(), moduleProperties.getJinterface().getTargetProject()).toFile();
 			Assert.isTrue(interfaceTargetProjectDir.exists(), String.format("Service codegen config '%s.config.%s.jinterface.targetPackage' indicated directory dos not exists!", CODEGEN_SERVICE_CONFIGURATION_PREFIX, moduleName));
 			moduleProperties.getJinterface().setTargetProject(interfaceTargetProjectDir.getAbsolutePath());
 			
-			File implementTargetProjectDir = new File(moduleProperties.getJimplement().getTargetProject());
+			File implementTargetProjectDir = Paths.get(getRuntimeProjectDir(), moduleProperties.getJimplement().getTargetProject()).toFile();
 			Assert.isTrue(implementTargetProjectDir.exists(), String.format("Service codegen config '%s.config.%s.jimplement.targetPackage' indicated directory dos not exists!", CODEGEN_SERVICE_CONFIGURATION_PREFIX, moduleName));
 			moduleProperties.getJimplement().setTargetProject(implementTargetProjectDir.getAbsolutePath());
 		}

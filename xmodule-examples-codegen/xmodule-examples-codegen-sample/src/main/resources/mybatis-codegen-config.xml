@@ -57,9 +57,11 @@
 			<property name="enableSubPackages" value="true" />
 		</javaClientGenerator>
 
-		<!-- ！！！！！！！！！以下需要动态改动，以免覆盖他人代码！！！！！！！！ -->
-		
-		<table tableName="cg_order" domainObjectName="Order" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		<!--
+		 <table/>配置改在application.yaml中进行配置，具体配置见#MybatisCodegenConfigProperties.tableConfigs字段
+		 下面的sample_table仅仅只是个示例，存在的目的主要是为了该xml不报错，会在运行时删掉该sample_table配置
+		 -->
+		<table tableName="sample_table" domainObjectName="Order" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 			<!-- 数据模型的名称 -->
 			<property name="modelName" value="订单"/>
 			<!-- 数据模型的别名 -->
@@ -73,21 +75,6 @@
 			<!-- selectModelListByExample查询的where条件列 -->
 			<property name="exampleQueryConditions" value="{'total_amount': 'gte,lte', 'order_time': 'gte,lte', 'customer_id': 'eq', 'payment_type': 'eq', 'status': 'eq', 'remark': 'like'}"/>
 		</table>
-		
-		<table tableName="cg_order_detail" domainObjectName="OrderDetail" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
-			<!-- 数据模型的名称 -->
-			<property name="modelName" value="订单明细"/>
-			<!-- 数据模型的别名 -->
-			<property name="modelAlias" value="OrderDetail"/>
-			<!-- 指定insertModel的插入字段 -->
-			<property name="insertModelColumns" value="['order_id', 'product_id', 'product_name', 'product_url', 'unit_price', 'quantity', 'freight_amount', 'sub_total_amount']"/>
-			<!-- Model注释的author -->
-			<property name="modelCommentAuthor" value="Mybatis-Generator"/>
-			<!-- 对应的Mapper接口上的注解 -->
-			<property name="mapperAnnotations" value="com.penglecode.xmodule.common.support.DefaultDatabase"/>
-			<!-- selectModelListByExample查询的where条件列 -->
-			<property name="exampleQueryConditions" value="{'order_id': 'eq', 'product_id': 'eq', 'product_name': 'like', 'unit_price': 'gte,lte', 'sub_total_amount': 'gte,lte'}"/>
-		</table>
-		
+
 	</context>
 </generatorConfiguration>

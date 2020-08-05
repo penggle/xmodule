@@ -1,6 +1,7 @@
 package com.penglecode.xmodule.common.codegen.config;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -34,7 +35,7 @@ public class ControllerCodegenConfiguration extends AbstractCodegenConfiguration
 			Assert.hasText(moduleProperties.getTargetPackage(), String.format("Controller codegen config '%s.config.%s.targetPackage' must be required!", CODEGEN_CONTROLLER_CONFIGURATION_PREFIX, moduleName));
 			Assert.hasText(moduleProperties.getTargetProject(), String.format("Controller codegen config '%s.config.%s.targetProject' must be required!", CODEGEN_CONTROLLER_CONFIGURATION_PREFIX, moduleName));
 			
-			File targetProjectDir = new File(moduleProperties.getTargetProject());
+			File targetProjectDir = Paths.get(getRuntimeProjectDir(), moduleProperties.getTargetProject()).toFile();
 			Assert.isTrue(targetProjectDir.exists(), String.format("Controller codegen config '%s.config.%s.targetPackage' indicated directory dos not exists!", CODEGEN_CONTROLLER_CONFIGURATION_PREFIX, moduleName));
 			moduleProperties.setTargetProject(targetProjectDir.getAbsolutePath());
 		}

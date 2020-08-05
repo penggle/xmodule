@@ -1,8 +1,11 @@
 package com.penglecode.xmodule.common.codegen.config;
 
-import java.util.Properties;
-
+import com.penglecode.xmodule.common.codeden.support.CustomTableConfiguration;
 import com.penglecode.xmodule.common.util.StringUtils;
+
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Mybatis代码生成配置
@@ -51,6 +54,11 @@ public class MybatisCodegenConfigProperties extends AbstractCodegenConfigPropert
 	 * XxxMapper.java源码配置
 	 */
 	private CommonCodegenConfigProperties daoMapper = new CommonCodegenConfigProperties();
+
+	/**
+	 * 表配置定义
+	 */
+	private Set<CustomTableConfiguration> tables = new HashSet<>();
 	
 	public String getDataSourceName() {
 		return dataSourceName;
@@ -114,6 +122,14 @@ public class MybatisCodegenConfigProperties extends AbstractCodegenConfigPropert
 
 	public void setDaoMapper(CommonCodegenConfigProperties daoMapper) {
 		this.daoMapper = daoMapper;
+	}
+
+	public Set<CustomTableConfiguration> getTables() {
+		return tables;
+	}
+
+	public void setTables(Set<CustomTableConfiguration> tables) {
+		this.tables = tables;
 	}
 
 	public Properties asProperties() {

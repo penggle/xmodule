@@ -167,7 +167,7 @@ public class CodegenUtils {
 		Set<String> classNames = ClassScanningUtils.scanPackageClassNames(basePackage);
 		ValueHolder<Class<?>> value = new ValueHolder<Class<?>>();
 		classNames.stream().filter(n -> n.substring(n.lastIndexOf(".") + 1).equals(mapperClassName)).forEach(className ->{
-			Class<?> mapperClass = null;
+			Class<?> mapperClass;
 			try {
 				mapperClass = ClassUtils.forName(className);
 				if(BaseMybatisMapper.class.isAssignableFrom(mapperClass)) {
@@ -196,7 +196,7 @@ public class CodegenUtils {
 		Set<String> classNames = ClassScanningUtils.scanPackageClassNames(basePackage);
 		ValueHolder<Class<?>> value = new ValueHolder<Class<?>>();
 		classNames.stream().filter(n -> n.substring(n.lastIndexOf(".") + 1).equals(serviceClassName)).forEach(className ->{
-			Class<?> serviceClass = null;
+			Class<?> serviceClass;
 			try {
 				serviceClass = ClassUtils.forName(className);
 				String createModelMethodName = "create" + modelAliasName;

@@ -16,6 +16,11 @@ import org.springframework.core.env.Environment;
 public abstract class AbstractCodegenConfiguration<T extends AbstractCodegenConfigProperties> implements EnvironmentAware, InitializingBean {
 
 	/**
+	 * 生成代码所在项目的项目根目录
+	 */
+	private final String runtimeProjectDir;
+
+	/**
 	 * Spring环境变量
 	 */
 	private Environment environment;
@@ -24,7 +29,17 @@ public abstract class AbstractCodegenConfiguration<T extends AbstractCodegenConf
 	 * 分模块的代码生成配置
 	 */
 	private Map<String, T> config = new HashMap<>();
-	
+
+	public AbstractCodegenConfiguration() {
+		String rootDir = getClass().getResource("/").getPath();
+		rootDir = rootDir.substring(1, rootDir.indexOf("/target/"));
+		this.runtimeProjectDir = rootDir;
+	}
+
+	public String getRuntimeProjectDir() {
+		return runtimeProjectDir;
+	}
+
 	public Map<String, T> getConfig() {
 		return config;
 	}
@@ -59,6 +74,9 @@ public abstract class AbstractCodegenConfiguration<T extends AbstractCodegenConf
 	
 	@Override
 	public final void afterPropertiesSet() throws Exception {
+		config.forEach((module, cfg) -> {
+			cfg.setRuntimeProjectDir(getRuntimeProjectDir());
+		});
 		init();
 	}
 	

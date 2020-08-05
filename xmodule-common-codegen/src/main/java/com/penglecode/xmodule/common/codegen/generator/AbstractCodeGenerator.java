@@ -47,12 +47,12 @@ public abstract class AbstractCodeGenerator<C extends AbstractCodegenConfigurati
 	/**
 	 * 生成代码
 	 */
-	public final void generate() {
+	public final void execute() {
 		String codeModule = getCodeModule().getName();
 		LOGGER.info(">>> 生成数据模型的{}代码开始...", codeModule);
 		try {
 			init();
-			doGenerate();
+			doExecute();
 		} catch (Exception e) {
 			LOGGER.error(String.format(">>> 生成数据模型的%s代码出错：%s", codeModule, e.getMessage()), e);
 		}
@@ -70,7 +70,7 @@ public abstract class AbstractCodeGenerator<C extends AbstractCodegenConfigurati
 	 * 执行代码生成
 	 * @throws Exception
 	 */
-	protected abstract void doGenerate() throws Exception;
+	protected abstract void doExecute() throws Exception;
 	
 	/**
 	 * 返回代码层次模块
