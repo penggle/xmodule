@@ -1,6 +1,10 @@
 package com.penglecode.xmodule.validator.examples.sequence;
 
+import com.penglecode.xmodule.common.validation.validator.Enums;
+import com.penglecode.xmodule.common.validation.validator.ValidationGroups.*;
+
 import org.hibernate.validator.constraints.URL;
+import org.hibernate.validator.custom.PropertyValidateOrder;
 
 import javax.validation.constraints.*;
 
@@ -13,29 +17,34 @@ import javax.validation.constraints.*;
  */
 public class Product {
 
-    @NotNull(message = "商品ID不能为空!")
+    @Null(message="商品ID必须为空!", groups={Create.class})
+    @NotNull(message = "商品ID不能为空!", groups={Update.class})
     private Long productId;
 
-    @NotBlank(message = "商品名称不能为空!")
-    @Size(max = 10, message = "商品名称最多{max}个字符!")
-    @Pattern(regexp = "[\\u4e00-\\u9fa5]+", message = "商品名称只能为中文!")
+    @PropertyValidateOrder(value = 1)
+    @NotBlank(message = "商品名称不能为空!", groups={Create.class, Update.class})
+    @Pattern(regexp = "[\\u4e00-\\u9fa5]+", message = "商品名称只能为中文!", groups={Create.class, Update.class})
+    @Size(min = 5, max = 100, message = "商品名称最少{min}个、最多{max}个字符!", groups={Create.class, Update.class})
     private String productName;
 
-    @NotNull(message = "商品类型不能为空!")
+    @PropertyValidateOrder(value = 5)
+    @NotNull(message = "商品类型不能为空!", groups={Create.class, Update.class})
+    @Enums(values={"0", "1"}, message = "商品类型必须是{values}中的一个!", groups={Create.class, Update.class})
     private Integer productType;
 
-    @NotNull(message = "商品URL不能为空!")
-    @URL(message = "商品URL不合法")
+    @PropertyValidateOrder(value = 7)
+    @NotNull(message = "商品URL不能为空!", groups={Create.class, Update.class})
+    @URL(message = "商品URL不合法", groups={Create.class, Update.class})
     private String productUrl;
 
-    @NotNull(message = "商品价格不能为空!")
-    @Min(value = 0, message = "商品价格不能小于{min}!")
-    @Max(value = 9999, message = "商品价格不能大于{max}!")
+    @NotNull(message = "商品价格不能为空!", groups={Create.class, Update.class})
+    @Min(value = 0, message = "商品价格不能小于{min}!", groups={Create.class, Update.class})
+    @Max(value = 9999, message = "商品价格不能大于{max}!", groups={Create.class, Update.class})
     private Double unitPrice;
 
-    @NotNull(message = "商品库存不能为空!")
-    @Min(value = 0, message = "商品库存不能小于{min}!")
-    @Max(value = 9999, message = "商品库存不能大于{max}!")
+    @NotNull(message = "商品库存不能为空!", groups={Create.class, Update.class})
+    @Min(value = 0, message = "商品库存不能小于{min}!", groups={Create.class, Update.class})
+    @Max(value = 9999, message = "商品库存不能大于{max}!", groups={Create.class, Update.class})
     private Integer stocks;
 
     public Long getProductId() {

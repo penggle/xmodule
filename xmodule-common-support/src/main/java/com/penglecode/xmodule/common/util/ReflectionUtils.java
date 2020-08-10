@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
+import java.util.*;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -73,8 +73,24 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 			return (Class) type;
 		}
     }
-    
-	
+
+	/**
+	 * 返回指定类的所有字段(包括public|protected|private|default)，包括父类的
+	 * @param targetClass
+	 * @return
+	 */
+	public static Set<Field> getAllFields(Class<?> targetClass) {
+		Assert.notNull(targetClass, "Parameter 'targetClass' must be not null!");
+		Set<Field> allFields = new LinkedHashSet<>();
+		Class<?> searchType = targetClass;
+		while (searchType != null && !Object.class.equals(searchType)) {
+			Field[] fields = searchType.getDeclaredFields();
+			allFields.addAll(Arrays.asList(fields));
+			searchType = searchType.getSuperclass();
+		}
+		return allFields;
+	}
+
 	/**
 	 * <p>根据属性字段名称获取@{code java.lang.reflect.Field}</p>
 	 * 
@@ -124,7 +140,17 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 		Field field = findField(constsClass, fieldName);
 		setFinalFieldValue(null, field, value);
 	}
-	
+
+	/**
+	 * 修改final字段的值
+	 * @param target
+	 * @param fieldName
+	 * @param value
+	 */
+	public static void setFinalFieldValue(Object target, String fieldName, Object value) {
+		setFinalFieldValue(target, findField(target.getClass(), fieldName), value);
+	}
+
 	/**
 	 * 修改final字段的值
 	 * @param target
@@ -154,7 +180,6 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @param target
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T getFieldValue(Field field, Object target) {
 		try {
 			field.setAccessible(true);

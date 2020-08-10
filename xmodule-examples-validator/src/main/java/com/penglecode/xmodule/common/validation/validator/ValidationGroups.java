@@ -1,5 +1,7 @@
 package com.penglecode.xmodule.common.validation.validator;
 
+import javax.validation.GroupSequence;
+
 public class ValidationGroups {
 
 	//验证所属操作组定义
@@ -42,5 +44,10 @@ public class ValidationGroups {
 	public interface Order2 {}
 
 	public interface Order3 {}
+
+	@GroupSequence({Order1.class, Order2.class, Order3.class})
+	public interface OrderSequence {
+
+	}
 
 }

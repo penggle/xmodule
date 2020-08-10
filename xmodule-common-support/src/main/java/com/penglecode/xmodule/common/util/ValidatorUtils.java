@@ -1,12 +1,13 @@
 package com.penglecode.xmodule.common.util;
 
+import com.penglecode.xmodule.common.util.SpringUtils;
+import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.HibernateValidatorConfiguration;
+
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
-import org.hibernate.validator.HibernateValidator;
-import org.hibernate.validator.HibernateValidatorConfiguration;
 
 /**
  * Java bean validator 工具类
@@ -55,7 +56,7 @@ public class ValidatorUtils {
 		ValidatorFactory validatorFactory = configuration.failFast(failFast).buildValidatorFactory();
 		return validatorFactory.getValidator();
 	}
-	
+
 	/**
 	 * 创建Validator
 	 * @param failFast						- 是否快速失败模式
