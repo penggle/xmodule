@@ -49,8 +49,7 @@ public class FileUtils {
 		String code;
 		try(BufferedInputStream in = new BufferedInputStream(new FileInputStream(fullFilePath))) {
 			int p = (in.read() << 8) + in.read();
-			code = null;
-			switch (p) {
+            switch (p) {
 			    case 0xefbb:
 			        code = "UTF-8";
 			        break;
@@ -404,6 +403,19 @@ public class FileUtils {
     		}
     	} catch (Exception e) {
     	}
+    }
+
+    /**
+     * 如果filePath指定的文件不存在则先创建
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
+    public static Path getOrCreate(Path filePath) throws IOException {
+        if(!filePath.toFile().exists()) {
+            filePath = Files.createFile(filePath);
+        }
+        return filePath;
     }
     
     /**

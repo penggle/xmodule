@@ -3792,3 +3792,214 @@ HashMap类中有以下主要成员变量：
   - 容量，如果不指定，默认容量是16(`static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;`)
 
 可能看完了你还是有点蒙，size和capacity之间有啥关系？为啥要定义这两个变量。loadFactor和threshold又是干啥的？
+
+- **size和capacity**
+
+  HashMap中的size和capacity之间的区别其实解释起来也挺简单的。我们知道，HashMap就像一个“桶”，那么capacity就是这个桶“当前”最多可以装多少元素，而size表示这个桶已经装了多少元素。来看下以下代码：
+
+  ```java
+      Map<String, String> map = new HashMap<String, String>();
+      map.put("hollis", "hollischuang");
+  
+      Class<?> mapType = map.getClass();
+      Method capacity = mapType.getDeclaredMethod("capacity");
+      capacity.setAccessible(true);
+      System.out.println("capacity : " + capacity.invoke(map));
+  
+      Field size = mapType.getDeclaredField("size");
+      size.setAccessible(true);
+      System.out.println("size : " + size.get(map));
+  ```
+  
+  
+  默认情况下，一个HashMap的容量（capacity）是16，设计成16的好处我在《[全网把Map中的hash()分析的最透彻的文章，别无二家。](http://www.hollischuang.com/archives/2091)》中也简单介绍过，主要是可以使用按位与替代取模来提升hash的效率。
+  
+  为什么我刚刚说capacity就是这个桶“当前”最多可以装多少元素呢？当前怎么理解呢。其实，HashMap是具有扩容机制的。在一个HashMap第一次初始化的时候，默认情况下他的容量是16，当达到扩容条件的时候，就需要进行扩容了，会从16扩容成32，而且总是成2的倍数或者说总体成2的指数倍扩容。
+  
+  我们知道，HashMap的重载的构造函数中，有一个是支持传入initialCapacity的，那么我们尝试着设置一下，看结果如何。
+  
+  ```java
+      Map<String, String> map = new HashMap<String, String>(1);
+  
+      Class<?> mapType = map.getClass();
+      Method capacity = mapType.getDeclaredMethod("capacity");
+      capacity.setAccessible(true);
+      System.out.println("capacity : " + capacity.invoke(map));
+  
+      Map<String, String> map = new HashMap<String, String>(7);
+  
+      Class<?> mapType = map.getClass();
+      Method capacity = mapType.getDeclaredMethod("capacity");
+      capacity.setAccessible(true);
+      System.out.println("capacity : " + capacity.invoke(map));
+  
+  
+      Map<String, String> map = new HashMap<String, String>(9);
+  
+      Class<?> mapType = map.getClass();
+      Method capacity = mapType.getDeclaredMethod("capacity");
+      capacity.setAccessible(true);
+      System.out.println("capacity : " + capacity.invoke(map));
+  ```
+  分别执行以上3段代码，分别输出：**capacity : 2、capacity : 8、capacity : 16**。
+  
+  也就是说，默认情况下HashMap的容量是16，但是，如果用户通过构造函数指定了一个数字作为容量，那么Hash会选择大于该数字的第一个2的幂作为容量。(1->1、7->8、9->16)
+  
+- **loadFactor和threshold**
+
+  前面我们提到过，HashMap有扩容机制，就是当达到扩容条件时会进行扩容，从16扩容到32、64、128...
+
+  那么，这个扩容条件指的是什么呢？
+
+  其实，HashMap的扩容条件就是当HashMap中的元素个数（size）超过临界值（threshold）时就会自动扩容。
+
+  在HashMap中，threshold = loadFactor * capacity。
+
+  loadFactor是装载因子，表示HashMap满的程度，默认值为0.75f，设置成0.75有一个好处，那就是0.75正好是3/4，而capacity又是2的幂。所以，两个数的乘积都是整数。
+
+  对于一个默认的HashMap来说，默认情况下，当其size大于12(16*0.75)时就会触发扩容。
+
+  验证代码如下：
+
+  ```java
+  public static void resizeTest1() {
+        Map<String,String> env = System.getenv();
+        HashMap<String,Object> map = new HashMap<>();
+        for(Map.Entry<String,String> entry : env.entrySet()) {
+            map.put(entry.getKey(), entry.getValue());
+            print(map);
+        }
+    }
+  
+    private static void print(HashMap<String,Object> map) {
+        int size = map.size();
+        int threshold = ReflectionUtils.getFieldValue(map, "threshold");
+        float loadFactor = ReflectionUtils.getFieldValue(map, "loadFactor");
+        Object[] table = ReflectionUtils.getFieldValue(map, "table");
+        Method capacityMethod = ReflectionUtils.findMethod(HashMap.class, "capacity");
+        capacityMethod.setAccessible(true);
+        int capacity = (int) ReflectionUtils.invokeMethod(capacityMethod, map);
+        System.out.println(String.format("size = %s, threshold = %s, capacity = %s, table.length = %s, loadFactor = %s", size, threshold, capacity, table == null ? 0 : table.length, loadFactor));
+    }
+  
+    public static void main(String[] args) {
+        resizeTest1();
+    }
+  ```
+  输出：
+  ```shell
+  size = 1, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 2, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 3, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 4, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 5, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 6, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 7, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 8, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 9, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 10, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 11, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 12, threshold = 12, capacity = 16, table.length = 16, loadFactor = 0.75
+  size = 13, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 14, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 15, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 16, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 17, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 18, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 19, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 20, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 21, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 22, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 23, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 24, threshold = 24, capacity = 32, table.length = 32, loadFactor = 0.75
+  size = 25, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 26, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 27, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 28, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 29, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 30, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 31, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 32, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 33, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 34, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 35, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 36, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 37, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 38, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 39, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 40, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 41, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 42, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 43, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 44, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 45, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 46, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 47, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 48, threshold = 48, capacity = 64, table.length = 64, loadFactor = 0.75
+  size = 49, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 50, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 51, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 52, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 53, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 54, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 55, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 56, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 57, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 58, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 59, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  size = 60, threshold = 96, capacity = 128, table.length = 128, loadFactor = 0.75
+  ```
+  当HashMap中的元素个数达到13的时候，capacity就从16扩容到32了。
+
+  HashMap中还提供了一个支持传入initialCapacity,loadFactor两个参数的方法，来初始化容量和装载因子。不过，一般不建议修改loadFactor的值。
+
+- **总结**
+
+  HashMap中size表示当前共有多少个KV对，capacity表示当前HashMap的容量是多少，默认值是16，每次扩容都是成倍的。loadFactor是装载因子，当Map中元素个数超过`loadFactor* capacity`(也即`threshold`)的值时，会触发扩容。`loadFactor* capacity`可以用threshold表示。
+
+  
+
+#### 为什么HashMap的默认负载因子设置成0.75
+
+HashMap是一种K-V结构，为了提升其查询及插入的速度，底层采用了链表的数组这种数据结构实现的。
+
+但是因为在计算元素所在的位置的时候，需要使用hash算法，而HashMap采用的hash算法就是链地址法。这种方法有两个极端。
+
+如果HashMap中哈希冲突概率高，那么HashMap就会退化成链表（不是真的退化，而是操作上像是直接操作链表），而我们知道，链表最大的缺点就是查询速度比较慢，他需要从表头开始逐一遍历。
+
+所以，为了避免HashMap发生大量的哈希冲突，所以需要在适当的时候对其进行扩容。
+
+而扩容的条件是元素个数达到临界值时。HashMap中临界值的计算方法：
+
+```
+临界值（threshold） = 负载因子（loadFactor） * 容量（capacity）
+```
+
+其中负载因子表示一个数组可以达到的最大的满的程度。这个值不宜太大，也不宜太小。
+
+loadFactory太大，比如等于1，那么就会有很高的哈希冲突的概率，会大大降低查询速度。
+
+**当负载因子是1.0的时候，也就意味着，只有当数组的16个值（默认容量情况下）全部填充了，才会发生扩容。这就带来了很大的问题，因为Hash冲突时避免不了的。当负载因子是1.0的时候，意味着会出现大量的Hash的冲突，底层的红黑树变得异常复杂。对于查询效率极其不利。这种情况就是牺牲了时间来保证空间的利用率。**
+
+loadFactory太小，比如等于0.5，那么频繁扩容没，就会大大浪费空间。
+
+所以，这个值需要介于0.5和1之间。根据数学公式推算。这个值在log(2)的时候比较合理。
+
+另外，为了提升扩容效率，HashMap的容量（capacity）有一个固定的要求，那就是一定是2的幂。
+
+所以，如果loadFactor是3/4的话，那么和capacity的乘积结果就可以是一个整数。
+
+所以，一般情况下，我们不建议修改loadFactory的值，除非特殊原因。
+
+比如我明确的知道我的Map只存5个kv，并且永远不会改变，那么可以考虑指定loadFactory。
+
+但是其实我也不建议这样用。我们完全可以通过指定capacity达到这样的目的。
+
+
+
+#### 为什么建议设置HashMap的初始容量，设置多少合适
+
+当HashMap内部维护的哈希表的容量达到75%时（默认情况下），会触发扩容及rehash，而rehash的过程是比较耗费时间的。所以初始化容量要设置成expectedSize/0.75 + 1的话，可以有效的减少冲突也可以减小误差。（大家结合这个公式，好好理解下这句话）
+
+**所以，我们可以认为，当我们明确知道HashMap中元素的个数的时候，把默认容量设置成expectedSize / 0.75F + 1 是一个在性能上相对好的选择，但是，同时也会牺牲些内存。**
+

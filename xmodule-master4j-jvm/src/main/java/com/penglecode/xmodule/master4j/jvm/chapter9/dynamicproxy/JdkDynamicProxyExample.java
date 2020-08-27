@@ -1,7 +1,5 @@
 package com.penglecode.xmodule.master4j.jvm.chapter9.dynamicproxy;
 
-import sun.misc.ProxyGenerator;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;

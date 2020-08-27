@@ -184,11 +184,15 @@
 		<module>xmodule-examples-security</module>
 		<module>xmodule-examples-ssltlsserts</module>
 		<module>xmodule-examples-springcloud</module>
+		<module>xmodule-examples-scrapy4j</module>
 		<module>xmodule-examples-codegen</module>
 		<module>xmodule-examples-validator</module>
 		<module>xmodule-examples-rabbitmq</module>
 		<module>xmodule-master4j-jvm</module>
         <module>xmodule-master4j-java</module>
-		<module>xmodule-examples-scrapy4j</module>
+        <module>xmodule-master4j-algorithm</module>
+		<module>xmodule-master4j-netty</module>
+		<module>xmodule-master4j-spring</module>
+		<module>xmodule-master4j-interviews</module>
     </modules>
 </project>
