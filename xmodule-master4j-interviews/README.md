@@ -204,3 +204,4 @@ synchronized 是**非公平锁**。ReentrantLock 默认是**非公平锁**，但
 - `Condition.signal()` 的API文档则说一个被选定的线程将被唤醒。实际是采用FIFO方式唤醒一个线程。
 - `Condition.signalAll()`的唤醒方式是FIFO
 
+具体测试代码见[NotifyOrderExample.java](src\main\java\com\penglecode\xmodule\master4j\java\lang\thread\NotifyOrderExample.java)
