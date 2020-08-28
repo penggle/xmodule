@@ -4,7 +4,7 @@ Java面试题汇总
 
 
 
-# 第一部分 	Java语言部分
+# 第一部分	Java语言篇
 
 
 
@@ -205,3 +205,202 @@ synchronized 是**非公平锁**。ReentrantLock 默认是**非公平锁**，但
 - `Condition.signalAll()`的唤醒方式是FIFO
 
 具体测试代码见[NotifyOrderExample.java](src/main/java/com/penglecode/xmodule/master4j/java/lang/thread/NotifyOrderExample.java)
+
+
+
+### 3.15、Java中synchronized加锁的锁对象有哪几种?
+
+- `synchronized`关键字加在实例方法上，锁对象是当前对象this；
+- `synchronized`关键字加在静态方法上，锁对象是当前Class对象；
+- `synchronized`关键字加在同步块上，锁对象是`synchronized(..)`括号内的对象；
+
+
+
+### 3.16、Java中什么样的变量可以成为共享资源?
+
+- 基础类型局部变量：`局部变量`存在于线程自己的方法栈中，如果局部变量时基础类型(包括原始类型及其包装类)，那么他是绝对线程安全的，这涉及到Java中只有值传递问题。
+- 对象类型局部变量：`对象类型局部变量`对和`基础类型局部变量`不太一样。尽管引用本身没有被共享，但引用所指的对象并没有存储在线程的栈内。所有的对象都存在`共享堆`中。如果在某个方法中创建的对象不会逃逸出（译注：即该对象不会被其它方法获得，也不会被非局部变量引用到）该方法，那么它就是线程安全的。实际上，哪怕将这个对象作为参数传给其它方法，只要别的线程不修改这个对象，那它仍是线程安全的。
+- 对象成员变量：对象成员存储在`堆`上。如果两个线程同时更新同一个对象的同一个成员，那这个代码就不是线程安全的。
+
+当多个线程同时访问同一个资源，并且其中的一个或者多个线程对这个资源进行了写操作，才会产生**竞态条件**。多个线程同时读同一个资源不会产生竞态条件。所以综上所述绝对线程安全的只有基础类型局部变量。
+
+
+
+3.17、Java中中断线程的方式有哪些?
+
+- 如果代码中调用了产生WATING的方法，诸如Object.wait()、Thread.sleep()、Thread.join()、I/O等，那么通过捕获中断异常来处理中断，在catch块中终止线程的运行(即让线程提前结束)。伪代码如下：
+
+  ```java
+  Thread threadA = new Thread(new Runnable() {
+      @Override
+      public void run() {
+          //这个while条件始终为true,尽管已经调用了threadA.interrupt()
+          while(!Thread.currentThread().isInterrupted()) {
+              try {
+  				Thread.sleep(10000);
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
+                  System.out.println(Thread.currentThread().isInterrupted()); //注意了，这里是false
+                  break;
+              }
+          }
+          System.out.println("threadA done");
+      }
+  }).start();
+  
+  Thread.sleep(5000);
+  
+  threadA.interrupt(); //5秒后中断threadA线程
+  ```
+
+- 如果代码中没有调用产生WATING的方法，那么可以通过中断信号机制来处理中断。伪代码如下所示：
+
+  ```java
+  Thread threadA = new Thread(new Runnable() {
+      @Override
+      public void run() {
+          long lastRunningTimeMillis = System.currentTimeMillis();
+          //在调用了threadA.interrupt()之后，这个while条件就变为false了退出了while循环
+          while(!Thread.currentThread().isInterrupted()) { //通过自旋来模拟一个高耗时的计算任务
+              lastRunningTimeMillis = System.currentTimeMillis();
+          }
+          System.out.println("threadA done");
+      }
+  }).start();
+  
+  Thread.sleep(5000);
+  
+  threadA.interrupt(); //5秒后中断threadA线程
+  ```
+
+
+
+
+
+
+
+# 第二部分	JVM篇
+
+
+
+## 1、内存区域
+
+
+
+aaa
+
+
+
+## 2、垃圾收集
+
+
+
+aaa
+
+
+
+## 3、监控工具
+
+
+
+aaa
+
+
+
+## 4、class与字节码
+
+
+
+aaa
+
+
+
+## 5、类加载机制
+
+
+
+### 5.1、类加载机制-双亲委托机制
+
+先说说类加载机制的几个核心方法：
+
+- ```java
+  protected Class<?> loadClass(String name, boolean resolve): 加载类的入口方法
+  ```
+
+- ```java
+  protected final Class<?> findLoadedClass(String name): 检测类是否已经被当前ClassLoader加载过了，未加载过返回null
+  ```
+- ```java
+  protected Class<?> findClass(String name): 尝试在当前ClassLoader在管辖范围内(例如ExtClassLoader的管辖范围是<JAVA_HOME>/jre/lib/ext目录)加载该类，未发现抛出ClassNotFoundException
+  ```
+
+举个例子，例如：当jvm要加载用户自定义的类Test.class的时候，其加载流程如下所述：
+
+1. 首先会到自定义加载器中查找，看是否已经加载过(**调用`findLoadedClass()`**)，如果已经加载过，则返回字节码。
+2. 如果自定义加载器没有加载过，则询问上一层加载器(即AppClassLoader)是否已经加载过Test.class。
+3. 如果没有加载过，则询问上一层加载器（ExtClassLoader）是否已经加载过。
+4. 如果没有加载过，则继续询问上一层加载（BoopStrap ClassLoader）是否已经加载过。
+5. 如果BoopStrap ClassLoader依然没有加载过，则到自己指定类加载路径下（"sun.boot.class.path"）查找(**调用`findClass()`**)是否有Test.class字节码，有则返回，没有通知(**这个通知是靠下级ClassLoader捕获parent.loadClass()方法来实现的**)下一层加载器ExtClassLoader到自己指定的类加载路径下（java.ext.dirs）查看。
+6. 依次类推，最后到自定义类加载器指定的路径还没有找到Test.class字节码，则抛出异常`ClassNotFoundException`。
+
+**loadClass()源码：**
+```java
+protected Class<?> loadClass(String name, boolean resolve)
+        throws ClassNotFoundException
+    {
+        synchronized (getClassLoadingLock(name)) {
+            // 首先，检查是否已经加载过
+            Class<?> c = findLoadedClass(name);
+            if (c == null) {
+                long t0 = System.nanoTime();
+                try {
+                    if (parent != null) {
+                        //父加载器不为空,调用父加载器的loadClass
+                        c = parent.loadClass(name, false);
+                    } else {
+                        //父加载器为空则,调用Bootstrap Classloader
+                        c = findBootstrapClassOrNull(name);
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ClassNotFoundException thrown if class not found
+                    // from the non-null parent class loader
+                }
+
+                if (c == null) {
+                    // If still not found, then invoke findClass in order
+                    // to find the class.
+                    long t1 = System.nanoTime();
+                    //父加载器没有找到，则调用findclass
+                    c = findClass(name);
+
+                    // this is the defining class loader; record the stats
+                    sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
+                    sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
+                    sun.misc.PerfCounter.getFindClasses().increment();
+                }
+            }
+            if (resolve) {
+                //调用resolveClass()
+                resolveClass(c);
+            }
+            return c;
+        }
+    }
+```
+
+
+
+### 5.2、遵守双亲委派模型自定义类加载器的步骤
+
+1. **继承ClassLoader类**
+2. **重写protected Class<?> findClass(String name)方法**
+3. **在上面findClass()方法中调用defineClass()方法**
+
+
+
+### 5.3、使用双亲委派模型来组织类加载器之间的关系的好处是什么?
+
+使用双亲委派模型来组织类加载器之间的关系，一个显而易见的好处就是Java中的类随着它的类加载器一起具备了一种带有优先级的层次 关系。例如类java.lang.Object，它存放在rt.jar之中，无论哪一个类加载器要加载这个类，最终都是委派给处于模型最顶端的启动类加载器进行加载，因此Object类在程序的各种类加载器环境中都能够保证是同一个类。反之，如果没有使用双亲委派模型，都由各个类加载器自行去加载的话，如果用户自己也编写了一个名为java.lang.Object的类，并放在程序的ClassPath中，那系统中就会出现多个不同的Object类，Java类型体系中最基础的行为也就无从保证，应用程序将会变得一片混乱，而且还带来安全问题。
+
+
+

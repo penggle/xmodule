@@ -187,7 +187,7 @@ public class NotifyOrderExample {
         }
 
         if("signal".equals(signalType)) {
-            //Object.notify()是按FIFO方式唤醒的
+            //Condition.signal()是按FIFO方式唤醒的
             for(int i = 0; i < nThreads; i++) { //接着做30次唤醒操作
                 Thread.sleep(50);
                 try {
@@ -198,7 +198,7 @@ public class NotifyOrderExample {
                 }
             }
         } else if("signalAll".equals(signalType)) {
-            //Object.notifyAll()是按LIFO方式唤醒的
+            //Condition.signalAll()是按FIFO方式唤醒的
             try {
                 lock.lock();
                 condition.signalAll(); //signalAll()需要获得lock

@@ -37,9 +37,9 @@ public class ThreadInterruptExample {
                 try {
                     Thread.sleep(sleepMillis);
                     System.out.println(String.format("【%s】处理第%s个任务耗时：%s毫秒...", Thread.currentThread().getName(), i + 1, sleepMillis));
-                } catch (InterruptedException e) {
+                } catch (InterruptedException e) { //特别注意：一旦捕获了InterruptedException，那么原本由interrupt()中断方法导致的中断标志位将不会改变，即Thread.currentThread().isInterrupted()仍然为false，而不是true
                     e.printStackTrace();
-                    System.out.println(String.format("【%s】处理第%s个任务时发生中断...", Thread.currentThread().getName(), i + 1));
+                    System.out.println(String.format("【%s】处理第%s个任务时发生中断... isInterrupted = %s", Thread.currentThread().getName(), i + 1, Thread.currentThread().isInterrupted()));
                     return; //接受到中断信号时，停止运行
                 }
             }
@@ -162,9 +162,9 @@ public class ThreadInterruptExample {
     }
 
     public static void main(String[] args) throws Exception {
-        //interruptByInterruptedException();
+        interruptByInterruptedException();
         //interruptByNoInterruptedException1();
-        interruptByNoInterruptedException2();
+        //interruptByNoInterruptedException2();
     }
 
 }
