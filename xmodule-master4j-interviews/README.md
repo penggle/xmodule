@@ -342,8 +342,11 @@ aaa
 4. 如果没有加载过，则继续询问上一层加载（BoopStrap ClassLoader）是否已经加载过。
 5. 如果BoopStrap ClassLoader依然没有加载过，则到自己指定类加载路径下（"sun.boot.class.path"）查找(**调用`findClass()`**)是否有Test.class字节码，有则返回，没有通知(**这个通知是靠下级ClassLoader捕获parent.loadClass()方法来实现的**)下一层加载器ExtClassLoader到自己指定的类加载路径下（java.ext.dirs）查看。
 6. 依次类推，最后到自定义类加载器指定的路径还没有找到Test.class字节码，则抛出异常`ClassNotFoundException`。
+7. **如果Test.class依赖一些Java核心类库则不会使用自定义的类加载器加载，BoopStrap ClassLoader肯定会代为加载的。**
+8. **如果Test.class依赖一些用户自定义的类(如BaseTest.java)则依然使用自定义的类加载器加载。**
 
 **loadClass()源码：**
+
 ```java
 protected Class<?> loadClass(String name, boolean resolve)
         throws ClassNotFoundException
@@ -395,6 +398,8 @@ protected Class<?> loadClass(String name, boolean resolve)
 1. **继承ClassLoader类**
 2. **重写protected Class<?> findClass(String name)方法**
 3. **在上面findClass()方法中调用defineClass()方法**
+
+参考示例：[JarEntryClassLoader.java](src/main/java/com/penglecode/xmodule/master4j/java/lang/classloader/JarEntryClassLoader.java)、[ClassLoaderExample.java](src/main/java/com/penglecode/xmodule/master4j/java/lang/classloader/ClassLoaderExample.java)
 
 
 
