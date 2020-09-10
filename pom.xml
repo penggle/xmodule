@@ -32,9 +32,8 @@
 		<jwt.version>8.4</jwt.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
 		<mysql.version>8.0.20</mysql.version>
+		<jmh.version>1.24</jmh.version>
 
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 	</properties>
 
@@ -118,6 +117,19 @@
 				<artifactId>pinyin4j</artifactId>
 				<version>${pinyin4j.version}</version>
 			</dependency>
+
+			<!-- JMH -->
+			<dependency>
+				<groupId>org.openjdk.jmh</groupId>
+				<artifactId>jmh-core</artifactId>
+				<version>${jmh.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openjdk.jmh</groupId>
+				<artifactId>jmh-generator-annprocess</artifactId>
+				<version>${jmh.version}</version>
+				<scope>provided</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -128,25 +140,6 @@
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>${java.version}</source>
-						<target>${java.version}</target>
-						<encoding>${project.build.sourceEncoding}</encoding>
-						<!-- Java编译保留方法参数名称 -->
-						<parameters>true</parameters>
-						<compilerId>eclipse</compilerId>
-					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.codehaus.plexus</groupId>
-							<artifactId>plexus-compiler-eclipse</artifactId>
-							<version>2.8.5</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -194,5 +187,6 @@
 		<module>xmodule-master4j-netty</module>
 		<module>xmodule-master4j-spring</module>
 		<module>xmodule-master4j-interviews</module>
+		<module>xmodule-master4j-jmh</module>
     </modules>
 </project>

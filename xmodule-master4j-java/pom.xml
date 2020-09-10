@@ -67,6 +67,16 @@
             <artifactId>jstl</artifactId>
         </dependency>
 
+        <!-- JMH -->
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+        </dependency>
+
         <!-- spring-boot-starter-test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 /**
  * JarFile示例
@@ -77,11 +78,20 @@ public class JarFileExample {
         System.out.println(Arrays.toString(datas));
     }
 
+    public static void testRtJarFile() throws IOException {
+        String jarFilePath = "C:\\Program Files\\Java\\jdk1.8.0_241\\jre\\lib\\rt.jar";
+        String targetClass = "java/lang/Object.class";
+        JarFile jarFile = new JarFile(jarFilePath, true);
+        JarEntry jarEntry = jarFile.getJarEntry(targetClass);
+        System.out.println(jarEntry);
+    }
+
     public static void main(String[] args) throws Exception {
         //traverseJarEntrys();
         //getJarEntryByJarFileApi();
-        getJarEntryByJarFileURL();
+        //getJarEntryByJarFileURL();
         //getJarEntryByJarHttpURL();
+        testRtJarFile();
     }
 
 }

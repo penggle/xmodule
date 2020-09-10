@@ -164,7 +164,7 @@ public class CodegenUtils {
 	 */
 	public static Class<?> getModelMapperClass(Class<?> modelClass, String basePackage) {
 		String mapperClassName = getModelMapperClassName(modelClass.getSimpleName());
-		Set<String> classNames = ClassScanningUtils.scanPackageClassNames(basePackage);
+		Set<String> classNames = ClassScanningUtils.scanClassNames(basePackage);
 		ValueHolder<Class<?>> value = new ValueHolder<Class<?>>();
 		classNames.stream().filter(n -> n.substring(n.lastIndexOf(".") + 1).equals(mapperClassName)).forEach(className ->{
 			Class<?> mapperClass;
@@ -193,7 +193,7 @@ public class CodegenUtils {
 	 */
 	public static Class<?> getModelServiceClass(Class<?> modelClass, String modelAliasName, String basePackage) {
 		String serviceClassName = getModelServiceInterfaceClassName(modelClass.getSimpleName());
-		Set<String> classNames = ClassScanningUtils.scanPackageClassNames(basePackage);
+		Set<String> classNames = ClassScanningUtils.scanClassNames(basePackage);
 		ValueHolder<Class<?>> value = new ValueHolder<Class<?>>();
 		classNames.stream().filter(n -> n.substring(n.lastIndexOf(".") + 1).equals(serviceClassName)).forEach(className ->{
 			Class<?> serviceClass;

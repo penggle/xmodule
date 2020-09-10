@@ -4,6 +4,10 @@ import com.sun.crypto.provider.AESKeyGenerator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
+
 /**
  * 类加载器示例
  *
@@ -144,12 +148,22 @@ public class ClassLoaderExample {
         System.out.println(clazz + " : " + clazz.getClassLoader());
     }
 
+    public static void getSystemClassLoader() throws IOException {
+        System.out.println(ClassLoader.getSystemClassLoader());
+        Enumeration<URL> resourceUrls = ClassLoader.getSystemResources("com/sun/deploy/ClientContainer");
+        while (resourceUrls.hasMoreElements()) {
+            URL url = resourceUrls.nextElement();
+            System.out.println(url);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         //aboutBootClassLoader();
         //aboutExtClassLoader();
         //aboutAppClassLoader();
         //customClassLoader1();
         //customClassLoader2();
+        getSystemClassLoader();
     }
 
 }
