@@ -10,13 +10,13 @@ Spring 是一个轻量级的Java企业级应用的开源开发框架，它是一
 
 ## 2、使用Spring框架的好处是什么？
 
-- **轻量**从代码大小与开销两方面来说，Spring都是轻量的。完整的Spring框架可以在一个只有2MB左右的jar包中发布出来，并且Spring所需的处理开销也是微不足道的。此外Spring是非侵入式的，典型的，Spring应用中的对象并不是必须依赖Spring中特定的类型。
+- **轻量**：从代码大小与开销两方面来说，Spring都是轻量的。完整的Spring框架可以在一个只有2MB左右的jar包中发布出来，并且Spring所需的处理开销也是微不足道的。此外Spring是非侵入式的，典型的，Spring应用中的对象并不是必须依赖Spring中特定的类型。
 - **控制反转**：Spring通过一种称作控制反转的IoC技术降低了耦合，通过IoC技术，一个对象及其依赖对象都会通过被动的方式被注入进来，而无需应用程序自己创建、组合或销毁对象，对象生命周期的维护全部交出去由IoC容器来做，应用程序仅仅负责实现业务逻辑即可。
-- **面向切面编程(AOP):  **Spring支持面向切面的AOP编程，并且把应用业务逻辑和系统服务分开。Spring AOP整合了多种动态代理技术(如JDK动态代理、Cglib动态代理)，并应用到诸如声明式事物等场景，简化并降低了开发工作。
-- **IoC容器**:  Spring 包含并管理应用中对象的生命周期和配置。在这个意义上讲它是一种容器，你可以配置你的每个bean是如何被创建，基于一个可配置的原型，你的bean可以只创建一个单独的实例，或者每次需要时都生成一个新的实例，以及级联创建bean所依赖的其他bean并自动完成组合装配。
-- **事务管理：**Spring 提供一个持续的事务管理接口，可以扩展到上至本地事务下至全局事务（JTA）。
-- **异常处理：**Spring 提供方便的API把具体技术相关的异常（比如由JDBC，Hibernate or JDO抛出的）转化为一致的unchecked异常。
-- **一整套框架及整合：**Spring提供了基于传统分层设计的一整套框架及整合，例如：
+- **面向切面编程(AOP)**：Spring支持面向切面的AOP编程，并且把应用业务逻辑和系统服务分开。Spring AOP整合了多种动态代理技术(如JDK动态代理、Cglib动态代理)，并应用到诸如声明式事物等场景，简化并降低了开发工作。
+- **IoC容器**：Spring 包含并管理应用中对象的生命周期和配置。在这个意义上讲它是一种容器，你可以配置你的每个bean是如何被创建，基于一个可配置的原型，你的bean可以只创建一个单独的实例，或者每次需要时都生成一个新的实例，以及级联创建bean所依赖的其他bean并自动完成组合装配。
+- **事务管理**：Spring 提供一个持续的事务管理接口，可以扩展到上至本地事务下至全局事务（JTA）。
+- **异常处理**：Spring 提供方便的API把具体技术相关的异常（比如由JDBC，Hibernate or JDO抛出的）转化为一致的unchecked异常。
+- **一整套框架及整合**：Spring提供了基于传统分层设计的一整套框架及整合，例如：
   - 表现层SpringMVC模块是Web应用MVC模式的典型代表。
   - 持久层SpringJDBC模块是对JDBC开发的轻量级封装。同时还提供了对Mybatis、JPA等ORM框架的整合支持，大大简化了开发工作。
   - 得益于Spring IoC容器的能力，使得其他框架可以很容易被整合到Spring中来。
@@ -64,7 +64,7 @@ Spring 是一个轻量级的Java企业级应用的开源开发框架，它是一
 
 - Test模块：spring-test，主要为测试提供支持的
 
-![Spring模块组成图.jpg](src/main/java/com/penglecode/xmodule/master4j/spring/Spring模块组成图.jpg)
+<img src="src/main/java/com/penglecode/xmodule/master4j/spring/Spring模块组成图.jpg"/>
 
 
 
@@ -92,11 +92,11 @@ org.springframework.beans.factory.XmlBeanFactory子类关系图：
 
 ![BeanFactory主要子类图.png](src/main/java/com/penglecode/xmodule/master4j/spring/beans/BeanFactory主要子类图.png)
 
-- **`HierarchicalBeanFactory`：**提供获取父级BeanFactory的getParentBeanFactory()方法，架设父子BeanFactory之间的桥梁。
-- **`AutowireCapableBeanFactory`：**为BeanFactory提供自动装配的能力。
-- **`ListableBeanFactory`：**为BeanFactory提供遍历容器中所有bean的能力。
-- **`ConfigurableBeanFactory`：**为BeanFactory提供可配置的能力，例如提供了很多setXxx()，getXxx()方法等。
-- **`ApplicationContext`：**应用程序上下文接口，基于BeanFactory之上的最重要接口。提供应用程序所需的各种资源或配置，例如Bean容器、环境变量、消息资源包、资源文件解析查找、应用程序事件发布等能力。
+- **`HierarchicalBeanFactory`**：提供获取父级BeanFactory的getParentBeanFactory()方法，架设父子BeanFactory之间的桥梁。
+- **`AutowireCapableBeanFactory`**：为BeanFactory提供自动装配的能力。
+- **`ListableBeanFactory`**：为BeanFactory提供遍历容器中所有bean的能力。
+- **`ConfigurableBeanFactory`**：为BeanFactory提供可配置的能力，例如提供了很多setXxx()，getXxx()方法等。
+- **`ApplicationContext`**：应用程序上下文接口，基于BeanFactory之上的最重要接口。提供应用程序所需的各种资源或配置，例如Bean容器、环境变量、消息资源包、资源文件解析查找、应用程序事件发布等能力。
 
 其他`BeanFactory`子类基本上都是`HierarchicalBeanFactory`、`AutowireCapableBeanFactory`、`ListableBeanFactory`、`ConfigurableBeanFactory`等组合起来的，例如`ConfigurableListableBeanFactory`
 
@@ -226,7 +226,7 @@ org.springframework.beans.factory.xml.XmlBeanFactory ，它根据XML文件中的
 
 
 
-**站在开发的角度来说，主要的调用链概括如下：**
+**站在开发的角度来说，主要的调用链概括如下**：
 
 - BeanFactory#getBean()  =>
 - AbstractFactoryBean#doGetBean()  =>
@@ -515,7 +515,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 - Spring是如何解决bean循环依赖的？
 
-  首先给出答案：**Spring通过三级缓存来解决bean循环依赖的。**
+  首先给出答案**：Spring通过三级缓存来解决bean循环依赖的。**
 
   - 那么三级缓存到底是什么？
 
@@ -652,14 +652,14 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 ![ApplicationContext主要子类图.png](src/main/java/com/penglecode/xmodule/master4j/spring/context/ApplicationContext主要子类图.png)
 
-- **`ConfigurableApplicationContext`：**可配置的应用程序上下文，例如可以配置Environment、父级ApplicationContext、ApplicationListener，以及refresh()，close()功能。
-- **`WebApplicationContext`：**web应用程序的上下文。
-- **`ConfigurableWebApplicationContext`：**是`ConfigurableApplicationContext`和`WebApplicationContext`两个的组合。
-- **`AbstractRefreshableApplicationContext`：**主要是和容器的刷新与创建有关，调用refreshBeanFactory方法完成容器刷新。
-- **`AbstractRefreshableConfigApplicationContext`：**基于XML配置文件的且可指定配置文件位置的应用程序上下文。
-- **`AbstractRefreshableWebApplicationContext`：**继承自`AbstractRefreshableConfigApplicationContext`。
-- **`GenericApplicationContext`：**通用的应用程序上下文。
-- **`GenericXmlApplicationContext`：**通用的以XML内容为构造条件的应用程序上下文。
+- **`ConfigurableApplicationContext`**：可配置的应用程序上下文，例如可以配置Environment、父级ApplicationContext、ApplicationListener，以及refresh()，close()功能。
+- **`WebApplicationContext`**：web应用程序的上下文。
+- **`ConfigurableWebApplicationContext`**：是`ConfigurableApplicationContext`和`WebApplicationContext`两个的组合。
+- **`AbstractRefreshableApplicationContext`**：主要是和容器的刷新与创建有关，调用refreshBeanFactory方法完成容器刷新。
+- **`AbstractRefreshableConfigApplicationContext`**：基于XML配置文件的且可指定配置文件位置的应用程序上下文。
+- **`AbstractRefreshableWebApplicationContext`**：继承自`AbstractRefreshableConfigApplicationContext`。
+- **`GenericApplicationContext`**：通用的应用程序上下文。
+- **`GenericXmlApplicationContext`**：通用的以XML内容为构造条件的应用程序上下文。
 - **`AnnotationConfigApplicationContext`：普通的以JavaConfig方式启动的应用程序上下文。其实就是普通Java Application程序。**
 - **`FileSystemXmlApplicationContext`：以FileSystemResource(形如file:/d:/xxx.xml)来定位配置文件的应用程序上下文。其实就是普通Java Application程序。**
 - **`ClassPathXmlApplicationContext`：以ClassPathResource(形如classpath:xxx.xml)来定位配置文件的应用程序上下文。其实就是普通Java Application程序。**
@@ -698,7 +698,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
     - 将当前ApplicationContext实例注册到JMX的MBean中去
 12. refresh()方法结束，应用程序上下文启动成功
 
-**概括的说，主要的过程有：**
+**概括的说，主要的过程有**：
 
 - 创建应用上下文内部的BeanFactory(实际是new了一个DefaultListableBeanFactory)，并对应用上下文进行初始化设置
 - 调用容器中已注册的BeanDefinitionRegistryPostProcessor或者BeanFactoryPostProcessor的回调方法
@@ -1113,7 +1113,7 @@ AOP全名Aspect-oriented programming面向切面编程，与大多数技术一�
 
   Advisor是切面的另外一种实现，能够将通知以更为复杂的方式织入到目标对象中，是将通知包装为更复杂切面的装配器。Advisor由切入点和Advice组成。Advisor这个概念来自于Spring AOP架构，在AspectJ中是没有等价的概念的。
 
-简单来讲，整个Aspect可以描述为：**满足指定`PointCut`规则的一系列`JoinPoint`会被添加相应的`Advice`的操作**。
+简单来讲，整个Aspect可以描述为**：满足指定`PointCut`规则的一系列`JoinPoint`会被添加相应的`Advice`的操作**。
 
 AOP代理主要分为**静态代理**和**动态代理**。即：
 
@@ -1125,7 +1125,7 @@ AOP代理主要分为**静态代理**和**动态代理**。即：
 
   静态代理不同，动态代理就是说AOP框架不会去修改编译时生成的字节码，而是在运行时在内存中生成一个AOP代理对象，这个AOP对象包含了目标对象的全部方法，并且在特定的切点做了增强处理，并回调原对象的方法。
 
-  Spring AOP中的动态代理主要有两种方式：**JDK动态代理**和**CGLIB动态代理**。
+  Spring AOP中的动态代理主要有两种方式**：JDK动态代理**和**CGLIB动态代理**。
 
   - JDK代理通过反射来处理被代理的类，并且要求被代理类必须实现一个接口。核心类是`InvocationHandler`接口和`Proxy`类。而当目标类没有实现接口时，Spring AOP框架会使用CGLIB来动态代理目标类。
   - CGLIB（Code Generation Library），是一个代码生成的类库，可以在运行时动态的生成某个类的子类。CGLIB是通过继承的方式做的动态代理，因此如果某个类被标记为final，那么它是无法使用CGLIB做动态代理的。核心类是`MethodInterceptor`接口和`Enhancer`类。
@@ -1323,7 +1323,7 @@ SpringAOP 的核心架构基于代理。当想要创建一个类的被通知实�
   - ***@within*** - 跟@target(..)效果一样，这并没有奇怪的，因为Spring AOP走的路线是基于CGLIB或JDK动态代理的而非AspectJ，而且只能代理方法，引入AspectJ切入点指示器(PCD)只是再尽量向标准靠拢，所以@target()、@within()语义上并没有完全实现标准AspjectJ的那套语义，所以形成了@target()与@within()行为基本一样的问题。
   - ***@annotation*** - 通过判断被代理对象上被调用的代理方法有没有标注@annotation(annotation)中指定的注解annotation来匹配切点，且annotation注解只能加在targetClass上，即实现类上才有效果，annotation注解加在方法上或者接口上都是没有效果的。
 
-- **Spring内部管理的自动代理创建的bean的名称：**
+- **Spring内部管理的自动代理创建的bean的名称**：
 
   见AopConfigUtils.**AUTO_PROXY_CREATOR_BEAN_NAME** = org.springframework.aop.config.internalAutoProxyCreator
 
@@ -1717,7 +1717,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
      - 如果beanA存在循环依赖的话，那么三级缓存`Map<String, ObjectFactory<?>> singletonFactories`会被查找。当初创建beanA的时候加入三级缓存的代码是`addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));`，其中这个lambda表达式就是`ObjectFactory`。在解决bean循环依赖时`ObjectFactory#getObject()`率先被调用，也就触发了调用`SmartInstantiationAwareBeanPostProcessor#getEarlyBeanReference()`方法，而`AnnotationAwareAspectJAutoProxyCreator`的顶级父类`org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator`实现了`SmartInstantiationAwareBeanPostProcessor#getEarlyBeanReference()`方法，在方法中创建了原始beanA的代理实例并代替原始beanA作为`getBean()`方法的返回值返回给了调用者，**这是第三种被自动代理的情况！**
   4. 至此bean自动代理的三种情况已经大致讲述完毕。
   
-- **总结一下自动的原理：**
+- **总结一下自动的原理**：
 
   <u>**要实现根据一定的条件自动代理注册到容器中的bean，那么必不可少的要遍历每个bean，你肯定想到的是自定义个BeanPostProcessor在诸如postProcessAfterInitialization()这样的生命周期回调方法中来做！事实的确是这个样子的，不过选择的是Spring内部使用的SmartInstantiationAwareBeanPostProcessor，之所以要选择他，主要是为了解决在自动代理情况下的Spring bean循环依赖的问题。**</u>
 
@@ -1945,9 +1945,9 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
      说到事务的隔离级别，我们先来说说数据库中几个引发数据一致性的名词定义：
 
-     -  **脏读：**指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。因为这个数据是还没有提交的数据， 那么另外一 个事务读到的这个数据是脏数据，依据脏数据所做的操作可能是不正确的。简言之就是：**后一个事物读取并使用到前一个事务还未提交的数据。**
-     - **不可重复读：**指在一个事务内，多次读取同一数据（**也可能是同一拨数据**）。在这个事务还没有结束时，另外一个事务也访问该同一数据。 那么，在第一个事务中的两次读数据之间，由于第二个事务的修改，那么第一个事务两次读到的数据可能是不一样的。这样就发生了在一个事务内两次读到的数据是不一样的，因此称为是不可重复读。**简言之就是：前一个事务中多次读取同一个数据，并且期间该同一数据被后一个事物修改过，而引发的前一事务读取到同一数据不同结果的问题，称之为不可重复读。**
-     - **幻读：**指当事务不是独立执行时发生的一种现象，例如第一个事务对一个表中的数据进行了修改，这种修改涉及到表中的全部数据行。同时，第二个事务也修改这个表中的数据，这种修改是向表中插入一行新数据。那么，就会发生操作第一个事务的用户发现表中还有 没有修改的数据行。**简言之就是：幻读是指同一查询在同一事务中多次进行，由于其他事务所做的插入操作，导致每次返回不同的结果集，此时发生幻像读，就好象发生了幻觉一样。**
+     -  **脏读**：指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。因为这个数据是还没有提交的数据， 那么另外一 个事务读到的这个数据是脏数据，依据脏数据所做的操作可能是不正确的。简言之就是**：后一个事物读取并使用到前一个事务还未提交的数据。**
+     - **不可重复读**：指在一个事务内，多次读取同一数据（**也可能是同一拨数据**）。在这个事务还没有结束时，另外一个事务也访问该同一数据。 那么，在第一个事务中的两次读数据之间，由于第二个事务的修改，那么第一个事务两次读到的数据可能是不一样的。这样就发生了在一个事务内两次读到的数据是不一样的，因此称为是不可重复读。**简言之就是：前一个事务中多次读取同一个数据，并且期间该同一数据被后一个事物修改过，而引发的前一事务读取到同一数据不同结果的问题，称之为不可重复读。**
+     - **幻读**：指当事务不是独立执行时发生的一种现象，例如第一个事务对一个表中的数据进行了修改，这种修改涉及到表中的全部数据行。同时，第二个事务也修改这个表中的数据，这种修改是向表中插入一行新数据。那么，就会发生操作第一个事务的用户发现表中还有 没有修改的数据行。**简言之就是：幻读是指同一查询在同一事务中多次进行，由于其他事务所做的插入操作，导致每次返回不同的结果集，此时发生幻像读，就好象发生了幻觉一样。**
 
      针对解决上述数据库中存在的脏读、不可重复读、幻读等问题，就出现了使用数据库事务隔离级别来指示数据库上述问题的最低保障，隔离级别是RDBMS标准的一部分，每个数据库都会实现以下五个标准的事务隔离级别：
 
@@ -2118,7 +2118,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
   **通过`org.springframework.transaction.support.TransactionTemplate`来实现编程式事务。**
 
-  **编程式事务示例：**
+  **编程式事务示例**：
 
   1. 模拟一个PROPAGATION_REQUIRED事务createProduct()的执行过程中嵌套了另一个PROPAGATION_REQUIRED事务recordAccessLog1()的场景：
 
@@ -2194,7 +2194,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
   - 基于Spring AOP的动态代理模式，即基于CGLIB动态代理或JDK动态代理；此种代理功能有限，例如只能加在public方法上，本类中方法之间相互调用会绕过代理逻辑等问题。
   - 基于AspectJ的字节码织入代理模式，它是基于AspectJ框架的，功能十分强大，没有上述问题。
 
-  **声明式事务示例：**
+  **声明式事务示例**：
 
   1. 模拟一个PROPAGATION_REQUIRED事务createProduct()的执行过程中嵌套了另一个PROPAGATION_REQUIRED事务recordAccessLog1()的场景：
 
@@ -2248,7 +2248,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
      
 
-- **Spring声明式事物实现的几种方式：**
+- **Spring声明式事物实现的几种方式**：
 
   1. 早期的基于org.springframework.transaction.interceptor.TransactionProxyFactoryBean配置的方式：
 
