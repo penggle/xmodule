@@ -13,8 +13,18 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.penglecode.xmodule.common.support.CustomObjectMapper;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 
+/**
+ * 基于Jackson2的JSON工具类
+ *
+ * @author 	pengpeng
+ * @date 	2019年2月27日 下午4:31:20
+ */
 public class JsonUtils {
+
+	private static final ConversionService DEFAULT_CONVERSION_SERVICE = new DefaultConversionService();
 
 	public static final String DEFAULT_EMPTY_JSON_OBJECT = "{}";
 	
@@ -91,6 +101,24 @@ public class JsonUtils {
 	 */
 	public static <T> T json2Object(String json, TypeReference<T> typeReference) {
 		return json2Object(DEFAULT_OBJECT_MAPPER, json, typeReference);
+	}
+
+	/**
+	 * json字符串转泛型类对象
+	 * @param json
+	 * @param mapper
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T json2Object(String json, Json2ObjectConverter<T> converter) {
+		try {
+			if(!StringUtils.isEmpty(json)) {
+				return converter.convert(DEFAULT_OBJECT_MAPPER, DEFAULT_OBJECT_MAPPER.readTree(json));
+			}
+		} catch (Exception e) {
+			throw new JacksonJsonException(e);
+		}
+		return null;
 	}
 	
 	/**
@@ -174,6 +202,110 @@ public class JsonUtils {
 		}
 		return false;
 	}
+
+	public static String toString(JsonNode parentNode, String fieldName) {
+		JsonNode jsonNode = parentNode.get(fieldName);
+		if(jsonNode != null) {
+			return jsonNode.toString();
+		}
+		return null;
+	}
+
+	public static String getString(JsonNode parentNode, String fieldName) {
+		return getString(parentNode, fieldName, null);
+	}
+
+	public static String getString(JsonNode parentNode, String fieldName, String defaultValue) {
+		JsonNode jsonNode = parentNode.get(fieldName);
+		if(jsonNode != null) {
+			return StringUtils.defaultIfEmpty(jsonNode.asText(), defaultValue);
+		}
+		return null;
+	}
+
+	public static Boolean getBoolean(JsonNode parentNode, String fieldName) {
+		return getBoolean(parentNode, fieldName, null);
+	}
+
+	public static Boolean getBoolean(JsonNode parentNode, String fieldName, Byte defaultValue) {
+		String fieldValue = getString(parentNode, fieldName, defaultValue != null ? defaultValue.toString() : null);
+		if(fieldValue != null) {
+			return DEFAULT_CONVERSION_SERVICE.convert(fieldValue, Boolean.class);
+		}
+		return null;
+	}
+
+	public static Byte getByte(JsonNode parentNode, String fieldName) {
+		return getByte(parentNode, fieldName, null);
+	}
+
+	public static Byte getByte(JsonNode parentNode, String fieldName, Byte defaultValue) {
+		String fieldValue = getString(parentNode, fieldName, defaultValue != null ? defaultValue.toString() : null);
+		if(fieldValue != null) {
+			return DEFAULT_CONVERSION_SERVICE.convert(fieldValue, Byte.class);
+		}
+		return null;
+	}
+
+	public static Short getShort(JsonNode parentNode, String fieldName) {
+		return getShort(parentNode, fieldName, null);
+	}
+
+	public static Short getShort(JsonNode parentNode, String fieldName, Short defaultValue) {
+		String fieldValue = getString(parentNode, fieldName, defaultValue != null ? defaultValue.toString() : null);
+		if(fieldValue != null) {
+			return DEFAULT_CONVERSION_SERVICE.convert(fieldValue, Short.class);
+		}
+		return null;
+	}
+
+	public static Integer getInteger(JsonNode parentNode, String fieldName) {
+		return getInteger(parentNode, fieldName, null);
+	}
+
+	public static Integer getInteger(JsonNode parentNode, String fieldName, Integer defaultValue) {
+		String fieldValue = getString(parentNode, fieldName, defaultValue != null ? defaultValue.toString() : null);
+		if(fieldValue != null) {
+			return DEFAULT_CONVERSION_SERVICE.convert(fieldValue, Integer.class);
+		}
+		return null;
+	}
+
+	public static Float getFloat(JsonNode parentNode, String fieldName) {
+		return getFloat(parentNode, fieldName, null);
+	}
+
+	public static Float getFloat(JsonNode parentNode, String fieldName, Float defaultValue) {
+		String fieldValue = getString(parentNode, fieldName, defaultValue != null ? defaultValue.toString() : null);
+		if(fieldValue != null) {
+			return DEFAULT_CONVERSION_SERVICE.convert(fieldValue, Float.class);
+		}
+		return null;
+	}
+
+	public static Double getDouble(JsonNode parentNode, String fieldName) {
+		return getDouble(parentNode, fieldName, null);
+	}
+
+	public static Double getDouble(JsonNode parentNode, String fieldName, Double defaultValue) {
+		String fieldValue = getString(parentNode, fieldName, defaultValue != null ? defaultValue.toString() : null);
+		if(fieldValue != null) {
+			return DEFAULT_CONVERSION_SERVICE.convert(fieldValue, Double.class);
+		}
+		return null;
+	}
+
+	public static Long getLong(JsonNode parentNode, String fieldName) {
+		return getLong(parentNode, fieldName, null);
+	}
+
+	public static Long getLong(JsonNode parentNode, String fieldName, Long defaultValue) {
+		String fieldValue = getString(parentNode, fieldName, defaultValue != null ? defaultValue.toString() : null);
+		if(fieldValue != null) {
+			return DEFAULT_CONVERSION_SERVICE.convert(fieldValue, Long.class);
+		}
+		return null;
+	}
 	
 	/**
 	 * 创建默认配置的ObjectMapper
@@ -210,6 +342,13 @@ public class JsonUtils {
 	
 	public static ObjectMapper getDefaultObjectMapper() {
 		return DEFAULT_OBJECT_MAPPER;
+	}
+
+	@FunctionalInterface
+	public static interface Json2ObjectConverter<T> {
+
+		public T convert(ObjectMapper objectMapper, JsonNode rootNode) throws Exception;
+
 	}
 
 	public static class JacksonJsonException extends RuntimeException {

@@ -151,6 +151,7 @@
 					<include>**/*.xml</include>
 					<include>**/*.ftl</include>
 					<include>**/*.jpg</include>
+					<include>**/*.properties</include>
 				</includes>
 				<!-- false:不进行maven属性替换 -->
 				<filtering>false</filtering>
@@ -185,8 +186,9 @@
         <module>xmodule-master4j-java</module>
         <module>xmodule-master4j-algorithm</module>
 		<module>xmodule-master4j-netty</module>
-		<module>xmodule-master4j-spring</module>
 		<module>xmodule-master4j-interviews</module>
 		<module>xmodule-master4j-jmh</module>
+		<module>xmodule-master4j-spring</module>
+		<module>xmodule-master4j-springboot</module>
     </modules>
 </project>
