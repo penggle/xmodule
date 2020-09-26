@@ -1,0 +1,6 @@
+spring:
+    examples:
+        #Spring多profile加载顺序及优先级示例
+        profiles:
+            account:
+                balance: 200

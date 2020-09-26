@@ -22,6 +22,26 @@ aaa
 
 
 
+### 1.3、java命令中-classpath参数与-Xbootclasspath参数的区别
+
+`-Xbootclasspath`参数对应着Java类加载器中最顶级的Bootstrap ClassLoader所管辖加载的类路径，但是`-Xbootclasspath`参数更为灵活：
+
+- `-Xbootclasspath:`，完全取代基本核心的Java class 搜索路径，不常用。例如Eclipse是怎么随意切换JDK的：
+
+  C:\j2sdk1.4.2_05\bin\javaw.exe -Xbootclasspath:C:\j2sdk1.4.2_05\lib\tools.jar;C:\j2sdk1.4.2_05\jre\lib\rt.jar;...
+
+- `-Xbootclasspath/a:`，带`/a`后追加式，即将`-Xbootclasspath/a:`后面紧跟的类路径参数添加在核心class搜索路径后面，常用。例如运行一个jar包，但是还得依赖一些第三方jar：java -Xbootclasspath/a:libs/third1.jar;libs/third2.jar; -jar myapp.jar
+
+- `-Xbootclasspath/p`，带`/p`前追加式，即将`-Xbootclasspath/p:`后面紧跟的类路径参数添加在核心class搜索路径前面，不常用，有可能导致核心Java class冲突。
+
+`-classpath`参数（或者简写成：-cp）对应着用户类路径，该参数会覆盖系统classpath环境变量。
+
+
+
+
+
+
+
 ## 2、Java集合框架
 
 ### 2.1、Set和List的区别
@@ -5379,3 +5399,160 @@ GC的时机我们是不可控的，那么同样的我们对于Class的卸载也�
 ### 5.5、为什么说Java的SPI(Service Provider Interface)机制破坏了双亲委派模型?
 
 SPI ，全称为 Service Provider Interface，是一种服务发现机制，它通过在ClassPath路径下的META-INF/services文件夹查找文件，自动加载文件里所定义的类。这一机制为很多框架扩展提供了可能，比如在JDBC中都使用到了SPI机制。就拿JDBC通过SPI机制自动加载驱动来说：java.sql.Driver和java.sql.DriverManager很明显都是Java核心类，都在rt.jar中，其加载职责由BootStrap ClassLoader来进行加载。但是各数据库厂商提供的各种驱动（例如com.mysql.jdbc.Driver）BootStrap ClassLoader启动类加载器是绝不可能认识及加载这些代码的，那该怎么办？为了解决这个困境，Java的设计团队只好引入了一个不太优雅的设计：线程上下文类加载器（Thread Context ClassLoader），引入这个上下文类加载器主要还是为了类加载能够够动态灵活。这个类加载器可以通过java.lang.Thread类的setContextClassLoader()方法进行设置， 如果创建线程时还未设置，它将会从父线程中继承一个，如果在应用程序的全局范围内都没有设置过的话，那这个类加载器默认就是ClassLoader.getSystemClassLoader()即应用程序类加载器。**所以，从逻辑上说，原本由引导类加载器（BootStrap ClassLoader）来加载的SPI接口实现类，就委托给子类来加载，从这一点上讲，确实是打破了双亲委派模型。但是最终委托的子类加载器(一般情况下是AppClassLoader)在加载SPI接口实现类的时候仍然遵循的是双亲委派模型的！**
+
+
+
+### 5.6、双亲委派模型缺陷
+
+- 在双亲委派模型中，子类加载器可以使用父类加载器已经加载出来的类，而父类加载器无法使用子类加载器加载出来的类。这就导致了双亲委派模型并不能解决所有的类加载器问题。
+- 案例：**Java 提供了很多服务提供者接口(Service Provider Interface，SPI)，允许第三方为这些接口提供实现。常见的 SPI 有 JDBC、JNDI、JAXP 等，这些SPI的接口由核心类库提供，却由第三方实现，这样就存在一个问题：SPI 的接口是 Java 核心库的一部分，是由BootstrapClassLoader加载的；SPI实现的Java类一般是由AppClassLoader来加载的。BootstrapClassLoader是无法找到 SPI 的实现类的，因为它只加载Java的核心库。它也不能代理给AppClassLoader，因为它是最顶层的类加载器。也就是说，双亲委派模型并不能解决这个问题**
+
+
+
+### 5.7、Java自带SPI机制ServiceLoader
+
+Java自带SPI机制，是通过`ServiceLoader`来实现的，通常实现一个SPI机制的应用的步骤是这样的：
+
+1. 定义一组接口 (这里是IPay接口)，并写出接口的一个或多个实现(例如这里的AliPay和WeiXinPay)。
+
+   ```java
+   public interface IPay {
+       void pay(Map<String,Object> parameter);
+   }
+   
+   public class AliPay implements IPay {
+       @Override
+       public void pay(Map<String, Object> parameter) {
+           System.out.println("支付宝支付");
+       }
+   }
+   
+   public class WeiXinPay implements IPay {
+       @Override
+       public void pay(Map<String, Object> parameter) {
+           System.out.println("微信支付");
+       }
+   }
+   ```
+   
+2. 在 `src/main/resources/` 下建立 `/META-INF/services` 目录， 新增一个以接口(IPay)的全类名命名的文件(这里是`com.penglecode.xmodule.master4j.java.spi.IPay`)，内容是要应用的实现类（这里是`com.penglecode.xmodule.master4j.java.util.spi.AliPay`和`com.penglecode.xmodule.master4j.java.util.spi.WeiXinPay`，每行一个类）
+
+3. 通过`ServiceLoader`来调用接口给定的实现类：
+
+   ```java
+   public class PaySPIExample {
+   
+       public static void main(String[] args) {
+           ServiceLoader<IPay> pays = ServiceLoader.load(IPay.class);
+           for (IPay pay : pays) {
+               pay.pay(new HashMap<>());
+           }
+       }
+   
+   }
+   ```
+
+   输出：
+
+   ```shell
+   支付宝支付
+   微信支付
+   ```
+
+
+
+其实ServiceLoader实现SPI的本质原理也并不是什么新鲜玩意，在`java.util.ServiceLoader.LazyIterator#hasNextService()`我们能看到：
+
+```java
+private boolean hasNextService() {
+    if (nextName != null) {
+        return true;
+    }
+    if (configs == null) {
+        try {
+            String fullName = PREFIX + service.getName();
+            if (loader == null)
+                configs = ClassLoader.getSystemResources(fullName);
+            else
+                configs = loader.getResources(fullName); //本质还是通过ClassLoader#getResources()方法来完成的
+        } catch (IOException x) {
+            fail(service, "Error locating configuration files", x);
+        }
+    }
+    while ((pending == null) || !pending.hasNext()) {
+        if (!configs.hasMoreElements()) {
+            return false;
+        }
+        pending = parse(service, configs.nextElement());
+    }
+    nextName = pending.next();
+    return true;
+}
+```
+
+其是通过ClassLoader#getResources(String name)方法加载出SPI约定的配置文件的URL，然后通过URL读取文件的内容来实现的，也不是什么新鲜技术。鉴于Java自带SPI机制的缺陷，像Dubbo、Spring等框架都实现了自己的SPI机制而不是沿用Java自带的SPI机制。说了这么多我们通过示例来看看怎么实现的：
+
+```java
+import java.net.URL;
+import java.util.Enumeration;
+
+/**
+ * SPI的原理实现示例
+ *
+ * 也就是ServiceLoader是如何获取到SPI接口列表的，具体见java.util.ServiceLoader.LazyIterator#hasNextService()
+ * 最终调用的还是ClassLoader#getResources()方法
+ */
+public class SPIActualExample {
+
+
+    public static void paySpiServiceTest() throws Exception {
+        String spiServiceName = "META-INF/services/" + IPay.class.getName();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Enumeration<URL> serviceFiles = classLoader.getResources(spiServiceName);
+        while(serviceFiles.hasMoreElements()) {
+            URL url = serviceFiles.nextElement();
+            System.out.println(url);
+            //file:/C:/workbench/GIT/xmodule/xmodule-master4j-java/target/classes/META-INF/services/com.penglecode.xmodule.master4j.java.util.spi.IPay
+        }
+    }
+
+    public static void springSpiServiceTest() throws Exception {
+        String spiServiceName = "META-INF/" + "spring.factories";
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Enumeration<URL> serviceFiles = classLoader.getResources(spiServiceName);
+        while(serviceFiles.hasMoreElements()) {
+            URL url = serviceFiles.nextElement();
+            System.out.println(url);
+            //jar:file:/C:/Users/Pengle/.m2/repository/org/springframework/boot/spring-boot/2.3.4.RELEASE/spring-boot-2.3.4.RELEASE.jar!/META-INF/spring.factories
+            //jar:file:/C:/Users/Pengle/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/2.3.4.RELEASE/spring-boot-autoconfigure-2.3.4.RELEASE.jar!/META-INF/spring.factories
+            //jar:file:/C:/Users/Pengle/.m2/repository/org/springframework/spring-beans/5.2.9.RELEASE/spring-beans-5.2.9.RELEASE.jar!/META-INF/spring.factories
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        paySpiServiceTest();
+        springSpiServiceTest();
+    }
+
+}
+```
+
+**实现原理**
+
+`ServiceLoader`实现了`Iterable`，采用迟延加载的策略，当应用程序首次调用静态方法`ServiceLoader#load(String name)`方法时将会生成一个新的`ServiceLoader`实例，当应用程序开始迭代`ServiceLoader`时才会懒加载读取 `META-INF/services/` 下的配置文档，从文档中读出接口的实现类并通过反射实例化一个实例并缓存在`ServiceLoader`的一个`LinkedHashMap`类型的成员变量`providers`中。至于如何加载`META-INF/services/`目录下的配置文件其实是通过ClassLoader#getResources(String name)方法来实现的，由此看出这也不是什么独门秘籍，因此像其他诸如Dubbo、Spring等框架都实现了自己的SPI机制，他们都是大同小异而已！
+
+**总结**
+
+JDK 内置的 SPI 机制本身有它的优点，但由于实现比较简单，也有不少缺点。
+
+**优点**
+
+使用 Java SPI 机制的优势是实现解耦，使得接口的定义与具体业务实现分离，而不是耦合在一起。应用程序可以根据实际业务情况启用或替换具体组件。
+
+**缺点**
+
+- 不能按需加载。虽然 ServiceLoader 做了延迟载入，但是基本只能通过遍历全部获取，也就是接口的实现类得全部载入并实例化一遍。如果你并不想用某些实现类，或者某些类实例化很耗时，它也被载入并实例化了，这就造成了浪费。
+- 获取某个实现类的方式不够灵活，只能通过 Iterator 形式获取，不能根据某个参数来获取对应的实现类。
+- 多个并发多线程使用 ServiceLoader 类的实例是不安全的。
+- 加载不到实现类时抛出并不是真正原因的异常，错误很难定位。
+

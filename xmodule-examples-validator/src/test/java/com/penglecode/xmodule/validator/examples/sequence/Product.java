@@ -4,7 +4,7 @@ import com.penglecode.xmodule.common.validation.validator.Enums;
 import com.penglecode.xmodule.common.validation.validator.ValidationGroups.*;
 
 import org.hibernate.validator.constraints.URL;
-import org.hibernate.validator.custom.PropertyValidateOrder;
+//import org.hibernate.validator.custom.PropertyValidateOrder;
 
 import javax.validation.constraints.*;
 
@@ -21,18 +21,18 @@ public class Product {
     @NotNull(message = "商品ID不能为空!", groups={Update.class})
     private Long productId;
 
-    @PropertyValidateOrder(value = 1)
+    //@PropertyValidateOrder(value = 1)
     @NotBlank(message = "商品名称不能为空!", groups={Create.class, Update.class})
     @Pattern(regexp = "[\\u4e00-\\u9fa5]+", message = "商品名称只能为中文!", groups={Create.class, Update.class})
     @Size(min = 5, max = 100, message = "商品名称最少{min}个、最多{max}个字符!", groups={Create.class, Update.class})
     private String productName;
 
-    @PropertyValidateOrder(value = 5)
+    //@PropertyValidateOrder(value = 5)
     @NotNull(message = "商品类型不能为空!", groups={Create.class, Update.class})
     @Enums(values={"0", "1"}, message = "商品类型必须是{values}中的一个!", groups={Create.class, Update.class})
     private Integer productType;
 
-    @PropertyValidateOrder(value = 7)
+    //@PropertyValidateOrder(value = 7)
     @NotNull(message = "商品URL不能为空!", groups={Create.class, Update.class})
     @URL(message = "商品URL不合法", groups={Create.class, Update.class})
     private String productUrl;

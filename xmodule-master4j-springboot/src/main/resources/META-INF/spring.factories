@@ -1,0 +1,6 @@
+# Application Listeners
+org.springframework.context.ApplicationListener=\
+com.penglecode.xmodule.master4j.springboot.springfactories.listeners.ApplicationStartingEventListener,\
+com.penglecode.xmodule.master4j.springboot.springfactories.listeners.ApplicationEnvironmentPreparedEventListener,\
+com.penglecode.xmodule.master4j.springboot.springfactories.listeners.ApplicationPreparedEventListener,\
+com.penglecode.xmodule.master4j.springboot.springfactories.listeners.ApplicationContextInitializedEventListener

@@ -16,6 +16,32 @@ context:
 #Servlet容器配置
 server:
     port: 8181
+    shutdown: graceful
+
+#Actuator配置
+management:
+    health:
+        #是否关闭默认的health端点
+        defaults:
+            enabled: true
+    endpoint:
+        shutdown:
+            #启用shutdown端点，默认JMX暴露该端点,WEB不暴露
+            enabled: true
+        health:
+            probes:
+                enabled: true
+            #是否显示组件列表
+            show-components: always
+            #是否显示详情，仅当show-components=always时有效
+            show-details: always
+    endpoints:
+        #默认是否启用或禁用所有端点? 默认为null表示既不全部启用也不全部禁用(默认启用health和info两个，见management.endpoints.web.exposure.include)
+        #enabled-by-default: false
+        web:
+            #web途径暴露的端点列表
+            exposure:
+                include: [health, info, shutdown]
 
 #SpringBoot应用的名称
 spring:
@@ -28,8 +54,13 @@ spring:
         name: xmodule-master4j-springboot
     #配置文件激活配置
     profiles:
-        active: prd
+        active: dev
+        include: foo,bar
 
+    #Spring AOP配置
+    aop:
+        auto: true
+        proxy-target-class: true
     #Spring国际化配置
     messages:
         basename: config/i18n/messages
@@ -56,11 +87,29 @@ spring:
             connection-timeout: 30000
             #连接测试语句
             connection-test-query: SELECT 1
+
     #Thymeleaf模板配置
     thymeleaf:
         #模板的模式，支持 HTML, XML TEXT JAVASCRIPT
-        mode: HTML5
+        mode: HTML
         #编码配置
         encoding: UTF-8
         #false-启用热更新
         cache: false
+
+    examples:
+        #Spring多profile加载顺序及优先级示例
+        profiles:
+            enabled: false
+            account:
+                id: 111
+                username: admin
+                password: 123456
+                balance: 0
+                type: debit-card
+        #Spring @conditional注解示例
+        conditions:
+            enabled: false
+        #SpringFactoriesLoader示例
+        factories-loader:
+            enabled: false

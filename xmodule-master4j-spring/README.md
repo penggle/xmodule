@@ -1,14 +1,18 @@
-# Spring核心技术部分
+Spring核心技术部分
 
 
 
-## 1、什么是Spring？
+# 1、Spring基础部分
+
+
+
+## 1.1、什么是Spring？
 
 Spring 是一个轻量级的Java企业级应用的开源开发框架，它是一个全面的、企业应用开发一站式的解决方案，贯穿表现层、业务层、持久层，可以这么说：使用Spring可以构建基于Java语言的任何类型应用程序。IoC容器是Spring的灵魂，其提供的与其他主流框架的无缝整合能力，使得Spring成为当今Java领域的主流霸主框架。 
 
 
 
-## 2、使用Spring框架的好处是什么？
+## 1.2、使用Spring框架的好处是什么？
 
 - **轻量**：从代码大小与开销两方面来说，Spring都是轻量的。完整的Spring框架可以在一个只有2MB左右的jar包中发布出来，并且Spring所需的处理开销也是微不足道的。此外Spring是非侵入式的，典型的，Spring应用中的对象并不是必须依赖Spring中特定的类型。
 - **控制反转**：Spring通过一种称作控制反转的IoC技术降低了耦合，通过IoC技术，一个对象及其依赖对象都会通过被动的方式被注入进来，而无需应用程序自己创建、组合或销毁对象，对象生命周期的维护全部交出去由IoC容器来做，应用程序仅仅负责实现业务逻辑即可。
@@ -23,7 +27,7 @@ Spring 是一个轻量级的Java企业级应用的开源开发框架，它是一
 
 
 
-## 3、Spring由哪些模块组成？
+## 1.3、Spring由哪些模块组成？
 
 
 
@@ -64,17 +68,45 @@ Spring 是一个轻量级的Java企业级应用的开源开发框架，它是一
 
 - Test模块：spring-test，主要为测试提供支持的
 
-<img src="src/main/java/com/penglecode/xmodule/master4j/spring/Spring模块组成图.jpg"/>
+![Spring模块组成图.jpg](src/main/java/com/penglecode/xmodule/master4j/spring/Spring模块组成图.jpg)
 
 
 
-## 4、核心容器（应用上下文) 模块
+
+
+# 2、Spring IOC容器部分
+
+## 2.0、IOC
+
+IOC是控制反转(**I**nversion **O**f **C**ontrol)，IOC是一种**编程思想**。Spring的IOC容器实现了IOC，是Spring框架的基本功能，管理着Spring应用中bean的**创建**、**配置**和**管理**。Spring的IOC容器接管了应用中的bean，能够自动解决bean与bean之间的依赖。
+
+> 传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，也就是正转；而反转则是由容器来帮忙创建及注入依赖对象；因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转。因此反转是指：依赖对象的获取被反转了。
+
+IOC容器对使用者来说就像是一个黑盒，不需要关心bean之间的依赖是怎样的，大大减少了编程的难度。
+
+IOC的实现方式有两种：**依赖注入**（Dependency Injection，DI）和**依赖查找**（Dependency Lookup，DL）
+
+- **依赖注入**：应用程序**被动**的接收对象，bean实例化的时候，IOC容器会自动根据**类型**或者**名称**，把依赖的其他bean注入给当前bean。依赖注入的方式主要有以下四种：
+  1. **注解**：通过注解来让IOC容器注入所依赖类型的对象，例如最常用的@Autowired。
+  2. **构造方法**：实现对应参数的构造方法，在创建对象时来让IOC容器注入所依赖类型的对象。
+  3. **setter方法**：实现对应属性的setter方法，来让IOC容器注入所依赖类型的对象。
+  4. **工厂方法**：例如@Bean注解的方法，让IOC容器注入所依赖类型的对象。
+- **依赖查找**：依赖查找是容器中的对象，通过容器的API，来查找自己所依赖的资源和对象。相比于**依赖注入**，**依赖查找**是一种更加主动的方式。
+
+| 类型     | 依赖处理 | 实现便利性 | 代码侵入性   | API依赖性     | 可读性 |
+| -------- | -------- | ---------- | ------------ | ------------- | ------ |
+| 依赖查找 | 主动获取 | 相对繁琐   | 侵入业务代码 | 依赖容器API   | 良好   |
+| 依赖注入 | 被动提供 | 相对便利   | 低侵入性     | 不依赖容器API | 一般   |
+
+
+
+## 2.1、核心容器（应用上下文) 模块
 
 它是基本的Spring模块，提供spring 框架的基础功能。BeanFactory是任何以spring为基础的应用的核心。Spring框架建立在此模块之上，它使Spring成为一个容器。
 
 
 
-## 5、BeanFactory – BeanFactory 实现举例
+## 2.2、BeanFactory – BeanFactory 实现举例
 
 BeanFactory是工厂模式的一个实现，提供了控制反转功能，用来把应用的配置和依赖从正真的应用代码中分离。最常用的BeanFactory 实现是XmlBeanFactory类。
 
@@ -88,7 +120,7 @@ org.springframework.beans.factory.XmlBeanFactory子类关系图：
 
 
 
-## 6、BeanFactory主要子类
+## 2.3、BeanFactory主要子类
 
 ![BeanFactory主要子类图.png](src/main/java/com/penglecode/xmodule/master4j/spring/beans/BeanFactory主要子类图.png)
 
@@ -102,84 +134,19 @@ org.springframework.beans.factory.XmlBeanFactory子类关系图：
 
 
 
-## 7、XmlBeanFactory
+## 2.4、XmlBeanFactory
 
 org.springframework.beans.factory.xml.XmlBeanFactory ，它根据XML文件中的定义加载beans。该容器从XML 文件读取配置元数据并用它去创建一个完全配置的系统或应用。这个类从Spring3.1的开始就已经废弃了，取而代之的是建议使用DefaultListableBeanFactory + XmlBeanDefinitionReader来构造一个DefaultListableBeanFactory实例。
 
 
 
-## 8、PropertyEditor、ConversionService、Formatter的区别
-
-`java.beans.PropertyEditor` 是 JDK 自带的类，是提供给 AWT。做啥用呢、就是讲用户在图形见面中输入的字符串转换位对应类型的值(对象)。类似于一个 convertor。Spring早期使用PropertyEditor进行Object与String的转换。
-
-到Spring 3后，Spring提供了统一的ConversionService API和强类型的Converter SPI，以实现转换逻辑。Spring容器使用该系统来读写bean的属性值。具体见BeanWrapper，BeanWrapper的子类BeanWrapperImpl中就整合了PropertyEditor与ConversionService两种方式来操作bean的属性值。
-
-除了格式转换，你还经常需要本地化String values。也就是以当地格式展示，如货币、日期等。通用的core.convert Converter SPI不能直接完成格式化需求。基于此，Spring 3 引入了 Formatter SPI，相比PropertyEditors简单直接。
 
 
 
-## 9、说说Spring 3后的核心包中新增的类型转换体系
-
-- **org.springframework.core.convert.ConversionService**
-
-  ![ConversionService.png](src/main/java/com/penglecode/xmodule/master4j/spring/core/converter/ConversionService.png)
-
-  直接提供给开发者使用的类型转换接口，该接口源码如下所示：
-
-  ```java
-  public interface ConversionService {
-  
-     //判断源对象类型是否可以转换成目标类型的对象
-     boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType);
-  
-     //判断源对象类型是否可以转换成目标类型的对象
-     boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
-  
-     //将源对象转换成目标类型的对象
-     <T> T convert(@Nullable Object source, Class<T> targetType);
-  
-     //将源对象转换成目标类型的对象
-     Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
-  
-  }
-  ```
-  其常用的一个实现是`org.springframework.core.convert.support.DefaultConversionService`，该类实现了`org.springframework.core.convert.ConversionService`接口和`org.springframework.core.convert.converter.ConverterRegistry`接口，后者提供了向ConversionService中注册自定义的`org.springframework.core.convert.converter.Converter`实例以增强整个ConversionService的类型转换能力。
-
-  
-
-- **org.springframework.core.convert.converter.Converter**
-
-  是直接需要开发者实现的强类型转换SPI接口，该接口的源码如下所示：
-
-  ```java
-  public interface Converter<S, T> {
-  
-     //将源对象转换成目标对象
-     T convert(S source);
-  
-  }
-  ```
-  很显然这是一种一对一的强类型转换接口。
-
-- **org.springframework.core.convert.converter.ConverterFactory**
-
-  Converter的工厂类，一般是一种特定类型或多态类型的对象转换成另一种多态类型的对象。例如：`StringToNumberConverterFactory`、`NumberToNumberConverterFactory`
-
-- **org.springframework.core.convert.converter.GenericConverter**
-
-  通用转换器接口，两种或多种类型之间的转换。这是最灵活的转换器SPI接口的，但也是最复杂的。 它是柔性的，一个GenericConverter可以支持多个源/目标类型对之间转换。由于这个接口相对比较复杂，一般情况下都不使用这个接口而使用更为简单的`Converter`或`ConverterFactory`。实际上调用`ConverterRegistry`的`addConverter()`或`addConverterFactory()`方法时，被添加进去的`Converter`或`ConverterFactory`会被适配为`GenericConverter`类型，也就是说真正添加进去的是一个适配器`ConverterAdapter`、`ConverterFactoryAdapter`(这两个适配是`GenericConversionService`的内部类)。
-
-- **org.springframework.core.convert.support.DefaultConversionService**
-
-  这是`ConversionService`的默认实现，在`DefaultConversionService`中默认加入了很多常用的类型转换器。
-
-- **org.springframework.format.support.FormattingConversionService**
-
-  这是将`org.springframework.format.Formatter`整合到`ConversionService`体系中来的一个实现，其默认实现是`org.springframework.format.support.DefaultFormattingConversionService`
 
 
 
-## 10、说说调用BeanFactory#getBean()方法实例化一个bean的主要过程
+## 2.5、说说调用BeanFactory#getBean()方法实例化一个bean的主要过程
 
 此处我们就拿最简单的单例bean的场景，简要叙述一下初次调用其getBean()方法实例化一个bean的主要过程：
 
@@ -248,13 +215,43 @@ org.springframework.beans.factory.xml.XmlBeanFactory ，它根据XML文件中的
 
 
 
-## 11、@Configuration注解的属性proxyBeanMethods有什么作用？
+## 2.5、Spring Bean的生命周期
+
+对Spring IOC容器中任何一个注册的bean来说，调用其getBean()方法时，便开始了该bean的生命周期。拿一个普通的常规配置的bean来说
+
+- 首先调用InstantiationAwareBeanPostProcessor的实例化前置处理方法：postProcessBeforeInstantiation()
+
+- 然后BeanFactory通过反射获取其默认构造器并调用Constructor#newInstance()方法获取bean的实例。
+
+  （对应AbstractAutowireCapableBeanFactory#createBeanInstance）
+
+- 接着调用InstantiationAwareBeanPostProcessor的实例化后置处理方法：postProcessAfterInstantiation()
+
+- 接着调用一些Aware方法，主要有BeanNameAware、BeanFactoryAware、ClassLoaderAware等。
+
+  （对应AbstractAutowireCapableBeanFactory#invokeAwareMethods()）
+
+- 接着调用BeanPostProcessor的初始化前置处理方法：postProcessBeforeInitialization()
+
+- 接着调用bean的init初始化方法了（如果该bean实现了InitializingBean接口或者指定了init-method方法或者具有@PostConstruct注解的方法的话）
+
+- 接着调用BeanPostProcessor的初始化后置处理方法：postProcessAfterInitialization()
+
+- **getBean()方法结束并返回，接下来就是使用bean**
+
+- 当bean需要被销毁时，调用bean的destroy销毁方法（如果该bean实现了DisposableBean接口或者指定了destroy-method方法或者具有@PreDestroy注解的方法的话）
+
+
+
+
+
+## 2.6、@Configuration注解的属性proxyBeanMethods有什么作用？
 
 布尔类型的proxyBeanMethods属性用来指示配置类中被@Bean注解标注的方法是否使用代理，默认是true使用代理，则直接从IOC容器之中取得bean的实例；如果设置为false，也就是不从IOC容器中获取bean的实例，这样每次调用@Bean标注的方法获取到的实例和IOC容器中的都不一样，是一个新的实例，所以我们可以将此属性设置为false来提高性能；
 
 
 
-## 12、Spring bean依赖注入的几种方式
+## 2.7、Spring bean依赖注入的几种方式
 
 - **构造器注入**
 
@@ -338,7 +335,7 @@ org.springframework.beans.factory.xml.XmlBeanFactory ，它根据XML文件中的
   
 
 
-## 13、Spring bean自动装配的几种模式
+## 2.8、Spring bean自动装配的几种模式
 
 Spring bean装配包括手动装配和自动装配，手动装配是有基于xml装配、构造方法、setter方法等。
 
@@ -354,7 +351,7 @@ Spring bean装配包括手动装配和自动装配，手动装配是有基于xml
 
 
 
-## 14、Spring bean自动装配与bean依赖注入中的@Autowired的区别。
+## 2.9、Spring bean自动装配与bean依赖注入中的@Autowired的区别。
 
 - Spring bean自动装配是指需要装配的目标bean中的各个依赖属性、setter方法上并没有设置任何注解(例如@Autowired)，例如：
 
@@ -406,7 +403,7 @@ Spring bean装配包括手动装配和自动装配，手动装配是有基于xml
 
 
 
-## 15、Spring bean的生命周期有哪些?
+## 2.10、Spring bean的生命周期有哪些?
 
 ![bean的生命周期.png](src/main/java/com/penglecode/xmodule/master4j/spring/beans/bean的生命周期.png)
 
@@ -499,7 +496,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 
 
-## 16、Spring是如何解决循环依赖问题的？
+## 2.11、Spring是如何解决循环依赖问题的？
 
 - 首先Spring只能解决单例bean的循环依赖问题。
 
@@ -648,7 +645,27 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 
 
-## 17、ApplicationContext主要子类
+## 2.12、BeanFactory和FactoryBean的区别
+
+- **BeanFactory**
+
+  BeanFactory定义了 IOC 容器的最基本形式，并提供了 IOC 容器应遵守的的最基本的接口，也就是 Spring IOC 所遵守的最底层和最基本的编程规范。BeanFactory的子类，是Spring IOC容器的具体实现，例如默认的DefaultListableBeanFactory。
+
+- **FactoryBean**
+
+  一般情况下，Spring 通过反射机制利用 <bean/ > 的 class 属性指定实现类实例化 Bean ，在某些情况下，实例化 Bean 过程比较复杂，如果按照传统的方式，则需要在 <bean/ > 中提供大量的配置信息。配置方式的灵活性是受限的，这时采用编码的方式可能会得到一个简单的方案。 Spring 为此提供了一个 org.springframework.bean.factory.FactoryBean 的工厂类接口，用户可以通过实现该接口定制实例化 Bean 的逻辑。
+
+- 总的概括一下就是：BeanFactory是IOC容器的具体接口规范，是所有bean的工厂，而FactoryBean仅仅是某一类bean的工厂，FactoryBean为了简化传统<bean/ >的配置方式，更具有灵活性。
+
+
+
+
+
+# 3、Spring应用上下文部分
+
+
+
+## 3.1、ApplicationContext主要子类
 
 ![ApplicationContext主要子类图.png](src/main/java/com/penglecode/xmodule/master4j/spring/context/ApplicationContext主要子类图.png)
 
@@ -668,7 +685,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 
 
-## 18、说说启动一个ApplicationContext的主要过程。
+## 3.2、说说启动一个ApplicationContext的主要过程。
 
 启动一个应用程序上下文的主要逻辑基本都集中在AbstractApplicationContext#refresh()方法中：
 
@@ -711,7 +728,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 
 
-## 19、BeanFactory和ApplicationContext的区别
+## 3.3、BeanFactory和ApplicationContext的区别
 
 - BeanFactory是Spring里面最低层的接口，提供了实例化初始化bean、自动装备bean、缓存单例bean等作为一个IoC容器的基础功能，且bean的实例化初始化都是被动进行的，即只有调用getBean()方法才会被动触发。
 - ApplicationContext应用上下文，继承BeanFactory接口，它是Spring的一各更高级的容器，提供了更多的有用的功能：
@@ -724,21 +741,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 
 
-## 20、BeanFactory和FactoryBean的区别
-
-- **BeanFactory**
-
-  BeanFactory定义了 IOC 容器的最基本形式，并提供了 IOC 容器应遵守的的最基本的接口，也就是 Spring IOC 所遵守的最底层和最基本的编程规范。BeanFactory的子类，是Spring IOC容器的具体实现，例如默认的DefaultListableBeanFactory。
-
-- **FactoryBean**
-
-  一般情况下，Spring 通过反射机制利用 <bean/ > 的 class 属性指定实现类实例化 Bean ，在某些情况下，实例化 Bean 过程比较复杂，如果按照传统的方式，则需要在 <bean/ > 中提供大量的配置信息。配置方式的灵活性是受限的，这时采用编码的方式可能会得到一个简单的方案。 Spring 为此提供了一个 org.springframework.bean.factory.FactoryBean 的工厂类接口，用户可以通过实现该接口定制实例化 Bean 的逻辑。
-
-- 总的概括一下就是：BeanFactory是IOC容器的具体接口规范，是所有bean的工厂，而FactoryBean仅仅是某一类bean的工厂，FactoryBean为了简化传统<bean/ >的配置方式，更具有灵活性。
-
-
-
-## 21、说说<context:annotation-config/ >和<context:component-scan/ >的区别
+## 3.4、说说<context:annotation-config/ >和<context:component-scan/ >的区别
 
 1. <context:annotation-config/ >和<context:component-scan/ >都是Spring应用上下文模块的基于XML配置的全局注解配置，对应的标签解析器分别为：
 
@@ -782,7 +785,7 @@ protected Object doCreateBean(final String beanName, final RootBeanDefinition mb
 
 
 
-## 22、ConfigurationClassPostProcessor到底做了什么?
+## 3.5、ConfigurationClassPostProcessor到底做了什么?
 
 org.springframework.context.annotation.ConfigurationClassPostProcessor实现了BeanDefinitionRegistryPostProcessor接口，在AbstractApplicationContext#refresh()方法中，是最早被调用的一组PostProcessor，说白了就是实现了BeanDefinitionRegistryPostProcessor接口的一组PostProcessor在应用上下文启动时最先被调用，并且是先调用其postProcessBeanDefinitionRegistry()方法，再调用其postProcessBeanFactory()方法。那么ConfigurationClassPostProcessor到底做了什么呢？ConfigurationClassPostProcessor的主要作用是注册被@Bean注释的工厂方法bean，完成这个目的它需要扫描一些候选的配置类，作为候选的配置类有以下两大种：
 
@@ -816,7 +819,7 @@ public class Example1LiteConfiguration {
 
 
 
-## 23、@Import、ImportSelector、DeferredImportSelector、ImportBeanDefinitionRegistrar、ImportAware等区别与使用方法
+## 3.6、@Import、ImportSelector、DeferredImportSelector、ImportBeanDefinitionRegistrar、ImportAware等区别与使用方法
 
 - ImportSelector、DeferredImportSelector、ImportBeanDefinitionRegistrar、ImportAware等都需要配合@Import才能使用。
 
@@ -979,25 +982,13 @@ public class MapperAutoRegistryExample {
 
 
 
-## 24、Resource、ResourceLoader、ResourcePatternResolver的区别
-
-- Resource：是Spring对资源的统一抽象，该接口描述了资源的一系列信息，最重要的是它提供了读取资源内容的能力，其实现子类封装了读取各种资源的实现细节，其主要实现有：FileSystemResource、ClassPathResource、ByteArrayResource、InputStreamResource等待
-- ResourceLoader：是Spring加载单个资源的统一接口`Resource getResource(String location)`，该接口只能有单个资源定位`location`来定位单个资源；
-- ResourcePatternResolver：是ResourceLoader的增强子接口，提供了根据模式匹配获取多个资源的能力，其典型的实现有：`PathMatchingResourcePatternResolver`和Servlet环境的`ServletContextResourcePatternResolver`
 
 
 
-## 25、classpath:和classpath*:区别
-
-classpath：只会到你的class路径中查找找文件。
-
-classpath*：不仅包含class路径，还包括jar文件中（class路径）进行查找。
-
-*注意： 用classpath:需要遍历所有的classpath，所以加载速度是很慢的；因此，在规划的时候，应该尽可能规划好资源文件所在的路径，尽量避免使用classpath*。
 
 
 
-## 26、Spring环境(Environment)&属性(PropertySource)体系
+## 3.7、Spring环境(Environment)&属性(PropertySource)体系
 
 Spring 环境 & 属性由四个部分组成：PropertySource、PropertyResolver、Profile 和 Environment。
 
@@ -1076,7 +1067,11 @@ public class ProfileExample {
 
 
 
-## 30、Spring AOP概念
+# 4、Spring AOP部分
+
+
+
+## 4.1、Spring AOP概念
 
 AOP全名Aspect-oriented programming面向切面编程，与大多数技术一样， AOP 带有自己特定的一组概念和术语，了解它们的含义非常重要。以下是AOP 的核心概念：
 
@@ -1113,7 +1108,7 @@ AOP全名Aspect-oriented programming面向切面编程，与大多数技术一�
 
   Advisor是切面的另外一种实现，能够将通知以更为复杂的方式织入到目标对象中，是将通知包装为更复杂切面的装配器。Advisor由切入点和Advice组成。Advisor这个概念来自于Spring AOP架构，在AspectJ中是没有等价的概念的。
 
-简单来讲，整个Aspect可以描述为**：满足指定`PointCut`规则的一系列`JoinPoint`会被添加相应的`Advice`的操作**。
+简单来讲，整个Aspect可以描述为：**满足指定`PointCut`规则的一系列`JoinPoint`会被添加相应的`Advice`的操作**。
 
 AOP代理主要分为**静态代理**和**动态代理**。即：
 
@@ -1125,14 +1120,14 @@ AOP代理主要分为**静态代理**和**动态代理**。即：
 
   静态代理不同，动态代理就是说AOP框架不会去修改编译时生成的字节码，而是在运行时在内存中生成一个AOP代理对象，这个AOP对象包含了目标对象的全部方法，并且在特定的切点做了增强处理，并回调原对象的方法。
 
-  Spring AOP中的动态代理主要有两种方式**：JDK动态代理**和**CGLIB动态代理**。
+  Spring AOP中的动态代理主要有两种方式：**JDK动态代理**和**CGLIB动态代理**。
 
   - JDK代理通过反射来处理被代理的类，并且要求被代理类必须实现一个接口。核心类是`InvocationHandler`接口和`Proxy`类。而当目标类没有实现接口时，Spring AOP框架会使用CGLIB来动态代理目标类。
   - CGLIB（Code Generation Library），是一个代码生成的类库，可以在运行时动态的生成某个类的子类。CGLIB是通过继承的方式做的动态代理，因此如果某个类被标记为final，那么它是无法使用CGLIB做动态代理的。核心类是`MethodInterceptor`接口和`Enhancer`类。
 
 
 
-## 31、Spring AOP架构
+## 4.2、Spring AOP架构
 
 SpringAOP 的核心架构基于代理。当想要创建一个类的被通知实例时，必须使用ProxyFactory 创建该类的代理实例，首先ProxyFactory 提供想要织入到代理的所有切面。使用ProxyFactory 是创建AOP 代理的纯程序化方法。
 
@@ -1346,7 +1341,7 @@ SpringAOP 的核心架构基于代理。当想要创建一个类的被通知实�
 
 
 
-## 32、Spring AOP生成的代理对象对java.lang.Object中方法的处理方式
+## 4.3、Spring AOP生成的代理对象对java.lang.Object中方法的处理方式
 
 Spring AOP最终是由`ProxyFactory`类生成代理对象，`ProxyFactory`在创建代理对象时会委托给`DefaultAopProxyFactory#createAopProxy(AdvisedSupport config)`方法，`DefaultAopProxyFactory`内部会分情况返回基于JDK的`JdkDynamicAopProxy`或基于CGLIB的`ObjenesisCglibAopProxy`，两种方式在处理调用代理对象上的那些继承自java.lang.Object的方法（诸如hashcode、equals等）时，他们的处理方式都是保持一致的，具体如下所示：
 
@@ -1387,7 +1382,7 @@ Spring AOP最终是由`ProxyFactory`类生成代理对象，`ProxyFactory`在创
 
 
 
-## 33、Spring AOP生成的代理类具体是什么样的？
+## 4.4、Spring AOP生成的代理类具体是什么样的？
 
 - 基于CGLIB动态代理的类，我们通过反射大致可以得出其声明形式：
 
@@ -1591,7 +1586,7 @@ Spring AOP最终是由`ProxyFactory`类生成代理对象，`ProxyFactory`在创
 
 
 
-## 34、Spring AOP切点Pointcut之MethodMatcher接口的运行机制
+## 4.5、Spring AOP切点Pointcut之MethodMatcher接口的运行机制
 
 MethodMatcher接口通过重载定义了两个matches()方法，两个参数的`matches(Method method, Class<?> targetClass)`被称为静态匹配，在匹配条件不是太严格时使用，可以满足大部分场景的使用，称之为静态的主要是区分为三个参数的`matches(Method method, Class<?> targetClass, Object... args)`方法需要在运行时动态的对参数的类型进行匹配；两个方法的分界线就是`boolean isRuntime()`方法，进行匹配时先用两个参数的`matches(Method method, Class<?> targetClass)`方法进行匹配，若匹配成功，则检查boolean isRuntime()的返回值，若为true，则调用三个参数的`matches(Method method, Class<?> targetClass, Object... args)`方法进行匹配（若两个参数的都匹配不中，三个参数的就被短路了），比如需要统计用户登录次数时，那么登录传入的参数就是可以忽略的，则调用两个参数的matches()方法就已经足够了，但是若要在登陆时对用户账号执行特殊的操作（如赋予特殊的操作权限），就需要对参数进行一个类似于检验的操作，就需要调用三个参数的matches()进行匹配。
 
@@ -1600,7 +1595,7 @@ MethodMatcher接口通过重载定义了两个matches()方法，两个参数的`
 
 
 
-## 35、Spring AOP某一个连接点方法上应用的各种通知Advice整合到同一个Advisor的机制
+## 4.6、Spring AOP某一个连接点方法上应用的各种通知Advice整合到同一个Advisor的机制
 
 Spring AOP通过`org.springframework.aop.framework.adapter.AdvisorAdapterRegistry`接口，将某一个连接点方法上应用的各种不同类型的通知Advice整合到同一个Advisor中去！
 
@@ -1701,7 +1696,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
 
 
-## 36、容器中注册的bean在满足被代理条件时，是如何被自动代理的？
+## 4.7、容器中注册的bean在满足被代理条件时，是如何被自动代理的？
 
 - 基于ProxyFactoryBean声明式创建bean的代理对象时，其实不是自动代理，不满足本例所问。因为容器中同一类型的bean存在两个：一个是原始声明的原始bean，另一个是ProxyFactoryBean这个FactoryBean的getObject()方法得到的原始bean的代理实例。
 
@@ -1725,7 +1720,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
 
 
-## 37、@EnableAspectJAutoProxy或<aop:aspectj-autoproxy/ >到底干了什么？
+## 4.8、@EnableAspectJAutoProxy或<aop:aspectj-autoproxy/ >到底干了什么？
 
 向容器中注册基于＠Aspect注解风格的目标bean自动代理生成器：`org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator`
 
@@ -1738,7 +1733,13 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
 
 
-## 40、Spring事务架构
+
+
+# 5、Spring事务部分
+
+
+
+## 5.1、Spring事务架构
 
 - **Spring的声明式事务的好处**
 
@@ -2465,7 +2466,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
 
 
-## 41、Spring事务失效的原因有哪些？
+## 5.2、Spring事务失效的原因有哪些？
 
 - **数据库引擎不支持事务**
 
@@ -2493,5 +2494,282 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
 
 
+# 6、Spring Core部分
 
 
+
+## 6.1、PropertyEditor、ConversionService、Formatter的区别
+
+`java.beans.PropertyEditor` 是 JDK 自带的类，是提供给 AWT。做啥用呢、就是讲用户在图形见面中输入的字符串转换位对应类型的值(对象)。类似于一个 convertor。Spring早期使用PropertyEditor进行Object与String的转换。
+
+到Spring 3后，Spring提供了统一的ConversionService API和强类型的Converter SPI，以实现转换逻辑。Spring容器使用该系统来读写bean的属性值。具体见BeanWrapper，BeanWrapper的子类BeanWrapperImpl中就整合了PropertyEditor与ConversionService两种方式来操作bean的属性值。
+
+除了格式转换，你还经常需要本地化String values。也就是以当地格式展示，如货币、日期等。通用的core.convert Converter SPI不能直接完成格式化需求。基于此，Spring 3 引入了 Formatter SPI，相比PropertyEditors简单直接。
+
+
+
+## 6.2、说说Spring 3后的核心包中新增的类型转换体系
+
+- **org.springframework.core.convert.ConversionService**
+
+  ![ConversionService.png](src/main/java/com/penglecode/xmodule/master4j/spring/core/converter/ConversionService.png)
+
+  直接提供给开发者使用的类型转换接口，该接口源码如下所示：
+
+  ```java
+  public interface ConversionService {
+  
+     //判断源对象类型是否可以转换成目标类型的对象
+     boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType);
+  
+     //判断源对象类型是否可以转换成目标类型的对象
+     boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+  
+     //将源对象转换成目标类型的对象
+     <T> T convert(@Nullable Object source, Class<T> targetType);
+  
+     //将源对象转换成目标类型的对象
+     Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+  
+  }
+  ```
+
+  其常用的一个实现是`org.springframework.core.convert.support.DefaultConversionService`，该类实现了`org.springframework.core.convert.ConversionService`接口和`org.springframework.core.convert.converter.ConverterRegistry`接口，后者提供了向ConversionService中注册自定义的`org.springframework.core.convert.converter.Converter`实例以增强整个ConversionService的类型转换能力。
+
+  
+
+- **org.springframework.core.convert.converter.Converter**
+
+  是直接需要开发者实现的强类型转换SPI接口，该接口的源码如下所示：
+
+  ```java
+  public interface Converter<S, T> {
+  
+     //将源对象转换成目标对象
+     T convert(S source);
+  
+  }
+  ```
+
+  很显然这是一种一对一的强类型转换接口。
+
+- **org.springframework.core.convert.converter.ConverterFactory**
+
+  Converter的工厂类，一般是一种特定类型或多态类型的对象转换成另一种多态类型的对象。例如：`StringToNumberConverterFactory`、`NumberToNumberConverterFactory`
+
+- **org.springframework.core.convert.converter.GenericConverter**
+
+  通用转换器接口，两种或多种类型之间的转换。这是最灵活的转换器SPI接口的，但也是最复杂的。 它是柔性的，一个GenericConverter可以支持多个源/目标类型对之间转换。由于这个接口相对比较复杂，一般情况下都不使用这个接口而使用更为简单的`Converter`或`ConverterFactory`。实际上调用`ConverterRegistry`的`addConverter()`或`addConverterFactory()`方法时，被添加进去的`Converter`或`ConverterFactory`会被适配为`GenericConverter`类型，也就是说真正添加进去的是一个适配器`ConverterAdapter`、`ConverterFactoryAdapter`(这两个适配是`GenericConversionService`的内部类)。
+
+- **org.springframework.core.convert.support.DefaultConversionService**
+
+  这是`ConversionService`的默认实现，在`DefaultConversionService`中默认加入了很多常用的类型转换器。
+
+- **org.springframework.format.support.FormattingConversionService**
+
+  这是将`org.springframework.format.Formatter`整合到`ConversionService`体系中来的一个实现，其默认实现是`org.springframework.format.support.DefaultFormattingConversionService`
+
+
+
+## 6.3、Resource、ResourceLoader、ResourcePatternResolver的区别
+
+- Resource：是Spring对资源的统一抽象，该接口描述了资源的一系列信息，最重要的是它提供了读取资源内容的能力，其实现子类封装了读取各种资源的实现细节，其主要实现有：FileSystemResource、ClassPathResource、ByteArrayResource、InputStreamResource等待
+- ResourceLoader：是Spring加载单个资源的统一接口`Resource getResource(String location)`，该接口只能有单个资源定位`location`来定位单个资源；
+- ResourcePatternResolver：是ResourceLoader的增强子接口，提供了根据模式匹配获取多个资源的能力，其典型的实现有：`PathMatchingResourcePatternResolver`和Servlet环境的`ServletContextResourcePatternResolver`
+
+
+
+## 6.4、classpath:和classpath*:区别
+
+classpath：只会到你的class路径中查找找文件。
+
+classpath*：不仅包含class路径，还包括jar文件中（class路径）进行查找。
+
+*注意： 用classpath:需要遍历所有的classpath，所以加载速度是很慢的；因此，在规划的时候，应该尽可能规划好资源文件所在的路径，尽量避免使用classpath*。
+
+
+
+## 6.5、说说Spring中的@AliasFor注解的作用
+
+在Spring的众多注解中，经常会发现很多注解的不同属性起着相同的作用，比如`@RequestMapping`的value属性和path属性，这就需要做一些基本的限制，比如`value`和`path`的值不能冲突，比如任意设置`value`或者设置`path`属性的值，都能够通过另一个属性来获取值等等。为了统一处理这些情况，Spring创建了`@AliasFor`标签。
+
+- **@AliasFor注解的使用方式**
+
+  1. 在同一个注解内显示使用；比如在`@RequestMapping`中的使用示例：
+
+     ```java
+     @Target({ElementType.TYPE, ElementType.METHOD})
+     @Retention(RetentionPolicy.RUNTIME)
+     @Documented
+     @Mapping
+     public @interface RequestMapping {
+     
+         @AliasFor("path")
+         String[] value() default {};
+     
+         @AliasFor("value")
+         String[] path() default {};
+        
+         //...
+     }
+     ```
+     又如：
+
+     ```java
+     @Documented
+     @Inherited
+     @Retention(RetentionPolicy.RUNTIME)
+     @Target(ElementType.TYPE)
+     public @interface ContextConfiguration {
+         @AliasFor("locations")
+         String[] value() default {};
+      
+         @AliasFor("value")
+         String[] locations() default {};
+         //...
+     }
+     ```
+
+     在同一个注解中成对使用即可，比如示例代码中，`value`和`path`就是互为别名。**但是要注意一点，`@AliasFor`标签有一些使用限制，但是这应该能想到的，比如要求互为别名的属性属性值类型，默认值，都是相同的，互为别名的注解必须成对出现，比如`value`属性添加了`@AliasFor(“path”)`，那么path属性就必须添加`@AliasFor(“value”)`，另外还有一点，互为别名的属性必须定义默认值。**
+
+     那么如果违反了别名的定义，在使用过程中就会报错，我们来做个简单测试：
+
+     ```java
+     public class AliasForExample {
+     
+         /**
+          * 由于value和path使用@AliasFor注解互为别名，因此两者必须使用相同的数据类、相同的default值，以及指定值也得相同
+          * 否则会报错: AnnotationConfigurationException: Different @AliasFor mirror values for annotation
+          */
+         @RequestMapping(value="/abc", path="/123")
+         public void againstAliasForAnnotation11() {
+     
+         }
+     
+         /**
+          * 由于value和path使用@AliasFor注解互为别名，因此两者必须使用相同的数据类、相同的default值，以及指定值也得相同
+          * 此时获取@RequestMapping注解上的path值也将是"/abc"
+          */
+         @RequestMapping(value="/abc")
+         public void againstAliasForAnnotation12() {
+     
+         }
+     
+         public static void againstAliasForAnnotation11Test() throws Exception {
+             Method method = AliasForExample.class.getMethod("againstAliasForAnnotation11");
+             RequestMapping requestMapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+         }
+     
+         public static void againstAliasForAnnotation12Test() throws Exception {
+             Method method = AliasForExample.class.getMethod("againstAliasForAnnotation12");
+             RequestMapping requestMapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+             System.out.println(Arrays.toString(requestMapping.path())); //输出：[/abc]
+         }
+     
+         public static void main(String[] args) throws Exception {
+             //againstAliasForAnnotation11Test();
+             againstAliasForAnnotation12Test();
+         }
+     
+     }
+     ```
+
+  2. 在不同注解内显示使用；用于覆盖元注解中的属性，例如：
+
+     ```java
+     public class AliasForExample {
+     
+         @Retention(RetentionPolicy.RUNTIME)
+         @Target(ElementType.METHOD)
+         @Documented
+         @RequestMapping(method = RequestMethod.GET)
+         public static @interface GetMapping {
+     
+             /**
+              * 与RequestMapping#value互为别名
+              */
+             @AliasFor(annotation = RequestMapping.class)
+             String[] value() default {};
+     
+             /**
+              * 与RequestMapping#path互为别名
+              */
+             @AliasFor(annotation = RequestMapping.class)
+             String[] path() default {};
+     
+         }
+     
+         /**
+          * 由于value和path使用@AliasFor注解互为别名，因此两者必须使用相同的数据类、相同的default值，以及指定值也得相同
+          * 否则会报错: AnnotationConfigurationException: Different @AliasFor mirror values for annotation ...
+          */
+         @GetMapping(value="/list", path="/123")
+         public void againstAliasForAnnotation21() {
+     
+         }
+     
+         /**
+          * 由于value和path使用@AliasFor注解互为别名，因此两者必须使用相同的数据类、相同的default值，以及指定值也得相同
+          * 此时获取@RequestMapping注解上的path值也将是"/abc"
+          */
+         @GetMapping(value="/abc")
+         public void againstAliasForAnnotation22() {
+     
+         }
+     
+         public static void againstAliasForAnnotation21Test() throws Exception {
+             Method method = AliasForExample.class.getMethod("againstAliasForAnnotation21");
+             RequestMapping requestMapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+         }
+     
+         public static void againstAliasForAnnotation22Test() throws Exception {
+             Method method = AliasForExample.class.getMethod("againstAliasForAnnotation22");
+             GetMapping getMapping = AnnotationUtils.findAnnotation(method, GetMapping.class);
+             System.out.println(Arrays.toString(getMapping.path())); //输出：[/abc]
+     
+             RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(method, RequestMapping.class);
+             //输出：@RequestMapping(consumes=[], headers=[], method=[GET], name=, params=[], path=[/abc], produces=[], value=[/abc])
+             System.out.println(requestMapping);
+         }
+     
+         public static void main(String[] args) throws Exception {
+             //againstAliasForAnnotation11Test();
+             //againstAliasForAnnotation12Test();
+             //againstAliasForAnnotation21Test();
+             againstAliasForAnnotation22Test();
+         }
+     
+     }
+     ```
+
+     
+
+- **实现原理**
+
+  真正在起作用的，是AnnotationUtils工具类中的<A extends Annotation> A synthesizeAnnotation(A annotation, AnnotatedElement annotatedElement)方法；
+
+  这个方法传入注解对象，和这个注解对象所在的类型，返回一个经过处理（这个处理就主要是用于处理[@AliasFor](https://github.com/AliasFor)标签）之后的注解对象，简单说，这个方法就是把A注解对象—(经过处理)—>支持AliasFor的A注解对象。
+
+  调用链：
+
+  org.springframework.core.annotation.AnnotationUtils#findAnnotation(java.lang.reflect.Method, java.lang.Class<A>)
+
+  org.springframework.core.annotation.AbstractMergedAnnotation#synthesize()
+
+  org.springframework.core.annotation.TypeMappedAnnotation#createSynthesized()
+
+  org.springframework.core.annotation.SynthesizedMergedAnnotationInvocationHandler#createProxy()
+
+  org.springframework.core.annotation.SynthesizedMergedAnnotationInvocationHandler#invoke()
+
+  总的来说是基于JDK动态代理来实现的。
+
+
+
+# 7、Spring WebMVC部分
+
+
+
+## 7.1、SpringMVC的请求处理过程
+
+![SpringMVC请求过程.png](src/main/java/com/penglecode/xmodule/master4j/spring/webmvc/SpringMVC请求过程.png)

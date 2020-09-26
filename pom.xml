@@ -11,22 +11,24 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.2.RELEASE</version>
+		<version>2.3.4.RELEASE</version>
 	</parent>
 
 	<properties>
+		<!--
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+		-->
 
 		<xmodule.version>1.0.0</xmodule.version>
 
-		<springboot.version>2.2.2.RELEASE</springboot.version>
-		<springcloud.version>Hoxton.RELEASE</springcloud.version>
-		<mybatis.version>3.5.3</mybatis.version>
-    	<mybatis-spring.version>2.0.3</mybatis-spring.version>
-		<mybatis-spring-boot-starter.version>2.1.1</mybatis-spring-boot-starter.version>
+		<springboot.version>2.3.4.RELEASE</springboot.version>
+		<springcloud.version>Hoxton.SR8</springcloud.version>
+		<mybatis.version>3.5.5</mybatis.version>
+		<mybatis-spring.version>2.0.5</mybatis-spring.version>
+		<mybatis-spring-boot-starter.version>2.1.3</mybatis-spring-boot-starter.version>
 		<mybatis-generator.version>1.4.0</mybatis-generator.version>
-		<thumbnailator.version>0.4.8</thumbnailator.version>
-		<guava.version>28.0-jre</guava.version>
+		<thumbnailator.version>0.4.12</thumbnailator.version>
+		<guava.version>29.0-jre</guava.version>
 		<commons-net.version>3.6</commons-net.version>
 		<json.version>20190722</json.version>
 		<jwt.version>8.4</jwt.version>
@@ -190,5 +192,6 @@
 		<module>xmodule-master4j-jmh</module>
 		<module>xmodule-master4j-spring</module>
 		<module>xmodule-master4j-springboot</module>
+		<module>xmodule-master4j-integrates</module>
     </modules>
 </project>

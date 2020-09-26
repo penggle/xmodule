@@ -21,7 +21,6 @@ public class PaySPIExample {
         ServiceLoader<IPay> pays = ServiceLoader.load(IPay.class);
         for (IPay pay : pays) {
             pay.pay(new HashMap<>());
-            System.out.println(pay.getClass().getClassLoader());
         }
     }
 
