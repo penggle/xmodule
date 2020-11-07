@@ -12,13 +12,23 @@ Java面试题汇总
 
 ### 1.1、什么是面向对象?
 
-aaaa
+面向对象编程是将事物高度抽象化的编程模式，将问题分解成一个一个步骤，对每个步骤进行相应的抽象，形成对象，通过不同对象之间的调用，组合解决问题。其中涉及到封装、继承、多态等面向对象特征的应用，同时辅以相关原则（例如单一职责原则、开放封闭原则等）来进行整体的抽象与设计。
 
 
 
 ### 1.2、面向对象的特征有哪些？
 
-aaa
+- 封装(Encapsulation)
+
+  所谓封装，也就是把客观事物封装成抽象的类，并且类可以把自己的数据和方法只让可信的类或者对象操作，对不可信的进行信息隐藏。封装是面向对象的特征之一，是对象和类概念的主要特性。简单的说，一个类就是一个封装了数据以及操作这些数据的代码的逻辑实体。在一个对象内部，某些代码或某些数据可以是私有的，不能被外界访问。通过这种方式，对象对内部数据提供了不同级别的保护，以防止程序中无关的部分意外的改变或错误的使用了对象的私有部分。
+
+- 继承(Inheritance)
+
+  继承是指这样一种能力：它可以使用现有类的所有功能，并在无需重新编写原来的类的情况下对这些功能进行扩展。通过继承创建的新类称为“子类”或“派生类”，被继承的类称为“基类”、“父类”或“超类”。继承的过程，就是从一般到特殊的过程。要实现继承，可以通过“继承”（Inheritance）和“组合”（Composition）来实现。继承概念的实现方式有二类：实现继承与接口继承。实现继承是指直接使用基类的属性和方法而无需额外编码的能力；接口继承是指仅使用属性和方法的名称、但是子类必须提供实现的能力；
+
+- 多态(Polymorphism)
+
+  所谓多态就是指一个类实例的相同方法在不同情形有不同表现形式。多态机制使具有不同内部结构的对象可以共享相同的外部接口。这意味着，虽然针对不同对象的具体操作不同，但通过一个公共的类，它们（那些操作）可以通过相同的方式予以调用。
 
 
 
@@ -38,7 +48,34 @@ aaa
 
 
 
+### 1.4、Java中hashcode()与equals()方法的联系
 
+- **hashcode是为了提高元素在散列结构存储中查找效率而存在的，在线性表中没有作用。**
+- **如果是为使用散列表，那么equals和hashcode方法是需要一起重写的。**
+- **若两个对象equals返回true，则它们的hashcode有必要相同。**
+- **若两个对象equals返回false，则它们的hashcode不一定不同。**
+- **若两个对象hashcode相同，则equals不一定为true。**
+- **若两个对象hashcode不同，则equals一定返回false。**
+- **同一对象在执行期间若已经存储在集合中，则不能修改影响hashcode值的相关信息，否则会导致内存泄露问题。**
+
+
+
+### 1.5、为什么重写了equals()方法就必须重写hashcode()方法？
+
+- 首先Object类中将equals()方法和hashcode()方法设计成关联的，equals()方法通过比较两个对象的内存地址来判断是否==，而hashcode()方法是个native的本地方法，其底层实现也是根据对象的内存地址通过hash算法得出来的，因此两者具有相关性。
+- 在一些散列表中，如果仅重写了equals()方法而不重写hashcode()方法，则会出现一个对象被put进入HashMap中出现石沉大海的情况，即put进去后再get的话，如果key不是同一个实例则get不到刚才put进去的值，出现内存泄漏。
+
+
+
+### 1.6、为什么JDK的动态代理要通过接口才能实现？
+
+通过设置相关参数（`System.setProperty("sun.misc.ProxyGenerator.saveGeneratedFiles","true")`）我们可以通过JDK动态代理生成的代理类的声明形式就不难得出答案：
+
+```java
+public final class $Proxy0 extends Proxy implements MyInterface { ... }
+```
+
+由于JAVA是基于单继承的，所以代理必须实现接口，以代理接口的方式实现动态代理。
 
 
 
@@ -141,7 +178,7 @@ wait()和join()分别和wait(0)和join(0)等价，他们都代表了无限期的
 ### 3.8、说说Java线程的中断机制
 
 首先，一个线程不应该由其他线程来强制中断或停止，而是应该由线程自己自行停止。所以，Thread.stop, Thread.suspend, Thread.resume 都已经被废弃了。而 Thread.interrupt()方法的作用其实也不是中断线程，而是「通知线程应该中断了」，具体到底中断还是继续运行，应该由被通知的线程自己处理。具体来说，当对一个线程，调用 interrupt() 时，
--  ① 如果线程处于被阻塞状态（例如处于sleep, wait, join 等状态），那么线程将立即退出被阻塞状态，并抛出一个InterruptedException异常。仅此而已。
+-  ① 如果线程处于被等待状态（例如处于sleep, wait, join 等状态），那么线程将立即退出被等待状态，并抛出一个InterruptedException异常。仅此而已。
 -  ② 如果线程处于正常活动状态，那么会将该线程的中断标志设置为 true，仅此而已。被设置中断标志的线程将继续正常运行，不受影响。interrupt() 并不能真正的中断线程， 需要被调用的线程自己进行配合才行。也就是说，一个线程如果有被中断的需求，那么就可以这样做。
 
 说的直白点：线程的interrupt状态与线程的死活没直接关系，java仅仅是通过interrupt标志位来告诉程序有人想让你中断运行，你是否中断运行就看你run()方法中如何设计的，我们(JVM)不帮你这个忙，我们仅仅是通知你。
@@ -162,7 +199,7 @@ Java有一个内建的等待机制来允许线程在等待信号的时候变为`
 
 ### 3.11、为什么wait()与notify()方法要设计在Object类中?
 
-- 首先、在Java中，所有对象的对象头中都有一个monitor监视器(对于HotSpot虚拟机来说，它的底层实现是ObjectMonitor.cpp)，而该monitor即是Java同步关键字`synchronized`实现的基石。
+- 首先、在Java中，所有对象的对象头Mark World中都有一个monitor监视器(对于HotSpot虚拟机来说，它的底层实现是ObjectMonitor.cpp)，而该monitor即是Java同步关键字`synchronized`实现的基石。
 - wait()和notify()不仅仅是普通方法或同步工具，更重要的是它们是 **Java 中两个线程之间的通信机制**。对语言设计者而言, 如果不能通过Java 关键字(例如`synchronized`)实现通信此机制，同时又要确保这个机制对每个对象可用, 那么 Object 类则是的合理的声明位置。记住**同步**和**等待通知**是两个不同的领域，不要把它们看成是相同的或相关的。同步是提供互斥并确保 Java 类的线程安全，而 **wait 和 notify 是两个线程之间的通信机制**。
 - **任意对象都可以上锁**，这是在 Object 类而不是 Thread 类中声明 wait 和 notify 的另一个原因。
 
@@ -218,7 +255,7 @@ void ObjectMonitor::wait(jlong millis, bool interruptible, TRAPS) {
 
 synchronized 是**非公平锁**。ReentrantLock 默认是**非公平锁**，但可设置为**公平锁**。
 
-那线程通过`Object.nofity()` 和 `Condition.signal()` 被唤醒时是否是**公平**的呢？
+那线程通过`Object.notify()` 和 `Condition.signal()` 被唤醒时是否是**公平**的呢？
 
 先说结果，在`Java 1.8 HotSpot`下，两者都是**公平**的。
 
@@ -454,7 +491,7 @@ public class ProducerConsumerExample {
 
 ### 3.19、Java中中断线程的方式有哪些?
 
-- 如果代码中调用了产生WATING的方法，诸如Object.wait()、Thread.sleep()、Thread.join()、I/O等，那么通过捕获中断异常来处理中断，在catch块中终止线程的运行(即让线程提前结束)。伪代码如下：
+- 如果代码中调用了产生阻塞的方法，诸如Object.wait()、Thread.sleep()、Thread.join()、I/O等，那么通过捕获中断异常来处理中断，在catch块中终止线程的运行(即让线程提前结束)。伪代码如下：
 
   ```java
   Thread threadA = new Thread(new Runnable() {
@@ -479,7 +516,7 @@ public class ProducerConsumerExample {
   threadA.interrupt(); //5秒后中断threadA线程
   ```
 
-- 如果代码中没有调用产生WATING的方法，那么可以通过中断信号机制来处理中断。伪代码如下所示：
+- 如果代码中没有调用产生阻塞的方法，那么可以通过中断信号机制来处理中断。伪代码如下所示：
 
   ```java
   Thread threadA = new Thread(new Runnable() {
@@ -519,11 +556,11 @@ public class ProducerConsumerExample {
 
    ThreadLocalMap是ThreadLocal的静态内部类，没有实现Map接口，独立实现了Map的功能，内部的Entry也是独立实现的。
 
-   与HashMap类似，初始容量默认是16，且必须是2的n次方（**为什么？**因为把length设计为2的n次方时，可以采用hashcode & (length - 1)来取代%号取模提高效率），而且其resize()方法是成倍扩容的。
+   与HashMap类似，初始容量默认是16，且必须是2的n次方（**为什么？**因为把length设计为2的n次方时，可以采用**hashcode & (length - 1)**来取代%号取模提高效率），而且其resize()方法是成倍扩容的。
 
    ThreadLocalMap内部使用的**除留余数法**哈希算法，采用**线性探查法**处理冲突。
 
-   ThreadLocalMap的Entry继承自WeakReference，ThreadLocal类型的key是弱引用，其目的是将ThreadLocal对象的生命周期和线程的生命周期解绑，使得ThreadLocal本身可以更早地被GC回收。当ThreadLocalMap检测到key被回收后(key为null)或者发生哈希冲突时，会进行脏数据清理(期间会将value也置为null)、rehash、扩容等操作，进一步规避了内存泄露等问题。
+   ThreadLocalMap的Entry继承自WeakReference，Entry的key是ThreadLocal类型的是弱引用，其目的是将ThreadLocal对象的生命周期和线程的生命周期解绑，使得ThreadLocal本身可以更早地被GC回收。当ThreadLocalMap检测到key被回收后(key为null)或者发生哈希冲突时，会进行脏数据清理(期间会将value也置为null)、rehash、扩容等操作，进一步规避了内存泄露等问题。
 
    
 
@@ -722,7 +759,7 @@ public class ProducerConsumerExample {
 
 弱引用：垃圾回收器一旦发现了弱引用的对象，不管内存是否足够，都会回收它的内存。
 
-ThreadLocalMap中使用的key为ThreadLocal的弱引用，value是强引用。如果ThreadLocal没有被外部强引用的话，在垃圾回收的时候，key会被清理，value不会。这样ThreadLocalMap就出现了为null的Entry。如果不做任何措施，value永远不会被GC回收，就会产生内存泄漏。
+**ThreadLocalMap中使用的key为ThreadLocal的弱引用，value是强引用。如果ThreadLocal没有被外部强引用的话，在垃圾回收的时候，key会被清理，value不会。这样ThreadLocalMap就出现了为null的Entry。如果不做任何措施，value永远不会被GC回收，就会产生内存泄漏。**
 
 ThreadLocalMap中考虑到这个情况，在set、get、remove操作后，会清理掉key为null的记录（**将value也置为null**）。使用完ThreadLocal后最后手动调用remove方法（删除Entry）。
 
@@ -780,7 +817,7 @@ Java内存模型把Java虚拟机内部划分为`线程栈`和`堆`，如下图�
 
 ### 4.3、原子性、可见性与有序性
 
-- **可见性(Visibility)**：即一个操作或者多个操作 要么全部执行并且执行的过程不会被任何因素打断，要么就都不执行。
+- **原子性(Atomicity)**：即一个操作或者多个操作 要么全部执行并且执行的过程不会被任何因素打断，要么就都不执行。
 
   由Java内存模型来直接保证的原子性变量操作包括read、load、 assign、use、store和write这六个，我们大致可以认为，基本数据类型的访问、读写都是具备原子性的。多个原子性操作组合在一起，那就不能保证原子性，需要一个更大范围的原子性保证，在Java中需要通过`synchronized`关键字或者concurrent包中`Lock`来保证语句执行的原子性。
 
@@ -853,7 +890,7 @@ Java内存模型把Java虚拟机内部划分为`线程栈`和`堆`，如下图�
 ### 4.5、volatile和synchronized的区别?
 
 - synchronized关键字能保证共享变量的原子性、有序性和可见性；volatile关键字只能保证可见性和有序性，并不保证原子性。
-- volatile仅能使用在变量级别；synchronized则可以使用在变量、方法和代码块上。
+- volatile仅能使用在变量级别；synchronized则可以使用在方法和代码块上。
 - volatile不会造成线程的阻塞；synchronized可能会造成线程的阻塞。
 
 
@@ -1315,7 +1352,7 @@ public class LockSupport {
 
      AQS中的队列分两类：
 
-     1. **等待队列**，等待队列是一个FIFO的双向链表，它是AQS中最主要的队列，处于等待队列中的节点都持有一个当前线程，它们都想获取锁。等待队列的元素由Node节点类数据结构构成，且只用到了数据结构中的thread、waitStatus、prev、next四个字段。其中
+     1. **等待队列**，等待队列是一个FIFO的双向链表，它是AQS中最主要的队列，处于等待队列中的节点都持有一个当前线程，它们都想获取锁。等待队列的元素由Node节点类数据结构构成，且只用到了数据结构中的thread、waitStatus、prev、next四个字段。
      2. **条件队列**，条件队列是一个尾进头出的单向链表，它是AQS中由Condition形成的队列，调用了condition.await()方法的线程都被挂起并加入到条件队列中，而处于条件队列中的节点都持有一个当前线程，它们等待有其他线程在condtion上调用signal()或signalAll()唤醒它们，这样它们就可以摇身一变(见transferForSignal()方法)，变成等待队列的节点加入等待队列中，等待着获取锁。
 
      ![AQS内部的队列.png](src/main/java/com/penglecode/xmodule/master4j/java/util/concurrent/AQS内部的队列.png)
@@ -1331,6 +1368,10 @@ public class LockSupport {
    - **LockSupport**
 
      由于不停的自旋会导致cpu的空转，非常损耗性能，所以引入LockSupport(内部借助Unsafe类实现，JVM底层由Posix线程库pthread中的mutex(互斥量)，condition(条件变量)来实现)，用于控制线程的休眠与唤醒。
+     
+   - **state共享变量**
+
+     用于标识同步状态的状态变量
 
 3. **AQS源码解析**
 
@@ -1428,7 +1469,7 @@ public class LockSupport {
 
    - **如果堵塞期间线程中断了咋办？**
 
-     首先线程的中断机制有两种：响应中断异常和响应中断信号(中断标识位)。在阻塞类方法中(Object.wait()、Thread.sleep()、LockSupport.park()等)只有LockSupport.park()是基于响应中断信号机制的，而AQS的底层实现中恰恰用的就是LockSupport.park()方法，AQS的做法是设置中断标识，但是不抛出中断异常（在acquireInterruptibly方法中会强制抛出中断异常）。
+     首先线程的中断机制有两种：响应中断异常和响应中断信号(中断标识位)。在阻塞类方法中(Object.wait()、Thread.sleep()、LockSupport.park()等)只有LockSupport.park()是基于静默响应中断信号机制的，而AQS的底层实现中恰恰用的就是LockSupport.park()方法，AQS的做法是设置中断标识，但是不抛出中断异常（在acquireInterruptibly方法中会强制抛出中断异常）。
 
    - **如果我想实现公平锁和非公平锁呢？**
 
@@ -1460,7 +1501,7 @@ public class LockSupport {
 
      ***JUC的大多数框架都是基于AQS实现的，而且都是利用state记录线程的个数作为阻塞还是唤醒线程的依据例。***
 
-   - **使用新的接口和实现包装同步组件：**在我们编写一个同步组件的时候，例如我们想实现一个独占锁，假设为Sync，其继承了AQS。只需要在Sync类中覆写tryRelease和tryAcquire即可，但是由于继承AQS的时候，会把tryAcquireShared、tryReleaseShared等共享锁方法也继承下来。而Sync并不会实现这些共享式同步组件的方法，因为Sync只是一个独占锁而已，从业务含义上，因此应该将这些方法屏蔽，从而防止用户误操作。按照最佳实现，屏蔽的方式是定义一个新的接口，假设用Mutex表示，这个接口只定义了独占锁相关方法，再编写一个类MutexImpl实现Mutex接口，而对于同步组件Sync类的操作，都封装在MutexImpl中。
+   - **使用新的接口和实现包装同步组件：**在我们编写一个同步组件的时候，例如我们想实现一个独占锁，假设为Sync，其继承了AQS。只需要在Sync类中覆写tryAcquire和tryRelease即可，但是由于继承AQS的时候，会把tryAcquireShared、tryReleaseShared等共享锁方法也继承下来。而Sync并不会实现这些共享式同步组件的方法，因为Sync只是一个独占锁而已，从业务含义上，因此应该将这些方法屏蔽，从而防止用户误操作。按照最佳实现，屏蔽的方式是定义一个新的接口，假设用Mutex表示，这个接口只定义了独占锁相关方法，再编写一个类MutexImpl实现Mutex接口，而对于同步组件Sync类的操作，都封装在MutexImpl中。
 
    - **同步组件推荐定义为静态内部类：**因为某个同步组件通常是为实现特定的目的而实现，可能只适用于特定的场合。如果某个同步组件不具备通用性，我们应该将其定义为一个私有的静态内部类。结合第一点，我们编写的同步组件Sync应该是MutexImpl的一个私有的静态内部类。
 
@@ -1500,7 +1541,7 @@ public class LockSupport {
    
            // 判断该节点是否在阻塞队列中
            while (!isOnSyncQueue(node)) {
-               // 如果不在阻塞队列中，这阻塞当前线程，等待 ConditionObject#signal 方法唤醒
+               // 如果不在阻塞队列中，就阻塞当前线程，等待 ConditionObject#signal 方法唤醒
                LockSupport.park(this);
                if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
                    break;
@@ -1585,7 +1626,7 @@ public class LockSupport {
    - 将state定义为双重语义：
 
      1. 值0和1代表获得到锁的线程数，在独占模式下，也就是说0-代表锁可用，1-代表锁不可用。
-     2. 大于1的值代表同一个线程连续获取锁的次数，**这是实现可重入的要素之一**。
+     2. 大于1的值代表同一个线程连续获取锁的次数（也就是重入次数），**这是实现可重入的要素之一**。
 
    - 站在可重入的角度下，在初次获得锁的情况下使用AQS内部的exclusiveOwnerThread属性保存当前锁被谁持有，**这是实现可重入的要素之二**。
 
@@ -1672,12 +1713,47 @@ public class LockSupport {
                     return nonfairTryAcquire(acquires);
                 }
             }
+            
+            /**
+             * 公平锁实现
+             */
+            static final class FairSync extends Sync {
+                private static final long serialVersionUID = -3000897897090466540L;
+        
+                final void lock() {
+                    acquire(1);
+                }
+        
+                /**
+                 * Fair version of tryAcquire.  Don't grant access unless
+                 * recursive call or no waiters or is first.
+                 */
+                protected final boolean tryAcquire(int acquires) {
+                    final Thread current = Thread.currentThread();
+                    int c = getState();
+                    if (c == 0) {
+                        if (!hasQueuedPredecessors() &&
+                            compareAndSetState(0, acquires)) {
+                            setExclusiveOwnerThread(current);
+                            return true;
+                        }
+                    }
+                    else if (current == getExclusiveOwnerThread()) {
+                        int nextc = c + acquires;
+                        if (nextc < 0)
+                            throw new Error("Maximum lock count exceeded");
+                        setState(nextc);
+                        return true;
+                    }
+                    return false;
+                }
+            }
         }
         ```
      
    - **公平锁**
    
-     公平锁体现在ReentrantLock.FairSync.tryAcquire()方法中，该方法中在每次检测到锁可用时都会调用hasQueuedPredecessors()方法检查自己是不是排在第一位，如果是排在第一位那么就获取锁，否则只能继续等下去，这里体现了绝对的公平性。但是性能损失是巨大的，即公平锁的吞吐量跟非公平锁相差很大。
+     公平锁体现在ReentrantLock.FairSync.tryAcquire()方法中，该方法中在每次检测到锁可用时都会调用`hasQueuedPredecessors()`方法检查自己是不是排在第一位，如果是排在第一位那么就获取锁，否则只能继续等下去，这里体现了绝对的公平性。但是性能损失是巨大的，即公平锁的吞吐量跟非公平锁相差很大。
 
 
 ### 5.9、Lock和synchronized的区别
@@ -2052,7 +2128,7 @@ public class ProducerConsumerExample {
 
 ### 5.12、Semaphore源码解析
 
-**Semaphore信号量是基于共享锁实现的**
+**Semaphore信号量是基于AQS共享锁实现的**
 
 `Semaphore`翻译成字面意思为 信号量，**Semaphore可以控同时访问的线程个数，通过 acquire() 获取一个许可，如果没有就等待，而 release() 释放一个许可**。适用于控制并发个数的场景，如控制某个资源池的并发使用情况。
 
@@ -4722,7 +4798,7 @@ FutureTask类是为基于`AbstractExecutorService`这个集适配器模式与模
 
 ### 5.20、ThreadPoolExecutor工作过程
 
-1. 线程池刚创建时，里面没有一个线程。任务队列是作为参数传进来的。不过，就算队列里面有任务，线程池也不会马上执行它们。除非调用了prestartAllCoreThreads()方法。
+1. 线程池刚创建时，里面没有一个worker线程。任务队列是作为参数传进来的。不过，就算队列里面有任务，线程池也不会马上执行它们。除非调用了prestartAllCoreThreads()方法。
 
 2. 当调用 execute() 方法添加一个任务时，线程池会做如下判断：
 
@@ -4731,7 +4807,7 @@ FutureTask类是为基于`AbstractExecutorService`这个集适配器模式与模
    - 如果这时候队列满了，而且正在运行的线程数量小于maximumPoolSize，那么还是要创建非核心线程立刻运行这个任务；
    - 如果队列已经满了，而且正在运行的线程数量大于或等于maximumPoolSize，那么线程池会抛出异常RejectExecutionException。
 
-3. 当一个线程完成任务时，它会从队列中getTask()取下一个任务来执行。getTask()方法中实现了线程的保活逻辑：
+3. 当一个worker线程完成任务时，它会从队列中getTask()取下一个任务来执行。getTask()方法中实现了线程的保活逻辑：
 
    - 如果设置了允许核心线程超时(allowCoreThreadTimeOut=true)
 
@@ -4764,7 +4840,7 @@ FutureTask类是为基于`AbstractExecutorService`这个集适配器模式与模
 
   是以上一个任务开始的时间计时，delay时间过去后，检测上一个任务是否执行完毕，如果上一个任务执行完毕，则当前任务立即执行，如果上一个任务没有执行完毕，则需要等上一个任务执行完毕后立即执行。
 
-  其实际delay时间 = delay时间 > 程序运行时间 ? delay时间 : 程序运行时间
+  其实际delay时间 = **MAX** ( delay时间，任务运行时间 )
 
 - **scheduleWithFixedDelay()：**
 
@@ -4772,7 +4848,7 @@ FutureTask类是为基于`AbstractExecutorService`这个集适配器模式与模
 
   其实际delay时间 = delay时间 + 程序运行时间
 
-**所以总结一下就是：scheduleWithFixedDelay的实际迟延时间肯定包含了程序的运行时间，而scheduleAtFixedRate的实际迟延时间可能会包含程序的运行时间。**
+**所以总结一下就是：scheduleWithFixedDelay的实际迟延时间肯定包含了任务的运行时间，而scheduleAtFixedRate的实际迟延时间可能会包含任务的运行时间。**
 
 
 
@@ -4782,7 +4858,7 @@ FutureTask类是为基于`AbstractExecutorService`这个集适配器模式与模
 - 从线程角度来说，Timer类是单线程模式，当某个TimerTask执行的比较久，就会严重影响到后续任务执行的准时性，无法实现类似于ScheduledExecutorService#scheduleWithFixedDelay()；而ScheduledThreadPoolExecutor是基于ThreadPoolExecutor实现的，是多线程模式，重用线程池中的多个worker线程来执行定时调度任务，各任务之间不会相互影响。
 - 从对系统时间的敏感性来说，Timer调度是基于操作系统的绝对时间的，对操作系统时间敏感，一旦操作系统时间被修改，那么将直接影响TimerTask定时调度任务执行的精准度；而ScheduledThreadPoolExecutor是基于相对时间的，不受操作系统时间改变的影响。
 - 从异常处理角度来说，Timer是单线程模式，且不会处理TimerTask抛出的异常，一旦发生异常，将导致整个Timer终止运行；而ScheduledThreadPoolExecutor是基于多线程的，单个任务出现异常不会影响到其他线程的运行。
-- 从是否能回去任务结果的角度来说，TimerTask只是实现了Runnable接口，无法从TimerTask中获取执行结果；而ScheduledThreadPoolExecutor中执行的ScheduledFutureTask类继承自FutureTask能够通过Future获取执行结果。
+- 从是否能获取任务结果的角度来说，TimerTask只是实现了Runnable接口，无法从TimerTask中获取执行结果；而ScheduledThreadPoolExecutor中执行的ScheduledFutureTask类继承自FutureTask能够通过Future获取执行结果。
 
 
 
@@ -5246,6 +5322,21 @@ ArrayBlockingQueue fairQueue = new  ArrayBlockingQueue(1000,true);
 
 
 
+## 5.25、ConcurrentHashMap的1.8版本和1.7版本的区别
+
+- 1.8版本的ConcurrentHashMap更像一个优化过的线程安全的HashMap。
+- JDK1.8取消了segment数组，直接用table保存数据，锁的粒度更小，减少并发冲突的概率。
+- JDK1.8存储数据时采用了链表+红黑树的形式，纯链表的形式时间复杂度为O(n)，红黑树则为O（logn），性能提升很大。什么时候链表转红黑树？当key值相等的元素形成的链表中元素个数超过8个并且桶数组的大小(容量)大于64的时候。
+- JDK1.8的实现降低锁的粒度，JDK1.7版本锁的粒度是基于Segment的，包含多个HashEntry，而JDK1.8锁的粒度就是HashEntry（首节点）
+- JDK1.8版本的数据结构变得更加简单，使得操作也更加清晰流畅，因为已经使用synchronized来进行同步，所以不需要分段锁的概念，也就不需要Segment这种数据结构了，由于粒度的降低，实现的复杂度也增加了
+- JDK1.8使用红黑树来优化链表，基于长度很长的链表的遍历是一个很漫长的过程，而红黑树的遍历效率是很快的，代替一定阈值的链表，这样形成一个最佳拍档
+- JDK1.8为什么使用内置锁synchronized来代替重入锁ReentrantLock，我觉得有以下几点
+  1. 因为粒度降低了，在相对而言的低粒度加锁方式，synchronized并不比ReentrantLock差，在粗粒度加锁中ReentrantLock可能通过Condition来控制各个低粒度的边界，更加的灵活，而在低粒度中，Condition的优势就没有了
+  2. JVM的开发团队从来都没有放弃synchronized，而且基于JVM的synchronized优化空间更大，使用内嵌的关键字比使用API更加自然
+  3. 在大量的数据操作下，对于JVM的内存压力，基于API的ReentrantLock会开销更多的内存，虽然不是瓶颈，但是也是一个选择依据
+
+
+
 # 第二部分	JVM篇
 
 
@@ -5259,6 +5350,131 @@ aaa
 
 
 ## 2、垃圾收集
+
+
+
+### 2.1、怎么做JDK8的内存调优？
+
+https://zhuanlan.zhihu.com/p/166131311
+
+
+
+### 2.2、对象从新生代进入到老年代的条件有哪些？
+
+1. **长期存活的对象**，对象在Survivor区中熬过了-XX:MaxTenuringThreshold次(CMS为6次，Parallel和G1均为15次)MinorGC仍然存活的对象
+2. **大对象直接进入老年代**，这个阈值可由参数-XX:PretenureSizeThreshold决定
+3. **分配担保**，Survivor 空间不够，老年代担保
+4. **动态年龄判断**，如果在Survivor空间中相同年龄所有对象大小的总和大于Survivor空间的一半，年龄大于或等于该年龄的对象就可以直接进入老年代
+
+
+
+### 2.3、触发Full GC的原因有哪些？
+
+1. ##### System.gc()方法的调用
+
+   此方法的调用是建议JVM进行Full GC，虽然只是建议而非一定，但很多情况下它会触发 Full GC，从而增加Full GC的频率，也即增加了间歇性停顿的次数。建议能不使用此方法就别使用，让虚拟机自己去管理它的内存，可通过通过-XX:+ DisableExplicitGC来禁止RMI调用System.gc()。
+
+2. ##### 老年代担保失败
+
+   新生代进行Minor GC时，另一个survivor空间放不下，对象只能放入老年代，而此时老年代也放不下则会触发Full GC
+
+3. ##### CMS并发失败
+
+   当时使用CMS作为老年代垃圾收集器的情况下，由于老年代浮动垃圾过多，空间过于散碎，没有足够连续内存来分配新对象，而不得不提前触发一次Full GC（此时老年代临时启用Serial Old GC进行空间整理）。
+
+4. ##### 老年代空间不足
+
+   当配置了大对象直接分配在老年代中**或者**新生代对象晋升到老年代（包括固定晋升年龄和动态晋升年龄两种情况），如果老年代空间不足，则会触发Full GC，如果Full GC之后空间依然不足，则抛出【java.lang.OutOfMemoryError: Java heap space】异常。
+
+
+
+### 2.4、重要GC参数说明
+
+1. ##### -XX:MaxTenuringThreshold
+
+   设置熬过多少会Minor GC后可以晋升到老年代的阈值。只对SerialGC和ParNewGC有效，对ParallelGC无效，Parallel Scavenge则根据运行状态来决定（-XX:+UseAdaptiveSizePolicy）。
+
+2. ##### -XX:PretenureSizeThreshold
+
+   设置大对象直接进入年老代的阈值。只对SerialGC和ParNewGC有效，对ParallelGC无效。在ParallelGC中该值默认为0，即不指定最大的晋升大小，一切由运行情况决定（-XX:+UseAdaptiveSizePolicy）。
+
+3. ##### -XX:MaxGCPauseMills
+
+   设置GC的最大停顿时间，仅在使用Parallel Scavenge/G1收集器时才会生效，默认200毫秒。
+
+4. ##### -XX:GCTimeRatio
+
+   设置吞吐量大小，即用户程序运行时间占总时间的比例，默认为99，即允许1%的GC时间，仅在使用Parallel Scavenge收集器时才会生效。
+
+5. ##### ParallelGCThreads
+
+   设置并行GC时进行内存回收的线程数。
+
+6. 
+
+
+
+
+
+### 2.5、垃圾收集器的选择与调优
+
+1. ##### 确定当前的垃圾选择器
+
+   通过加入`-XX:+PrintCommandLineFlags`来确定当前使用的GC类型：
+
+   ```shell
+   -XX:InitialHeapSize=1052925824 -XX:MaxHeapSize=16846813184 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC
+   ```
+
+   或者通过`java -XX:+PrintFlagsFinal -version`来确定当前使用的GC类型也行。
+
+   最后参考以下对照表确认当前应用所使用的GC类型：
+
+   - **-XX:+UseSerialGC**：Serial收集器串行回收+Serial Old收集器串行回收
+   - **-XX:+UseParNewGC**：ParNew收集器并行回收+Serial Old收集器串行回收
+   - **-XX:+UseParallelGC**：Parallel收集器并行回收+Serial Old收集器串行回收
+   - **-XX:+UseParallelOldGC**：Parallel收集器并行回收+Parallel Old收集器并行回收
+   - **-XX:+UseConcMarkSweepGC**：Serial收集器串行回收+CMS收集器并发回收(备用Serial Old收集器)
+   - **-XX:+UseConcMarkSweepGC -XX:-UseParNewGC**：ParNew收集器并行回收+CMS收集器并发回收(备用Serial Old收集器)
+   - **-XX:+UseG1GC**：G1收集器并发、并行执行内存回收
+
+   当前垃圾收集器为：
+
+   年轻代：Parallel收集器-复制算法、多线程、可控吞吐量
+
+   老年代：Serial Old 收集器-标记整理、单线程、GC期间StopTheWorld
+
+2. ##### 调优思路&参数&方案
+
+   - **调优目的**：低停顿；少FGC；高吞吐；
+   - **调优思路**：
+     - 新生代大小适中。偏大会导致老年代过小，偏小会导致MinorGC过多，对象年龄涨的快，且没有足够survivor空间，这样对象还是容易跑到老年代，尽可能的让周期性对象在新生代收掉，比如某些对象只存活几分钟如Session，这些对象没必要留到老年代。一般建议在1/2到1/4个堆总内存大小；
+     - survivor空间同理不能过大或者过小。过大会浪费内存空间，同时减小了eden和old空间，过小很可能出现老年代担保现象，导致对象被迫提前进入老年代；
+     - 新生代存活周期MaxTenuringThreshold默认15，如果觉得15太长，可以缩短，让注定老年对象提前进入老年代；
+   - **可调整参数**：
+     - SurvivorRatio：新生代中Eden 区域与Survivor 区域的容量比值， 默认为8， 代表 Eden ：Survivor=8∶1
+     - PretenureSizeThreshold：直接晋升到老年代的对象大小，设置这个参数后，大于这个参数的对象将直接在老年代分配
+     - MaxTenuringThreshold：晋升到老年代的对象年龄。每个对象在坚持过一次Minor GC 之后，年龄就加1，当超过这个参数值时就进入老年代，最大15（对象头只分配了4位最大1111）
+     - UseAdaptiveSizePolicy：动态调整Java 堆中各个区域的大小以及进入老年代的年龄
+     - ParallelGCThreads：设置并行GC 时进行内存回收的线程数
+     - GCTimeRatio：用户程序运行时间占总时间的比率，默认值为99，即允许1% 的GC 时间。仅在使用Parallel Scavenge 收集器时生效
+     - MaxGCPauseMillis：设置GC 的最大停顿时间。仅在使用Parallel Scavenge/G1 收集器时生效
+     - CMSInitiatingOccupancyFraction：设置CMS 收集器在老年代空间被使用多少后触发垃圾收集。默认值为68%
+     - UseCMSCompactAtFullCollection：设置CMS 收集器在完成垃圾收集后是否要进行一次内存碎片整理，默认true
+     - CMSFullGCsBeforeCompaction：设置CMS 收集器在进行若干次垃圾收集后再启动一次内存碎片整理，默认0
+     - TargetSurvivorRatio：默认50，即survivor区对象目标使用率为50%。
+   - **调优方案**：
+     - 能在Minor GC解决的，不要留到Full GC阶段，新生代内存一般比老年代内存要小，因为对象存活率低，复制算法较快，因此新生代一般是占堆内存总大小的1/2 ~ 1/4之间为宜。
+     - 堆内存的初始大小与总大小设置为一样的值，即-Xms和-Xmx设置同样大小值，避免内存调整。
+     - -Xmn和SurvivorRatio，调整Eden和Survivor的大小，合适即可。通过工具多分析对象存活率和存活大小。
+     - GC收集器调整，现在多核CPU时代，尽量使用并行垃圾收集器。jre8 server模式默认Parallel Scavenge + Paralle Old，可以调整为ParNew + CMS，降低停顿时间，如果效果还不尽人意，可以试试G1。
+
+
+
+### 2.6、JVM产生"Stop The World"的场景
+
+- 对象的移动过程中，为确保对象引用更新的正确性，JVM将暂停所有其他的线程，这种情况被称为“Stop-The-World”，导致系统全局停顿。出现这种情况的代表性GC算法有：**标记-复制算法**和**标记-整理算法**等。
+- 所有收集器在GC Roots根节点枚举这一步骤时都是必须暂停用户线程的。现在可达性分析算法耗时最长的查找引用链的过程已经可以做到与用户线程一起并发进行， 但根节点枚举始终还是必须在一个能保障一致性的快照中才得以进行，为了生成这样一个快照，必须进行"Stop The World"。
 
 
 
@@ -5315,7 +5531,7 @@ aaa
 2. 如果自定义加载器没有加载过，则询问上一层加载器(即AppClassLoader)是否已经加载过Test.class。
 3. 如果没有加载过，则询问上一层加载器（ExtClassLoader）是否已经加载过。
 4. 如果没有加载过，则继续询问上一层加载（BoopStrap ClassLoader）是否已经加载过。
-5. 如果BoopStrap ClassLoader依然没有加载过，则到自己指定类加载路径下（"sun.boot.class.path"）查找(**调用`findClass()`**)是否有Test.class字节码，有则返回，没有通知(**这个通知是靠下级ClassLoader捕获parent.loadClass()方法来实现的**)下一层加载器ExtClassLoader到自己指定的类加载路径下（java.ext.dirs）查看。
+5. 如果BoopStrap ClassLoader依然没有加载过，则到自己指定类加载路径下（"sun.boot.class.path"）查找(**调用`findClass()`**)是否有Test.class字节码，有则返回，没有通知(**这个通知是靠下级ClassLoader捕获parent.loadClass()方法的ClassNotFoundException异常来实现的**)下一层加载器ExtClassLoader到自己指定的类加载路径下（java.ext.dirs）查看。
 6. 依次类推，最后到自定义类加载器指定的路径还没有找到Test.class字节码，则抛出异常`ClassNotFoundException`。
 7. **如果Test.class依赖一些Java核心类库则不会使用自定义的类加载器加载，BoopStrap ClassLoader肯定会代为加载的。**
 8. **如果Test.class依赖一些用户自定义的类(如BaseTest.java)则依然使用自定义的类加载器加载。**
@@ -5555,4 +5771,125 @@ JDK 内置的 SPI 机制本身有它的优点，但由于实现比较简单，�
 - 获取某个实现类的方式不够灵活，只能通过 Iterator 形式获取，不能根据某个参数来获取对应的实现类。
 - 多个并发多线程使用 ServiceLoader 类的实例是不安全的。
 - 加载不到实现类时抛出并不是真正原因的异常，错误很难定位。
+
+
+
+## 6、线程安全与锁优化
+
+
+
+### 6.1、Java中实现线程同步安全的方式有哪些？
+
+- **互斥同步**：这类同步方式是基于重量级锁（`synchronized`关键字和JUC的`ReentrantLock`）实现的；
+- **非阻塞同步**：这类同步是基于现有的CPU并发指令集（CAS，TAS等）辅以自旋重试的一种乐观锁来实现的；
+- **无同步方案**：例如基于Java中的ThreadLocal来实现；
+
+
+
+### 6.2、为什么要进行锁优化？
+
+JAVA中的通常说的锁，指的就是`synchronized`关键字所代表的锁，它是个重量级锁，它最终是基于操作系统底层的互斥同步手段（互斥量）实现的，互斥同步对性能最大的影响是阻塞的实现，挂起线程和恢复线程的操作都需要转入内核态中完成，这些操作给Java虚拟机的并发性能带来了很大的压力，因为Java的线程是映射到操作系统1:1的原生内核线程之上的，如果要阻塞或唤醒一条线程，则需要操作系统来帮忙完成，这就不可避免地陷入用户态到核心态的转换中，进行这种状态转换需要耗费很多的处理器时间。
+
+
+
+### 6.3、JAVA锁优化的手段
+
+主要分为JVM层面和代码编程两个方面。
+
+1. JVM层面：
+
+   - 锁消除：即即时编译器(JIT)在运行时，对一些代码要求同步，但是对被检测到不可能存在共享数据竞争的锁进行消除。开启锁消除前提是java必须运行在server模式，同时必须开启逃逸分析：-server -XX:+DoEscapeAnalysis -XX:+EliminateLocks
+   - 锁粗化：如果虚拟机探测到有这样一串零碎的操作都对同一个对象加锁，将会把加锁同步的范围扩展（粗化）到整个操作序列的外部，即取消对一连串零碎操作的细锁，这样只需要加锁一次就可以了。
+   - 适时关闭偏向锁：在系统并发(竞争)较大的情况下，关闭偏向锁(-XX:-UseBiasedLocking)可以提升性能。
+
+2. 代码编程层面：
+
+   - 减少锁的粒度或持有的时间：比如尽量用synchronized(monitor)块来进行同步，而且块中把一些无需同步的操作移出去，比如在同步块中掺杂了日志记录，这些都可以挪出同步块中。
+   - 锁分离：例如读写锁ReadWriteLock，读多写少的情况，可以提高性能。
+
+
+
+### 6.3、JVM锁膨胀过程（简述）
+
+1. 偏向锁可用会先尝试偏向锁；
+2. 轻量级锁可用会先尝试轻量级锁；
+3. 以上都失败，尝试自旋锁；
+4. 再失败，重量级锁兜底；
+
+
+
+### 6.4、JVM锁膨胀过程（详述）
+
+- ##### 偏向锁的升级
+
+  如果偏向锁可用，当线程访问代码块并获取锁对象时，会将当前线程的threadID通过CAS设置到锁对象头的Mark World字段中，因为偏向锁不会主动释放锁，因此以后同一线程再次获取锁的时候，需要比较当前线程的threadID和锁对象头中的threadID是否一致，如果一致，则无需使用CAS来加锁、解锁；如果不一致（其他线程，如线程2要竞争锁对象，而偏向锁不会主动释放因此还是存储的线程1的threadID），那么需要查看锁对象头Mark World字段中记录的threadID所对应的线程是否存活，如果没有存活，那么锁对象被重置为无锁状态，其它线程（线程2）可以竞争将其设置为偏向锁；如果存活，那么立刻查找该线程（线程1）的栈帧信息，如果还是需要继续持有这个锁对象，那么暂停当前线程1，撤销偏向锁，升级为轻量级锁，如果线程1不再使用该锁对象，那么将锁对象状态设为无锁状态，重新偏向新的线程。
+
+- ##### 轻量级锁的升级
+
+  线程1获取轻量级锁时会先把锁对象的对象头MarkWord复制一份到线程1的栈帧中创建的用于存储锁记录的空间（称为DisplacedMarkWord），然后使用CAS把对象头中的内容替换为线程1存储的锁记录（DisplacedMarkWord）的地址；
+
+  如果在线程1复制对象头的同时（在线程1CAS之前），线程2也准备获取锁，复制了对象头到线程2的锁记录空间中，但是在线程2CAS的时候，发现线程1已经把对象头换了，线程2的CAS失败，那么线程2就尝试使用自旋锁来等待线程1释放锁。
+
+  **如果自旋次数到了线程1还没有释放锁，或者线程1还在执行，线程2还在自旋等待，这时又有一个线程3过来竞争这个锁对象，那么这个时候轻量级锁就会膨胀为重量级锁**。重量级锁把除了拥有锁的线程都阻塞，防止CPU空转。
+
+- ##### 不存在锁降级
+
+  <u>**轻量级锁一旦膨胀为重量级锁就不会再降级为轻量级锁了；偏向锁升级为轻量级锁也不能再降级为偏向锁。一句话就是锁可以升级不可以降级，但是偏向锁状态可以被重置为无锁状态。**</u>
+
+
+
+### 6.5、JVM锁膨胀过程（原理）
+
+- ##### 偏向锁
+
+  偏向锁也是JDK1.6中引入的锁优化，它的目的是消除数据在无竞争情况下的同步原语，进一步提高程序的运行性能。**如果说轻量级锁是在低竞争的情况下使用CAS操作去消除同步使用的互斥量，那偏向锁就是在无竞争的情况下把整个同步都消除掉，连CAS操作都不做了。**
+
+  **偏向锁中的“偏”，就是偏心的“偏”、偏袒的“偏”。它的意思是这个锁会偏向于第一个获得它的线程，如果在接下来的执行过程中，该锁一直没有被其他的线程获取，则持有偏向锁的线程将永远不需要再进行同步。**
+
+  当锁对象第一次被线程获取的时候，虚拟机将会把对象头中的标志位设置为“01”、把偏向模式设置为“1”，表示进入偏向模式。同时使用CAS操作把获取到这个锁的线程的ID记录在锁对象头的 Mark Word字段之中。如果CAS操作成功，持有偏向锁的线程以后每次进入这个锁相关的同步块时，**虚拟机都可以不再进行任何同步操作（例如加锁、解锁及对Mark Word的更新操作等）**。
+
+  偏向锁只有遇到其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁，线程是不会主动释放偏向锁的。
+
+  关于偏向锁的撤销，需要等待全局安全点，即在某个时间点上没有字节码正在执行时，它会先暂停拥有偏向锁的线程，然后判断锁对象是否处于被锁定状态。如果线程不处于活动状态，则将对象头设置成无锁状态，并撤销偏向锁，恢复到无锁（标志位为01）或轻量级锁（标志位为00）的状态。
+
+  偏向锁在 JDK 6 及之后版本的 JVM 里是默认启用的。可以通过 JVM 参数关闭偏向锁：-XX:-UseBiasedLocking=false，关闭之后程序默认会进入轻量级锁状态。
+
+- ##### 轻量级锁
+
+  轻量级锁是JDK 1.6之中加入的新型锁机制。引入轻量级锁的主要目的是：在多线程竞争不激烈的前提下，减少传统的重量级锁使用操作系统互斥量产生的性能消耗。需要注意的是轻量级锁并不是取代重量级锁，而是在大多数情况下同步块并不会出现严重的竞争情况，所以引入轻量级锁可以减少重量级锁对线程的阻塞带来的开销。
+
+  所以偏向锁是认为环境中不存在竞争情况，而轻量级锁则是认为环境中不存在竞争或者竞争不激烈，所以轻量级锁一般都只会有少数几个线程竞争锁对象，其他线程只需要稍微等待（自旋）下就可以获取锁，但是自旋次数有限制，如果自旋超过一定的次数，或者一个线程在持有锁，一个在自旋，又有第三个来访时，轻量级锁膨胀为重量级锁，重量级锁使除了拥有锁的线程以外的线程都阻塞，防止CPU空转。
+
+  ![轻量级锁膨胀为重量级锁的过程.jpg](src/main/java/com/penglecode/xmodule/master4j/java/jvm/locks/轻量级锁膨胀为重量级锁的过程.jpg)
+
+  - ##### 加锁
+
+    在代码进入同步块的时候，如果此同步对象没有被锁定（锁标志位为“01”状态），虚拟机首先将在当前线程的栈帧中建立一个名为锁记录（Lock Record）的空间，用于存储锁对象目前的Mark Word的拷贝（官方把这份拷贝加了一个Displaced前缀，即Displaced Mark Word）。然后，虚拟机将使用CAS操作尝试将对象的Mark Word更新为指向Lock Record的指针。如果这个更新动作成功，那么这个线程就拥有了该对象的锁，并且对象Mark Word的锁标志位（Mark Word的最后2bit）将转变为“00”，即表示此对象处于轻量级锁定状态。如果这个更新操作失败了，虚拟机首先会检查对象的Mark Word是否指向当前线程的栈帧，如果是说明当前线程已经拥有了这个对象的锁，那就可以直接进入同步块继续执行，否则说明这个锁对象已经被其他线程抢占了。如果有两条以上的线程争用同一个锁，那轻量级锁就不再有效，要膨胀为重量级锁，锁标志的状态值变为“10”，Mark Word中存储的就是指向重量级锁（互斥量）的指针，前一个线程(即当前持有锁的线程)继续安全滴在同步块中执行代码，后一个抢锁的线程将会进入阻塞状态，直到当前持有锁的线程退出同步块时唤醒它。
+
+  - ##### 解锁
+
+    解锁过程也是通过CAS操作来进行的。如果对象的Mark Word仍然指向着线程的锁记录，那就用CAS操作把对象当前的Mark Word和线程中复制的Displaced Mark Word替换回来，如果替换成功，整个同步过程就完成了。如果替换失败，说明有其他线程尝试过获取该锁，那就要在释放锁的同时，唤醒被挂起的线程。
+
+  - ##### 性能
+
+    没有锁竞争时，轻量级锁用CAS操作替代互斥量的开销，性能较优。有锁竞争时，除了互斥量开销，还有CAS操作开销，所以性能较差。但是，一般情况下，在整个同步周期内都是不存在竞争的”，这是一个经验数据。
+
+- ##### 重量级锁
+
+  重量级锁是指当有一个线程获取锁之后，其余所有等待获取该锁的线程都会处于阻塞状态。
+
+  重量级锁通过对象内部的监视器（monitor）实现，而其中 monitor 的本质是依赖于底层操作系统的 Mutex Lock 实现，操作系统实现线程之间的切换需要从用户态切换到内核态，切换成本非常高。
+
+  简言之，就是所有的控制权都交给了操作系统，由操作系统来负责线程间的调度和线程的状态变更。而这样会出现频繁地对线程运行状态的切换，线程的挂起和唤醒，从而消耗大量的系统资源，导致性能低下。
+
+  下面说下膨胀过程，直接上图：
+
+  ![JVM锁膨胀过程图.jpg](src/main/java/com/penglecode/xmodule/master4j/java/jvm/locks/JVM锁膨胀过程图.jpg)
+
+
+
+### 6.5、偏向锁和轻量级锁的区别
+
+- 偏向锁仅在一个锁对象处于无锁状态标识下时才可以通过一个CAS操作来设置锁对象头上的`ThreadID`字段来获取偏向锁，在没有多线程竞争的情况下，后面该同一线程再次获取该锁的时候，就会连加锁、解锁这些步骤都省了，相当于无锁操作，极致地优化了实现同步的开销。
+- 轻量级锁的获取及释放依赖多次 CAS 原子指令，而偏向锁只需要在置换 ThreadID 的时候依赖一次 CAS 原子指令即可。
 

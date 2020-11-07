@@ -1,6 +1,5 @@
 package com.penglecode.xmodule.master4j.netty.examples.echo2;
 
-import com.penglecode.xmodule.master4j.netty.codec.LineEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -10,9 +9,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.LineBasedFrameDecoder;
-import io.netty.handler.codec.base64.Base64Decoder;
-import io.netty.handler.codec.base64.Base64Encoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.concurrent.DefaultThreadFactory;

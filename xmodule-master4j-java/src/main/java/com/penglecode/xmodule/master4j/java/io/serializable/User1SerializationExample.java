@@ -34,7 +34,7 @@ public class User1SerializationExample {
     }
 
     public static void main(String[] args) throws Exception {
-        //serialize();
+        serialize();
         deserialize();
     }
 

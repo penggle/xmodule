@@ -1,6 +1,7 @@
 package com.penglecode.xmodule.master4j.java.util.concurrent;
 
 import java.util.concurrent.*;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * 线程池的典型实现ThreadPoolExecutor
@@ -49,9 +50,39 @@ public class ThreadPoolExecutorExample {
          */
     }
 
+    public static void shutdownTest() {
+        int nThreads = 4;
+        ThreadPoolExecutor executorService = new ThreadPoolExecutor(nThreads, nThreads, 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(MAX_CONCURRENCY), DEFAULT_THREAD_FACTORY, new ThreadPoolExecutor.CallerRunsPolicy());
+        Runnable task = () -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+        for(int i = 0; i < 10; i++) {
+            executorService.execute(task);
+        }
+        executorService.shutdown();
+
+        while(true) {
+            System.out.println(String.format(">>> shutdown = %s, terminating = %s, terminated = %s, activeCount = %s, completedTaskCount = %s, totalTaskCount = %s",
+                    executorService.isShutdown(), executorService.isTerminating(), executorService.isTerminated(), executorService.getActiveCount(), executorService.getCompletedTaskCount(), executorService.getTaskCount()));
+            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(500));
+            if(!executorService.isTerminating() && executorService.isTerminated()) {
+                System.out.println(String.format(">>> shutdown = %s, terminating = %s, terminated = %s, activeCount = %s, completedTaskCount = %s, totalTaskCount = %s",
+                        executorService.isShutdown(), executorService.isTerminating(), executorService.isTerminated(), executorService.getActiveCount(), executorService.getCompletedTaskCount(), executorService.getTaskCount()));
+                break;
+            }
+        }
+        System.out.println("ThreadPoolExecutor terminated.");
+    }
+
     public static void main(String[] args) throws Exception {
         //newThreadPoolSizeTest();
-        prestartAllCoreThreads();
+        //prestartAllCoreThreads();
+        shutdownTest();
     }
 
 }

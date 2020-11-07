@@ -26,8 +26,8 @@ public class Example3PlainJavaConsumer1 extends AbstractRabbitMqExample {
 		channel.exchangeDeclare(exchangeName, "fanout"); //定义指定名称的fanout类型的exchange
 		String queueName = channel.queueDeclare().getQueue(); //向RabbitMQ Server声明一个由Server随机生成的、非持久性的、排他的、只与当前连接相关的且退出时自动删除的队列
 		channel.queueBind(queueName, exchangeName, ""); //绑定随机生成的queue与指定的exchange
-		
-		//autoAck=true，即在consumer收到消息的时候立即异步发送ack确认
+
+		//autoAck=true，即noack=true，即客户端没有确认，服务端默认为客户端成功地消费到了消息，并将消息从服务端删除
 		channel.basicConsume(queueName, true, new SimpleDeliverCallback(), consumerTag -> {});
 		System.out.println("【Example3Consumer】消费启动...");
 	}

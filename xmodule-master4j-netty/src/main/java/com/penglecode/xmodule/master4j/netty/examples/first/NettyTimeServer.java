@@ -3,6 +3,7 @@ package com.penglecode.xmodule.master4j.netty.examples.first;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -28,12 +29,12 @@ public class NettyTimeServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyTimeServer.class);
 
     /**
-     * 用于接受客户端连接的线程池
+     * 用于接受客户端连接的线程组
      */
     private final EventLoopGroup bossGroup;
 
     /**
-     * 处理I/O事件的线程池
+     * 处理I/O事件的线程组
      */
     private final EventLoopGroup workerGroup;
 
@@ -55,8 +56,14 @@ public class NettyTimeServer {
     public void start() {
         try {
             serverBootstrap.group(bossGroup, workerGroup)
-                    //指定Channel的类型，用于接受客户端连接，对应于java.nio包中的ServerSocketChannel
+                    //指定服务端ChannelFactory的生产的Channel类型，用于接受客户端连接，对应于java.nio包中的ServerSocketChannel
                     .channel(NioServerSocketChannel.class)
+                    //设置底层socket已接受请求的缓存队列大小，可设最大值与平台有关：windows最大200，其他128
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    //是否重用处于TIME_WAIT状态的地址(例如服务重启后是否可以绑定相同端口)，默认false
+                    .option(ChannelOption.SO_REUSEADDR, true)
+                    //是否启用心跳机制,默认false(鸡肋设置，还是建议应用层自己实现心跳)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
                     /**
                      * 上面NioServerSocketChannel接受客户端连接后需要做的初始化动作，
                      * 包括设置读数据的解码器、写数据的编码器以及自定义业务数据处理器
@@ -77,7 +84,7 @@ public class NettyTimeServer {
                             ch.pipeline().addLast(new TimeServerHandler());
                         }
                     });
-            //启动服务并监听在8080端口，接受客户端请求
+            //启动服务并监听在指定的port端口，接受客户端请求
             ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
             LOGGER.info(">>> Netty Time Server started and listen on {}", port);
             //等待服务端所持有的的NioServerSocketChannel被关闭，start()方法运行结束，否则hang在此处

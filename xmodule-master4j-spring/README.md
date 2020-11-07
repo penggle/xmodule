@@ -87,7 +87,7 @@ IOC容器对使用者来说就像是一个黑盒，不需要关心bean之间的�
 IOC的实现方式有两种：**依赖注入**（Dependency Injection，DI）和**依赖查找**（Dependency Lookup，DL）
 
 - **依赖注入**：应用程序**被动**的接收对象，bean实例化的时候，IOC容器会自动根据**类型**或者**名称**，把依赖的其他bean注入给当前bean。依赖注入的方式主要有以下四种：
-  1. **注解**：通过注解来让IOC容器注入所依赖类型的对象，例如最常用的@Autowired。
+  1. **属性注解**：通过注解来让IOC容器注入所依赖类型的对象，例如最常用的@Autowired。
   2. **构造方法**：实现对应参数的构造方法，在创建对象时来让IOC容器注入所依赖类型的对象。
   3. **setter方法**：实现对应属性的setter方法，来让IOC容器注入所依赖类型的对象。
   4. **工厂方法**：例如@Bean注解的方法，让IOC容器注入所依赖类型的对象。
@@ -1216,7 +1216,7 @@ SpringAOP 的核心架构基于代理。当想要创建一个类的被通知实�
   |      org.springframework.aop.support.ComposablePointcut      | ComposablePointcut 类使用诸如union()和intersection()等操作组合两个或更多个切入点 |
   |     org.spri11gframework.aop.support.ControlFlowPointcut     | ControlFlowPointcut 是一种特殊的切入点，它们匹配另一个方法的控制流中的所有方法， 即任何作为另一个方法的结果而直接或间接调用的方法 |
   | org.springframework.aop.support.DynamicMethodMatcherPointcut | 此实现旨在作为构建动态切入点的基类；该类除了能在方法声明上做拦截逻辑，还可以在方法参数值上做拦截逻辑；并且该类的matchs(Method method, Class<?> targetClass， Object[] args)方法在每次调用代理对象上的代理方法时均会被调用一次。 |
-  |   org.springframework.aop.support.JdkRegexpMethαlPointcut    | 该实现允许使用JDK 1.4 正则表达式支持定义切入点。该类需要JDKl.4 或更高版本 |
+  |   org.springframework.aop.support.JdkRegexpMethodlPointcut   | 该实现允许使用JDK 1.4 正则表达式支持定义切入点。该类需要JDKl.4 或更高版本 |
   |   org.springframework.aop.support.NameMatchMethodPointcut    | 通过使用NameMatchMethodPointcut，可以创建一个切入点，对方法名称列表执行简单匹配 |
   | org.springframework.aop.support.StaticMethodMatcherPointcut  | StaticMethodMatcherPointcut 类用作构建静态切入点的基础；该类只能在被拦截的方法声明上做拦截逻辑，无法在方法参数值上做拦截逻辑；并且该类的matchs(Method method, Class<?> targetClass)方法初次调用结果会被缓存起来，后面不会再次调用 |
 
@@ -1237,7 +1237,7 @@ SpringAOP 的核心架构基于代理。当想要创建一个类的被通知实�
   在这之前的有关ProxyFactory及Advice、Pointcut、Advisor的使用都是基于编程的方式在使用Spring AOP。在使用Spring AOP 的声明式自己置时，存在三个选项。
 
   1. 使用ProxyFactoryBean ： 在Spring AOP 中，当根据定义的Spring bean 创建AOP 代理时， ProxyFactoryBean提供了一种声明方式来配置Spring 的ApplicationContext（以及底层的BeanFactory）。
-  2. 使用Spring <aop:/ > 名称空间 ：在Spring2.0 中引入的aop 名称空间提供了一种简化的方式（与ProxyFactoryBean相比）来定义Spring 应用程序中的切面及其DI 需求。但是，<aop:/ > 名称空间在底层也是使用了ProxyFactoryBean 。
+  2. 使用Spring <aop:/ > 名称空间 ：在Spring2.0 中引入的aop 名称空间提供了一种简化的方式（与ProxyFactoryBean相比）来定义Spring 应用程序中的切面及其DI 需求。但是，<aop:/ > 名称空间在底层也是使用了ProxyFactoryBean来实现的。
   3. 使用＠Aspect注解：除基于XML的<aop:/ > 名称空间外，还可以在类中使用@Aspect注解来配置Spring AOP 。尽管使用的语法基于Aspect ， 并且在使用此选项时需要包含一些AspectJ库， 但在引导ApplicationContext 时， Spring 仍然使用代理机制（即为目标创建代理对象）。
 
 - **使用ProxyFactoryBean**
@@ -1335,7 +1335,7 @@ SpringAOP 的核心架构基于代理。当想要创建一个类的被通知实�
 
   AOP 为许多基于OOP 的应用程序中出现的常见问题提供了强大的解决方案。在使用SpringAOP 时， 可以利用AOP 功能的可选择子集，在大多数情况下， 可以解决在应用程序中遇到的问题。但是， 在某些情况下， 可能需要使用SpringAOP 范围之外的某些AOP 功能。
   从连接点的角度来看， SpringAOP 仅支持与执行公共非静态方法相匹配的切入点。但是，在某些情况下，可能需要向受保护／私有的方法应用通知，比如对象构建或字段访问期间等。
-  在这些情况下， 需要使用更全面的功能集来查看AOP 实现。此时，我们偏爱使用Aspectf， 因为可以使用Spring配置AspectJ 切面， AspectJ 成为SpringAOP 的完美补充。
+  在这些情况下， 需要使用更全面的功能集来查看AOP 实现。此时，我们偏爱使用AspectJ， 因为可以使用Spring配置AspectJ 切面， AspectJ 成为SpringAOP 的完美补充。
 
 
 
@@ -1958,7 +1958,13 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
      - **ISOLATION_REPEATABLE_READ **：使用行锁锁定所读取的所有行，来解决不可重复读问题，但是解决不了幻读。
      - **ISOLATION_SERIALIZABLE**：使用表锁来锁定整个表，来解决幻读问题，锁粒度最大，并发性能最差。
 
-  2. **事务的传播特性**
+  2. **事务隔离级别的说明**
+
+     - **ISOLATION_READ_UNCOMMITTED**和**ISOLATION_SERIALIZABLE**基本没有数据库在用，原因是前者效率是高但是数据一致性约束太过松散，后者则是数据一致性约束太过严谨，导致效率严重受到制约。
+     - Oracle数据库的默认隔离级别是**ISOLATION_READ_COMMITTED**，MySQL是**ISOLATION_REPEATABLE_READ **
+     - <u>要注意的是，SQL标准中定义的**ISOLATION_REPEATABLE_READ **是存在幻读的，但实际上MySQL 的**ISOLATION_REPEATABLE_READ **级别**不存在幻读**，其实现是通过**间隙锁**来防止幻读。</u>
+
+  3. **事务的传播特性**
 
      事务的隔离级别是数据库本身的事务功能，然而事务的传播属性则是Spring自己为我们提供的功能，数据库事务没有事务的传播属性这一说法。这一点需要明确！
 
@@ -2027,19 +2033,19 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
      }
      ```
 
-  3. **只读事务的理解**
+  4. **只读事务的理解**
 
      只读事务readOnly并不是所有数据库都支持的，不同的数据库下会有不同的结果。
      设置了readOnly后，connection都会被赋予readOnly属性，效果取决于数据库的实现。例如：
 
      > 1. 在oracle下测试，发现不支持readOnly，也就是不论Connection里的readOnly属性是true还是false均不影响SQL的增删改查；
      >
-  > 2. 在mysql下测试，发现支持readOnly，设置为true时，只能查询，若增删改会异常：java.sql.SQLException: Connection is read-only。
-  
-  另外在ORM中，设置了事务readOnly会赋予一些额外的优化，例如在Hibernate中，会被禁止flush等。
-  
+     > 2. 在mysql下测试，发现支持readOnly，设置为true时，只能查询，若增删改会异常：java.sql.SQLException: Connection is read-only。
+
+     另外在ORM中，设置了事务readOnly会赋予一些额外的优化，例如在Hibernate中，会被禁止flush等。
+
      总结：只读事务readOnly不是一个强选项，只是应用程序给数据库的一个"暗示"，提示数据库，本次事务都是读取操作没有写入操作，提示数据库可以放心的优化而不用担心数据的一致性。这个能力由数据库厂商自由实现，没有必须实现的硬性标准。
-  
+
      **connection.setReadOnly(true)**与**`SET TRANSACTION READ ONLY`**的区别：前者`connection.setReadOnly(true)`正如前面所述，仅仅在connection属性上给数据库一个"暗示"或"建议"，数据库理不理睬不确定；后者`SET TRANSACTION READ ONLY`是显式的强制的来告诉数据库开启一个只读事务。在显式只读事务中，只能看到开启事务的那一刻的数据库快照中的数据，期间其他事务提交的数据它是看不到的，同时你非要在本只读事务中做DML操作数据库不保证数据的一致性。这个特性在有些场景特别有用，例如分页查询时，对于一个高并发的表，查分页count与查分页数据时保持数据的一致性通过设置readOnly=true就很适合。
 
 - **事务状态TransactionStatus**

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	debug="true" 	启动时输出配置加载信息
+	scan="true" 	默认每分钟自动扫描
+	scanPeriod="30 seconds" 	设置每30秒自动扫描,若没有指定具体单位则以milliseconds为标准(单位:milliseconds, seconds, minutes or hours)
+-->
+<configuration scan="true" scanPeriod="120 seconds">
+    <!--SpringBoot应用名称-->
+    <springProperty scope="context" name="SPRING_APPLICATION_NAME" source="spring.application.name" defaultValue="xmodule-master4j-integrates"/>
+    <!-- SpringBoot日志模块的默认配置 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <!-- 重新定义LOG_PATH默认值 -->
+    <property name="LOG_PATH" value="${LOG_PATH:-${java.io.tmpdir:-/tmp}}"/>
+    <!-- 重新定义LOG_FILE默认值 -->
+    <property name="LOG_FILE" value="${LOG_FILE:-${SPRING_APPLICATION_NAME}}"/>
+    <!-- 覆盖覆盖defaults.xml中的CONSOLE_LOG_PATTERN默认值，但是此例中自定义的CONSOLE_LOG_PATTERN SpringBoot转换时报错，未能解决，故取消include appender
+    <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%thread] %clr([%-5level]) [%class.%method\(%file:%line\)] - %X{traceId:-}%m%n"/>
+     -->
+    <!-- 引入FILE appender
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml"/>
+     -->
+    <!-- 引入CONSOLE appender
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+     -->
+
+    <!--appender 模块-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}) %clr(${PID:- }){magenta} [%thread] %clr([%-5level]) [%class.%method\(%file:%line\)] - %X{traceId:-}%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE}_log_%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <maxFileSize>100MB</maxFileSize>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder charset="UTF-8">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(${PID:- }){magenta} [%thread] [%-5level] [%class.%method\(%file:%line\)] - %X{traceId:-}%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.apache.commons" level="ERROR"/>
+	<logger name="org.apache.http" level="ERROR"/>
+	<logger name="org.apache.ibatis" level="INFO"/>
+	<logger name="org.mybatis.spring" level="INFO"/>
+	<logger name="org.springframework" level="INFO"/>
+	<logger name="org.springframework.boot" level="DEBUG"/>
+
+    <!-- SpringBoot logging web group -->
+    <logger name="org.springframework.http" level="DEBUG"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+    <logger name="org.springframework.core.codec" level="DEBUG"/>
+    <logger name="org.springframework.boot.actuate.endpoint.web" level="DEBUG"/>
+    <logger name="org.springframework.boot.web.servlet.ServletContextInitializerBeans" level="DEBUG"/>
+
+	<logger name="org.springframework.boot.autoconfigure.logging" level="ERROR"/>
+    <logger name="org.springframework.core.io.support.SpringFactoriesLoader" level="TRACE"/>
+
+	<logger name="com.penglecode" level="DEBUG"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

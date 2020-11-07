@@ -107,7 +107,6 @@ public class RandomAccessFileExample {
                     if(sb.length() > 0) {
                         line = sb.toString().trim();
                         if(line.startsWith("<row")) {
-                            line = new String(line.trim().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
                             lines.add(line);
                             System.out.println(line);
                         }

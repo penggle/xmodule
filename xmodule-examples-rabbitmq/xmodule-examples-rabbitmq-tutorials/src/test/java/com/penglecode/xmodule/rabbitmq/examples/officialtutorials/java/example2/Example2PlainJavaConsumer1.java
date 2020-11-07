@@ -29,7 +29,7 @@ public class Example2PlainJavaConsumer1 extends AbstractRabbitMqExample {
 		channel.queueDeclare(queueName, false, false, false, null); //声明队列
 		
 		channel.basicQos(1); //一次只接受一条未收到的消息,而且是在手动Ack确认被RabbitMQ Server收到之后才会发出下一个消息
-		//autoAck=false，关闭自动Ack确认，改为在DeliverCallback中手动Ack确认
+		//autoAck=true，即noack=true，即客户端没有确认，服务端默认为客户端成功地消费到了消息，并将消息从服务端删除
 		channel.basicConsume(queueName, false, new Example2DeliverCallback(channel), consumerTag -> {});
 		
 		System.out.println("【Example2Consumer】消费启动...");

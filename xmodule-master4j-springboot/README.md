@@ -1,4 +1,4 @@
-SpringBoot2.x核心技术
+# SpringBoot2.x部分
 
 
 
@@ -1070,7 +1070,7 @@ SpringBoot使用一个非常特殊的`PropertySource`顺序，该顺序设计用
    **注意这一步是个重要的分水岭：**
 
    - 如果是一个同步的页面请求，那么这个`HandlerMethodReturnValueHandler`应该是`ViewNameMethodReturnValueHandler`，经过它处理method返回值后那么一定会返回一个非`null`的`ModelAndView`。
-   - 如果是一个异步的Ajax请求，那么这个`HandlerMethodReturnValueHandler`应该是`RequestResponseBodyMethodProcessor`，其处理method返回值时会直接通过合适的HttpMessageConverter直接将结果write给客户端了，且返回一个`null`的`ModelAndView`用来指示后续的ViewResolver也不用去查找视图并渲染视图了，此处已经提前代做了。
+   - 如果是一个异步的Ajax请求，那么这个`HandlerMethodReturnValueHandler`应该是`RequestResponseBodyMethodProcessor`，其处理method返回值时会直接通过合适的`HttpMessageConverter`直接将结果write给客户端了，且返回一个`null`的`ModelAndView`用来指示后续的`ViewResolver`也不用去查找视图并渲染视图了，此处已经提前代做了。
 
 7. `HandlerAdapter#handle(..)`调用结束返回`ModelAndView`给`DispatchServlet#render(mav)`方法进一步处理。
 
@@ -1078,7 +1078,7 @@ SpringBoot使用一个非常特殊的`PropertySource`顺序，该顺序设计用
 
 9. `ViewResolver`查找到视图`View`之后立刻返回。
 
-10. 接着`DispatchServlet`调用View#render(..)方法渲染视图
+10. 接着`DispatchServlet`调用`View#render(..)`方法渲染视图
 
 11. 视图内容被write到客户端(浏览器端)，整个流程结束。
 

@@ -22,10 +22,10 @@
 
 - **直接寻址法：**取关键字或关键字的某个线性函数值为散列地址。即H(key)=key或H(key) = a·key + b，其中a和b为常数（这种散列函数叫做自身函数）。
 - **除留余数法：**取关键字被某个不大于散列表表长m的数p除后所得的余数为散列地址。即 H(key) = key MOD p,p<=m。不仅可以对关键字直接取模，也可在折叠、平方取中等运算之后取模。对p的选择很重要，一般取素数或m，若p选的不好，容易产生碰撞。
--  随机数法：选择一随机函数，取关键字作为随机函数的种子生成随机值作为散列地址，通常用于关键字长度不同的场合。
--  数字分析法：分析一组数据，比如一组员工的出生年月日，这时我们发现出生年月日的前几位数字大体相同，这样的话，出现冲突的几率就会很大，但是我们发现年月日的后几位表示月份和具体日期的数字差别很大，如果用后面的数字来构成散列地址，则冲突的几率会明显降低。因此数字分析法就是找出数字的规律，尽可能利用这些数据来构造冲突几率较低的散列地址。
-- 平方取中法：取关键字平方后的中间几位作为散列地址。
-- 折叠法：将关键字分割成位数相同的几部分，最后一部分位数可以不同，然后取这几部分的叠加和（去除进位）作为散列地址。
+-  **随机数法**：选择一随机函数，取关键字作为随机函数的种子生成随机值作为散列地址，通常用于关键字长度不同的场合。
+-  **数字分析法**：分析一组数据，比如一组员工的出生年月日，这时我们发现出生年月日的前几位数字大体相同，这样的话，出现冲突的几率就会很大，但是我们发现年月日的后几位表示月份和具体日期的数字差别很大，如果用后面的数字来构成散列地址，则冲突的几率会明显降低。因此数字分析法就是找出数字的规律，尽可能利用这些数据来构造冲突几率较低的散列地址。
+- **平方取中法**：取关键字平方后的中间几位作为散列地址。
+- **折叠法**：将关键字分割成位数相同的几部分，最后一部分位数可以不同，然后取这几部分的叠加和（去除进位）作为散列地址。
 
 **哈希算法必然存在冲突，那么解决哈希冲突的方法有哪些呢？**
 
@@ -46,7 +46,7 @@
 
 2. **一致性哈希(Consistent Hashing)**
 
-   通俗的说就是对于 `k` 个 `key` 和 `n` 个槽位(分布式系统中的节点)的哈希表，增减槽位后，平均只需对 `k/n` 个 `key` 重新映射即可。
+   通俗的说就是对于 `m` 个 `key` 和 `n` 个槽位(分布式系统中的节点)的哈希表，增减槽位后，平均只需对 `m/n` 个 `key` 重新映射即可。
 
    一致性哈希算法的目标是尽可能降低分布式环境下，通过哈希定位算法确定的元素(key)位置受机器节点数量的影响。
 
@@ -302,3 +302,163 @@
    }
    ```
 
+
+
+## 3、排序算法
+
+- ##### 冒泡算法
+
+  ![常用排序算法总结](https://p3-tt.byteimg.com/origin/pgc-image/f792a785202d415e9de57ce32790cdf5?from=pc)
+
+  冒泡算法：通过重复地遍历要排序的列表，比较每对相邻的项目，并在顺序不正确的情况下交换它们。
+
+  冒泡排序的思想是，从第0个元素到第n-1个元素遍历，若前面一个元素大于后面一个元素，则交换两个元素，这样可将整个序列中最大的元素冒泡到最后，然后再从第0个到第n-2遍历，如此往复，直到只剩一个元素。
+
+  ```java
+      @Override
+      public int[] sort(int[] array) {
+          int complexity = 0;
+          int n = array.length;
+          for (int i = 0; i < n - 1; i++) { //外层循环控制遍历次数
+              //内存循环处理单次遍历过程中比对并交换
+              for (int j = 0; j < n - i - 1; j++) {
+                  complexity++;
+                  if (array[j] > array[j + 1]) {
+                      Sort.swap(j, j + 1, array);
+                  }
+              }
+              Sort.printNumbers(array);
+          }
+          System.out.println(">>> complexity = " + complexity); //36
+          return array;
+      }
+  
+      public static void main(String[] args) {
+          int[] input = {4, 2, 9, 6, 23, 12, 34, 0, 1};
+          new BubbleSortExample().sort(input);
+      }
+  ```
+
+- ##### 选择排序
+
+  选择排序：通过给第 n 位选择一个第 n 小的数填充上去形成的算法，对于第 n 位来说，则从第 n 位开始搜索一个最小的数并记住该数的索引minIndex，在本轮搜索结束后交换第 n 位与第 minIndex 位的数，以此类推，在array.length轮选择过程中最终完成排序。
+
+  ```java
+  	@Override
+      public int[] sort(int[] array) {
+          int complexity = 0;
+          int n = array.length;
+          for(int i = 0; i < n; i++) { //外层循环用于选择第i位的选择值
+              int minIndex = i;
+              for(int j = i; j < n; j++) { //内层循环从第i位开始寻找一个最小值及其minIndex
+                  complexity++;
+                  if(array[j] < array[minIndex]) {
+                      minIndex = j;
+                  }
+              }
+              Sort.swap(minIndex, i, array); //第i轮查找过后交换第i位和第minIndex位
+              Sort.printNumbers(array);
+          }
+          System.out.println(">>> complexity = " + complexity); //45
+          return array;
+      }
+  
+      public static void main(String[] args) {
+          int[] input = {4, 2, 9, 6, 23, 12, 34, 0, 1};
+          new SelectionSortExample().sort(input);
+      }
+  ```
+
+- ##### 插入排序
+
+  插入排序：思路是类似打扑克牌开局摸牌插牌的情形，每一步将一个待排序的记录，插入到前面已经排好序的有序序列中去，直到插完所有元素为止。
+
+  ```java
+  	@Override
+      public int[] sort(int[] array) {
+          int complexity = 0;
+          int n = array.length;
+          for(int i = 1; i < n; i++) { //外层循环控制排序轮数，其中i代表从第0位~第(i - 1)位为已经排好序的序列
+              for(int j = i; j > 0; j--) { //内存循环将未知序的第i位插入到[0, i]开区间内的某个适当位置上
+                  complexity++;
+                  if(array[j] < array[j - 1]){
+                      Sort.swap(j, j - 1, array);
+                  }
+              }
+              Sort.printNumbers(array);
+          }
+          System.out.println(">>> complexity = " + complexity); //45
+          return array;
+      }
+  
+      public static void main(String[] args) {
+          int[] input = {4, 2, 9, 6, 23, 12, 34, 0, 1};
+          new InsertionSortExample().sort(input);
+      }
+  ```
+
+- ##### 快速排序
+
+  快速排序可能是最常被提到的排序算法了，快排的思想是，选取第一个数为基准，通过一次遍历将小于它的元素放到它的左侧，将大于它的元素放到它的右侧，然后对它的左右两个子序列分别递归地执行同样的操作。
+
+  ```java
+      @Override
+      public int[] sort(int[] array) {
+          doSort(array, 0, array.length - 1);
+          return array;
+      }
+  
+      protected void doSort(int[] array, int left, int right) {
+          if(left >= right){ //如果left索引超过了right索引则结束拆分
+              return;
+          }
+          //因为left/right后面都在动态变化，所以得先记录一份，后面递归再排序分段的时候需要用到
+          int begin = left, end = right;
+          //以最左边的数(left)为基准，即最左边的坑位腾出来了，可以充当temp交换位置
+          int pivot = array[left];
+          while(left < right) {
+              // 先从右向左遍历找到一个比pivot小的，将其填充到temp交换位置
+              while(left < right && array[right] >= pivot)
+                  right--;
+              //赋值过后right索引处充当temp交换位置
+              array[left] = array[right];
+  
+              // 再从左向右遍历找到一个比pivot大的，将其填充到temp交换位置
+              while (left < right && array[left] <= pivot)
+                  left++;
+              // 赋值过后left索引处充当temp交换位置
+              array[right] = array[left];
+  
+              /**
+               * 在right > left的情况下，继续执行上面的逻辑，
+               * 形成以pivot为中心的左右两边整体大小分明的两个字列表：
+               * array[0, left]和array[left + 1, length - 1]
+               */
+          }
+          // 最后将pivot放到left位置。此时，left位置的左侧数值应该都比left小；
+          // 而left位置的右侧数值应该都比left大。
+          array[left] = pivot;
+  
+          Sort.printNumbers(array);
+  
+          //对pivot左侧的一组数值进行递归的切割，以至于将这些数值完整的排序
+          doSort(array, begin, left);
+          //对pivot右侧的一组数值进行递归的切割，以至于将这些数值完整的排序
+          doSort(array, left + 1, end);
+      }
+  
+      public static void main(String[] args) {
+          int[] input = {4, 2, 9, 6, 23, 12, 34, 0, 1};
+          new QuickSortExample().sort(input);
+      }
+  ```
+
+  
+
+- ##### 归并排序
+
+  归并排序的思想是，利用二分的特性，将序列分成两个子序列进行排序，将排序后的两个子序列归并（合并），当序列的长度为2时，它的两个子序列长度为1，即视为有序，可直接合并，即达到归并排序的最小子状态。
+
+  
+
+- 

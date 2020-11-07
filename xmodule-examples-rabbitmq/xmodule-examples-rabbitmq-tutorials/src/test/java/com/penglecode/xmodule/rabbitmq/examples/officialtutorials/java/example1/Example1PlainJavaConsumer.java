@@ -24,8 +24,8 @@ public class Example1PlainJavaConsumer extends AbstractRabbitMqExample {
 		Connection connection = getConnectionFactory().newConnection(); //创建连接
 		Channel channel = connection.createChannel(); //创建通道
 		channel.queueDeclare(queueName, false, false, false, null); //声明队列
-		
-		//autoAck=true，即在consumer收到消息的时候立即异步发送ack确认
+
+		//autoAck=true，即noack=true，即客户端没有确认，服务端默认为客户端成功地消费到了消息，并将消息从服务端删除
 		channel.basicConsume(queueName, true, new SimpleDeliverCallback(), consumerTag -> {});
 		System.out.println("【Example1Consumer】消费启动...");
 	}

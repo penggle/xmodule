@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.penglecode.xmodule.master4j.integrates.example.mybatis.mapper.StudentMapper">
+    
+    <insert id="insertStudent" keyProperty="studentId" parameterType="Student" statementType="PREPARED" useGeneratedKeys="true">
+        INSERT INTO m_student(
+            student_id,
+            student_name,
+            student_sex,
+            student_age,
+            create_time
+        ) VALUES (
+            #{studentId, jdbcType=BIGINT},
+            #{studentName, jdbcType=VARCHAR},
+            #{studentSex, jdbcType=VARCHAR},
+            #{studentAge, jdbcType=TINYINT},
+            #{createTime, jdbcType=VARCHAR}
+        )
+    </insert>
+    
+    <update id="updateStudentById" parameterType="Student" statementType="PREPARED">
+        UPDATE m_student a
+           SET a.student_id = a.student_id
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(student.studentName)">
+               ,a.student_name = #{student.studentName, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(student.studentSex)">
+               ,a.student_sex = #{student.studentSex, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(student.studentAge)">
+               ,a.student_age = #{student.studentAge, jdbcType=TINYINT}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(student.updateTime)">
+                ,a.update_time = #{student.updateTime, jdbcType=VARCHAR}
+            </if>
+         WHERE a.student_id = #{student.studentId, jdbcType=BIGINT}
+    </update>
+    
+    <delete id="deleteStudentById" parameterType="java.lang.Long" statementType="PREPARED">
+        DELETE FROM m_student WHERE student_id = #{studentId, jdbcType=BIGINT}
+    </delete>
+    
+    <select id="selectStudentById" parameterType="java.lang.Long" resultType="Student" statementType="PREPARED">
+        SELECT a.student_id	    studentId,
+               a.student_name	studentName,
+               a.student_sex	studentSex,
+               a.student_age    studentAge,
+               DATE_FORMAT(a.create_time, '%Y-%m-%d %T')	createTime,
+               DATE_FORMAT(a.update_time, '%Y-%m-%d %T')	updateTime
+          FROM m_student a
+         WHERE a.student_id = #{studentId, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAllStudentList" parameterType="java.util.Map" resultType="Student" statementType="PREPARED">
+        SELECT a.student_id	    studentId,
+               a.student_name	studentName,
+               a.student_sex	studentSex,
+               a.student_age    studentAge,
+               DATE_FORMAT(a.create_time, '%Y-%m-%d %T')	createTime,
+               DATE_FORMAT(a.update_time, '%Y-%m-%d %T')	updateTime
+          FROM m_student a
+         ORDER BY a.student_name ASC
+    </select>
+
+    <select id="selectTeacherListOfStudent" parameterType="java.lang.Long" resultType="Student" statementType="PREPARED">
+        SELECT a.teacher_id	    teacherId,
+               a.teacher_name	teacherName,
+               a.teacher_sex	teacherSex,
+               a.teacher_age    teacherAge,
+               DATE_FORMAT(a.create_time, '%Y-%m-%d %T')	createTime,
+               DATE_FORMAT(a.update_time, '%Y-%m-%d %T')	updateTime,
+               b.course_name    courseName
+          FROM m_teacher a INNER JOIN m_teacher_course b
+         WHERE a.teacher_id = b.teacher_id
+           AND b.student_id = #{studentId, jdbcType=BIGINT}
+         ORDER BY a.teacher_name ASC
+    </select>
+
+</mapper>

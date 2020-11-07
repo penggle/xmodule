@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.penglecode.xmodule.master4j.integrates.example.mybatis.mapper.TeacherMapper">
+    
+    <insert id="insertTeacher" keyProperty="teacherId" parameterType="Teacher" statementType="PREPARED" useGeneratedKeys="true">
+        INSERT INTO m_teacher(
+            teacher_id,
+            teacher_name,
+            teacher_sex,
+            teacher_age,
+            create_time
+        ) VALUES (
+            #{teacherId, jdbcType=BIGINT},
+            #{teacherName, jdbcType=VARCHAR},
+            #{teacherSex, jdbcType=VARCHAR},
+            #{teacherAge, jdbcType=TINYINT},
+            #{createTime, jdbcType=VARCHAR}
+        )
+    </insert>
+    
+    <update id="updateTeacherById" parameterType="Teacher" statementType="PREPARED">
+        UPDATE m_teacher a
+           SET a.teacher_id = a.teacher_id
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(teacher.teacherName)">
+               ,a.teacher_name = #{teacher.teacherName, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(teacher.teacherSex)">
+               ,a.teacher_sex = #{teacher.teacherSex, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(teacher.teacherAge)">
+               ,a.teacher_age = #{teacher.teacherAge, jdbcType=TINYINT}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(teacher.updateTime)">
+                ,a.update_time = #{teacher.updateTime, jdbcType=VARCHAR}
+            </if>
+         WHERE a.teacher_id = #{teacher.teacherId, jdbcType=BIGINT}
+    </update>
+    
+    <delete id="deleteTeacherById" parameterType="java.lang.Long" statementType="PREPARED">
+        DELETE FROM m_teacher WHERE teacher_id = #{teacherId, jdbcType=BIGINT}
+    </delete>
+    
+    <select id="selectTeacherById" parameterType="java.lang.Long" resultType="Teacher" statementType="PREPARED">
+        SELECT a.teacher_id	    teacherId,
+               a.teacher_name	teacherName,
+               a.teacher_sex	teacherSex,
+               a.teacher_age    teacherAge,
+               DATE_FORMAT(a.create_time, '%Y-%m-%d %T')	createTime,
+               DATE_FORMAT(a.update_time, '%Y-%m-%d %T')	updateTime
+          FROM m_teacher a
+         WHERE a.teacher_id = #{teacherId, jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAllTeacherList" parameterType="java.util.Map" resultType="Teacher" statementType="PREPARED">
+        SELECT a.teacher_id	    teacherId,
+               a.teacher_name	teacherName,
+               a.teacher_sex	teacherSex,
+               a.teacher_age    teacherAge,
+               DATE_FORMAT(a.create_time, '%Y-%m-%d %T')	createTime,
+               DATE_FORMAT(a.update_time, '%Y-%m-%d %T')	updateTime
+          FROM m_teacher a
+         ORDER BY a.teacher_name ASC
+    </select>
+
+    <select id="selectStudentListOfTeacher" parameterType="java.util.Map" resultType="Teacher" statementType="PREPARED">
+        SELECT a.student_id	    studentId,
+               a.student_name	studentName,
+               a.student_sex	studentSex,
+               a.student_age    studentAge,
+               DATE_FORMAT(a.create_time, '%Y-%m-%d %T')	createTime,
+               DATE_FORMAT(a.update_time, '%Y-%m-%d %T')	updateTime,
+               b.course_name    courseName
+          FROM m_teacher a INNER JOIN m_student_course b
+         WHERE a.student_id = b.student_id
+           AND b.teacher_id = #{teacherId, jdbcType=BIGINT}
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(courseName)">
+           AND b.course_name = #{courseName, jdbcType=VARCHAR}
+        </if>
+         ORDER BY a.student_name ASC
+    </select>
+
+</mapper>

@@ -28,7 +28,7 @@ import com.penglecode.xmodule.common.consts.ApplicationConstants;
  * @date 	 2015年4月26日 下午8:36:35
  * @version 1.0
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"rawtypes"})
 public class SpringUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpringUtils.class);

@@ -28,7 +28,7 @@ Java虚拟机在执行Java程序的过程中会把它所管理的内存划分为
 
 程序计数器（Program Counter Register）是一块较小的内存空间， 它可以看作是当前线程所执行的字节码的行号指示器。在Java虚拟机的 概念模型里[1]，字节码解释器工作时就是通过改变这个计数器的值来选 取下一条需要执行的字节码指令，它是程序控制流的指示器，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。
 
-由于Java虚拟机的多线程是通过线程轮流切换、分配处理器执行时 间的方式来实现的，在任何一个确定的时刻，一个处理器（对于多核处 理器来说是一个内核）都只会执行一条线程中的指令。因此，为了线程 切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计 数器，各条线程之间计数器互不影响，独立存储，我们称这类内存区域 为“线程私有”的内存。
+由于Java虚拟机的多线程是通过线程轮流切换、分配处理器执行时 间的方式来实现的，在任何一个确定的时刻，一个处理器（对于多核处 理器来说是一个内核）都只会执行一条线程中的指令。因此，为了线程 切换后能恢复到正确的执行位置，**每条线程都需要有一个独立的程序计 数器，各条线程之间计数器互不影响，独立存储，我们称这类内存区域 为“线程私有”的内存。**
 
 #### Java虚拟机栈
 
@@ -48,7 +48,7 @@ HotSpot虚拟机的栈容量是不可以动态扩展的，以前的Classic虚拟
 
 #### Java堆
 
-对于Java应用程序来说，Java堆（Java Heap）是虚拟机所管理的内 存中最大的一块。Java堆是被所有线程共享的一块内存区域，在虚拟机 启动时创建。此内存区域的唯一目的就是存放对象实例，Java世界 里“几乎”所有的对象实例都在这里分配内存。在《Java虚拟机规范》中 对Java堆的描述是：“所有的对象实例以及数组都应当在堆上分配[1]”， 而这里笔者写的“几乎”是指从实现角度来看，随着Java语言的发展，现 在已经能看到些许迹象表明日后可能出现值类型的支持，即使只考虑现 在，由于即时编译技术的进步，尤其是逃逸分析技术的日渐强大，栈上 分配、标量替换[2]优化手段已经导致一些微妙的变化悄然发生，所以说 Java对象实例都分配在堆上也渐渐变得不是那么绝对了。
+对于Java应用程序来说，Java堆（Java Heap）是虚拟机所管理的内存中最大的一块。Java堆是被所有线程共享的一块内存区域，在虚拟机 启动时创建。此内存区域的唯一目的就是存放对象实例，Java世界 里“几乎”所有的对象实例都在这里分配内存。在《Java虚拟机规范》中 对Java堆的描述是：“所有的对象实例以及数组都应当在堆上分配[1]”， 而这里笔者写的“几乎”是指从实现角度来看，随着Java语言的发展，现 在已经能看到些许迹象表明日后可能出现值类型的支持，即使只考虑现 在，由于即时编译技术的进步，尤其是逃逸分析技术的日渐强大，栈上 分配、标量替换[2]优化手段已经导致一些微妙的变化悄然发生，所以说 Java对象实例都分配在堆上也渐渐变得不是那么绝对了。
 
 Java堆是垃圾收集器管理的内存区域，因此一些资料中它也被称 作“GC堆”（Garbage Collected Heap，幸好国内没翻译成“垃圾堆”）。从 回收内存的角度看，由于现代垃圾收集器大部分都是基于分代收集理论 设计的，所以Java堆中经常会出现“新生代”“老年代”“永久代”“Eden空 间”“From Survivor空间”“To Survivor空间”等名词**（新生代其中又包含一个Eden和两个Survivor）**，这些概念在本书后续 章节中还会反复登场亮相，在这里笔者想先说明的是这些区域划分仅仅 是一部分垃圾收集器的共同特性或者说设计风格而已，而非某个Java虚 拟机具体实现的固有内存布局，更不是《Java虚拟机规范》里对Java堆 的进一步细致划分。不少资料上经常写着类似于“Java虚拟机的堆内存 分为新生代、老年代、永久代、Eden、Survivor……”这样的内容。在十 年之前（以G1收集器的出现为分界），作为业界绝对主流的HotSpot虚 拟机，它内部的垃圾收集器全部都基于“经典分代”[3]来设计，需要新生 代、老年代收集器搭配才能工作，在这种背景下，上述说法还算是不会 产生太大歧义。但是到了今天，垃圾收集器技术与十年前已不可同日而 语，HotSpot里面也出现了不采用分代设计的新垃圾收集器，再按照上 面的提法就有很多需要商榷的地方了。不过无论从什么角度，无论如何划分，都不 会改变Java堆中存储内容的共性，无论是哪个区域，存储的都只能是对 象的实例，**将Java堆细分的目的只是为了更好地回收内存，或者更快地分配内存。**在本章中，我们仅仅针对内存区域的作用进行讨论，Java堆 中的上述各个区域的分配、回收等细节将会是下一章的主题。
 
@@ -60,11 +60,11 @@ Java堆既可以被实现成固定大小的，也可以是可扩展的，不过�
 
 方法区（Method Area）与Java堆一样，是各个线程共享的内存区 域，它用于存储已被虚拟机加载的类型信息、常量、静态变量、即时编 译器编译后的代码缓存等数据。虽然《Java虚拟机规范》中把方法区描 述为堆的一个逻辑部分，但是它却有一个别名叫作“非堆”（NonHeap），目的是与Java堆区分开来。 
 
-说到方法区，不得不提一下“永久代”这个概念，尤其是在JDK 8以 前，许多Java程序员都习惯在HotSpot虚拟机上开发、部署程序，很多人 都更愿意把方法区称呼为“永久代”（Permanent Generation），或将两者 混为一谈。本质上这两者并不是等价的，因为仅仅是当时的HotSpot虚 拟机设计团队选择把收集器的分代设计扩展至方法区，或者说使用永久 代来实现方法区而已，这样使得HotSpot的垃圾收集器能够像管理Java堆 一样管理这部分内存，省去专门为方法区编写内存管理代码的工作。但 是对于其他虚拟机实现，譬如BEA JRockit、IBM J9等来说，是不存在 永久代的概念的。原则上如何实现方法区属于虚拟机实现细节，不受 《Java虚拟机规范》管束，并不要求统一。**但现在回头来看，当年使用 永久代来实现方法区的决定并不是一个好主意，这种设计导致了Java应 用更容易遇到内存溢出的问题（永久代有-XX:MaxPermSize的上限， 即使不设置也有默认大小，而J9和JRockit只要没有触碰到进程可用内存 的上限，例如32位系统中的4GB限制，就不会出问题），而且有极少数 方法（例如String::intern()）会因永久代的原因而导致不同虚拟机下有不 同的表现。当Oracle收购BEA获得了JRockit的所有权后，准备把JRockit 中的优秀功能，譬如Java Mission Control管理工具，移植到HotSpot虚拟 机时，但因为两者对方法区实现的差异而面临诸多困难。考虑到 HotSpot未来的发展，在JDK 6的时候HotSpot开发团队就有放弃永久 代，逐步改为采用本地内存（Native Memory）来实现方法区的计划了 ，到了JDK 7的HotSpot，已经把原本放在永久代的字符串常量池、静态变量等移出，而到了JDK 8，终于完全废弃了永久代的概念，改用与 JRockit、J9一样在本地内存中实现的元空间（Meta-space）来代替，把 JDK 7中永久代还剩余的内容（主要是类型信息）全部移到元空间中。**
+说到方法区，不得不提一下“永久代”这个概念，尤其是在JDK 8以 前，许多Java程序员都习惯在HotSpot虚拟机上开发、部署程序，很多人 都更愿意把方法区称呼为“永久代”（Permanent Generation），或将两者 混为一谈。本质上这两者并不是等价的，因为仅仅是当时的HotSpot虚 拟机设计团队选择把收集器的分代设计扩展至方法区，或者说使用永久代来实现方法区而已，这样使得HotSpot的垃圾收集器能够像管理Java堆 一样管理这部分内存，省去专门为方法区编写内存管理代码的工作。但 是对于其他虚拟机实现，譬如BEA JRockit、IBM J9等来说，是不存在 永久代的概念的。原则上如何实现方法区属于虚拟机实现细节，不受 《Java虚拟机规范》管束，并不要求统一。**但现在回头来看，当年使用 永久代来实现方法区的决定并不是一个好主意，这种设计导致了Java应 用更容易遇到内存溢出的问题（永久代有-XX:MaxPermSize的上限， 即使不设置也有默认大小，而J9和JRockit只要没有触碰到进程可用内存 的上限，例如32位系统中的4GB限制，就不会出问题），而且有极少数 方法（例如String::intern()）会因永久代的原因而导致不同虚拟机下有不 同的表现。当Oracle收购BEA获得了JRockit的所有权后，准备把JRockit 中的优秀功能，譬如Java Mission Control管理工具，移植到HotSpot虚拟 机时，但因为两者对方法区实现的差异而面临诸多困难。考虑到 HotSpot未来的发展，在JDK 6的时候HotSpot开发团队就有放弃永久 代，逐步改为采用本地内存（Native Memory）来实现方法区的计划了 ，到了JDK 7的HotSpot，已经把原本放在永久代的字符串常量池、静态变量等移出，而到了JDK 8，终于完全废弃了永久代的概念，改用与 JRockit、J9一样在本地内存中实现的元空间（Meta-space）来代替，把 JDK 7中永久代还剩余的内容（主要是类型信息）全部移到元空间中。**
 
 #### 运行时常量池
 
-运行时常量池（Runtime Constant Pool）是方法区的一部分。Class 文件中除了有类的版本、字段、方法、接口等描述信息外，还有一项信 息是常量池表（Constant Pool Table），用于存放编译期生成的各种字面 量与符号引用，这部分内容将在类加载后存放到方法区的运行时常量池 中。
+运行时常量池（Runtime Constant Pool）是方法区的一部分。Class 文件中除了有类的版本、字段、方法、接口等描述信息外，还有一项信 息是常量池表（Constant Pool Table），用于存放编译期生成的各种字面 量与符号引用，这部分内容将在类加载后存放到方法区的运行时常量池中。
 
 
 #### 直接内存
@@ -87,16 +87,39 @@ Java是一门面向对象的编程语言，Java程序运行过程中无时无刻
 
 #### 对象的创建步骤
 
-1. 类加载检查。即new指令的目标(类的符号引用所代表的的类)类以及该类所依赖的子类是否被加载、解析和初始化过，如果没有，那必须先执行相应的类加载过程。
+1. 类加载检查。即new指令的目标(类的符号引用所代表的的类)类以及该类所依赖的子类是否被加载、解析和初始化过，如果没有，那必须先执行相应的类加载过程（即执行<cinit>方法）。
 2. 对象内存分配。对象内存地址分配方式分为基于规整内存空间的"**指针碰撞**"方式和基于不规整内存空间的"**空闲列表**"方式。具体采用哪种方式取决于所采用的垃圾收集器是否带有空间压缩整理（Compact）的能力决定。因此，当使用 Serial、ParNew等带压缩整理过程的收集器时，系统采用的分配算法是**指针碰撞**，既简单又高效；而当使用CMS这种基于清除（Sweep）算法的收集器时，理论上就只能采用较为复杂的空闲列表来分配内存。对象内存分配并发保障方式：一是采用CAS配上失败重试的方式保证原子性。二是采用本地线程分配缓冲（Thread Local Allocation Buffer，TLAB）。
 3. 对象初始值归零设置。对象内存分配完毕后，需要将对象的实例变量设置为零，这里的零即默认值。
-4. 执行构造器方法，即执行Class文件中的<init>()方法。
+4. 设置对象头。初始化零值完成之后，虚拟机要对对象进行必要的设置，例如这个对象是那个类的实例、如何才能找到类的元数据信息、对象的哈希吗、对象的 GC 分代年龄等信息。 这些信息存放在对象头中。 另外，根据虚拟机当前运行状态的不同，如是否启用偏向锁等，对象头会有不同的设置方式。
+5. 执行构造器方法，即执行Class文件中的<init>()方法。
 
 #### 压缩指针
 
-为了尽量较少对象的内存使用量，64 位 Java 虚拟机引入了压缩指针 的概念（对应虚拟机选项 -XX:+UseCompressedOops，默认开启），将堆中原本 64 位的 Java 对象指针压缩成 32 位的。使得对象头的大小从 16 字节降至 12 字节。当然，压缩指针不仅可以作用于对象头的类型指针，还可以作用于引用类型的字段，以及引用类型数组。
+在32位到64位的转变中，人们最大的获益是内存容量。在一个32位的系统中，内存地址的宽度就是32位，这就意味着，我们最大能获取的内存空间是2^32（也就是4G）字节。这个容量明显不够用！在一个64位的机器中，理论上，我们能获取到的内存容量是2^64字节，这是一个十分庞大的数字。可惜的是，这只是一个理论值，而现实中，因为有一堆有关硬件和软件的因素限制，我们能得到的内存要少得多。举个例了来说，最好的 linux 系统最多支持到16TB的内存，而且截止到现在 java11 也在正在研制最新一代的垃圾收集器 ZGC ，号称可以支持到 TB 几倍的且能保证 STW 时间不会太长，可能许多人会说“16TB好大呀”，但是和2^64比起来，它真的挺小的。好了，接下来，我们就谈谈compressed oops能帮我们做什么。
 
-默认情况下，Java 虚拟机堆中对象的起始地址需要对齐至 8 的倍数（**内存对齐**）。不到 8N 个字节部分，会被自动填充，称之为对象间的填充（padding）。在默认情况下，Java 虚拟机中的 32 位压缩指针可以寻址到 2 的 35 次方个字节，也就是 32GB 的地址空间（超过 32GB 则会关闭压缩指针）。在对压缩指针解引用时，需要将其左移 3 位，再加上一个固定偏移量，便可以得到能够寻址 32GB 地址空间的伪 64 位指针了。
+**是什么是OOP？**
+
+在堆中，32位的对象引用（指针）占4个字节，而64位的对象引用占8个字节。64位JVM在支持更大堆的同时，由于对象引用变大却带来了性能问题：
+
+1. **增加了GC开销：64位对象引用需要占用更多的堆空间，留给其他数据的空间将会减少，从而加快了GC的发生，更频繁的进行GC。**
+2. **降低CPU缓存命中率：64位对象引用增大了，CPU能缓存的oop将会更少，从而降低了CPU缓存的效率。**
+
+为了能够保持32位的性能，oop必须保留32位。那么，如何用32位oop来引用更大的堆内存呢？答案是——压缩指针（CompressedOops）。
+
+OOP = “ordinary object pointer” 普通对象指针。 启用CompressOops后，会压缩的对象包括：
+
+1. 对象头中的对象类型指针，称之为**Klass Pointer**；
+2. 引用类型的字段（成员变量）；
+3. 类中静态变量；
+4. 引用类型数组；
+
+当然，压缩也不是万能的，针对一些特殊类型的指针，JVM是不会优化的。 比如指向 PermGen的Class 对象指针，本地变量，堆栈元素，入参，返回值，NULL指针不会被压缩。
+
+为了尽量减少对象的内存使用量，64 位 Java 虚拟机引入了压缩指针 的概念（对应虚拟机选项 -XX:+UseCompressedOops，默认开启），将堆中原本 64 位的 Java 对象指针压缩成 32 位的。使得对象头的大小从 16 字节降至 12 字节。当然，压缩指针不仅可以作用于对象头的类型指针，还可以作用于引用类型的字段，以及引用类型数组。
+
+默认情况下，Java 虚拟机堆中对象的起始地址需要对齐至 8 的倍数（**内存对齐**）。不到 8N 个字节部分，会被自动填充，称之为对象间的填充（padding）。在默认情况下，Java 虚拟机中的 32 位压缩指针可以寻址到 2 的 35 次方个字节（**32位系统一共可以寻址4G个位置，每个位置8位，这些再当做32G个位置，所以一共是32G**），也就是 32GB 的地址空间（超过 32GB 则会关闭压缩指针）。在对压缩指针解引用时，需要将其左移 3 位，再加上一个固定偏移量，便可以得到能够寻址 32GB 地址空间的伪 64 位指针了。
+
+**根据32位压缩指针计算内存的实际地址的公式近视为： `内存地址(字节单位) = jvm内存偏移量 + 指针 * 8`**
 
 内存对齐不仅存在于对象与对象之间，也存在于对象中的字段之间。字段重排序遵循以下几个原则：
 
@@ -196,7 +219,7 @@ HotSpot虚拟机对象的对象头由以下几部分组成：
 
  ![对象内存定位-句柄定位.png](src/main/java/com/penglecode/xmodule/master4j/jvm/chapter2/对象内存定位-句柄定位.png)
 
-- 如果使用直接指针访问的话，Java堆中对象的内存布局就必须考虑如何放置访问类型数据的相关信息，reference中存储的直接就是对象地址，如果只是访问对象本身的话，**就不需要通过对象头中的对象类型指针来多一次间接访问的开销**，其结构如下图所示：
+- 如果使用直接指针访问的话，Java堆中对象的内存布局就必须考虑如何放置访问类型数据的相关信息，reference中存储的直接就是对象地址，如果只是访问对象本身的话，**就不需要通过对象头中的对象类型指针(Klass Pointer)来多一次间接访问的开销**，其结构如下图所示：
 
   ![对象内存定位-直接指针定位.png](src/main/java/com/penglecode/xmodule/master4j/jvm/chapter2/对象内存定位-直接指针定位.png)
 
@@ -216,7 +239,7 @@ HotSpot虚拟机对象的对象头由以下几部分组成：
 
 Java堆用于储存对象实例，我们只要不断地创建对象，并且保证GC Roots到对象之间有可达路径来避免垃圾回收机制清除这些对象，那么 随着对象数量的增加，总容量触及最大堆的容量限制后就会产生内存溢出异常。
 
-下面代码清单中限制Java堆的大小为20MB，不可扩展（将堆的最小 值-Xms参数与最大值-Xmx参数设置为一样即可避免堆自动扩展），通过参数-XX:+HeapDumpOnOutOf-MemoryError可以让虚拟机在出现内存溢出异常的时候Dump出当前的内存堆转储快照以便进行事后分析 
+下面代码清单中限制Java堆的大小为20MB，不可扩展（将堆的最小 值-Xms参数与最大值-Xmx参数设置为一样即可避免堆自动扩展），通过参数-XX:+HeapDumpOnOutOfMemoryError可以让虚拟机在出现内存溢出异常的时候Dump出当前的内存堆转储快照以便进行事后分析 
 
 ```java
 /**
@@ -258,9 +281,9 @@ Java堆内存的OutOfMemoryError异常是实际应用中最常见的内存溢
 
 要解决这个内存区域的异常，常规的处理方法是首先通过内存映像 分析工具（如Eclipse Memory Analyzer）对Dump出来的堆转储快照进行 分析。第一步首先应确认内存中导致OOM的对象是否是必要的，也就是要先分清楚到底是出现了**内存泄漏（Memory Leak）**还是**内存溢出（Memory Overflow）**。
 
-如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引 用链，找到泄漏对象是通过怎样的引用路径、与哪些GC Roots相关联， 才导致垃圾收集器无法回收它们，根据泄漏对象的类型信息以及它到GC Roots引用链的信息，一般可以比较准确地定位到这些对象创建的位置，进而找出产生内存泄漏的代码的具体位置。
+**如果是内存泄漏**，可进一步通过工具查看泄漏对象到GC Roots的引用链，找到泄漏对象是通过怎样的引用路径、与哪些GC Roots相关联， 才导致垃圾收集器无法回收它们，根据泄漏对象的类型信息以及它到GC Roots引用链的信息，一般可以比较准确地定位到这些对象创建的位置，进而找出产生内存泄漏的代码的具体位置。
 
-如果不是内存泄漏，换句话说就是内存中的对象确实都是必须存活的，那就应当检查Java虚拟机的堆参数（-Xmx与-Xms）设置，与机器 的内存对比，看看是否还有向上调整的空间。再从代码上检查是否存在某些对象生命周期过长、持有状态时间过长、存储结构设计不合理等情况，尽量减少程序运行期的内存消耗。
+**如果不是内存泄漏**，换句话说就是内存中的对象确实都是必须存活的，那就应当检查Java虚拟机的堆参数（-Xmx与-Xms）设置，与机器 的内存对比，看看是否还有向上调整的空间。再从代码上检查是否存在某些对象生命周期过长、持有状态时间过长、存储结构设计不合理等情况，尽量减少程序运行期的内存消耗。
 
 以上是处理Java堆内存问题的简略思路，处理这些问题所需要的知识、工具与经验是后面三章的主题，后面我们将会针对具体的虚拟机实 现、具体的垃圾收集器和具体的案例来进行分析，这里就先暂不展开。
 
@@ -409,7 +432,7 @@ Exception in thread "main" java.lang.OutOfMemoryError: PermGen space
 
 从运行结果中可以看到，运行时常量池溢出时，在OutOfMemoryError异常后面跟随的提示信息是“PermGen space”，说明 运行时常量池的确是属于方法区（即JDK 6的HotSpot虚拟机中的永久代）的一部分。
 
-**而使用JDK 7或更高版本的JDK来运行这段程序并不会得到相同的结果，无论是在JDK 7中继续使用-XX：MaxPermSize参数或者在JDK 8 及以上版本使用-XX：MaxMeta-spaceSize参数把方法区容量同样限制在6MB，也都不会重现JDK 6中的溢出异常，循环将一直进行下去，永不 停歇[1]。出现这种变化，是因为自JDK 7起，原本存放在永久代的字符 串常量池被移至Java堆之中，所以在JDK 7及以上版本，限制方法区的 容量对该测试用例来说是毫无意义的。**这时候使用-Xmx参数限制最大 堆到6MB就能够看到以下两种运行结果之一，具体取决于哪里的对象分配时产生了溢出：
+**而使用JDK 7或更高版本的JDK来运行这段程序并不会得到相同的结果，无论是在JDK 7中继续使用-XX:MaxPermSize参数或者在JDK 8 及以上版本使用-XX:MaxMetaspaceSize参数把方法区容量同样限制在6MB，也都不会重现JDK 6中的溢出异常，循环将一直进行下去，永不停歇[1]。出现这种变化，是因为自JDK 7起，原本存放在永久代的字符 串常量池被移至Java堆之中，所以在JDK 7及以上版本，限制方法区的 容量对该测试用例来说是毫无意义的。**这时候使用-Xmx参数限制最大 堆到6MB就能够看到以下两种运行结果之一，具体取决于哪里的对象分配时产生了溢出：
 
 ```java
 // OOM异常一：
@@ -426,7 +449,7 @@ Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 	at RuntimeConstantPoolOOM.main(RuntimeConstantPoolOOM.java from InputFileObject:14)
 ```
 
-我们再来看看方法区的其他部分的内容，方法区的主要职责是用于 存放类型的相关信息，如类名、访问修饰符、常量池、字段描述、方法 描述等。对于这部分区域的测试，基本的思路是运行时产生大量的类去 填满方法区，直到溢出为止。虽然直接使用Java SE API也可以动态产生 类（如反射时的GeneratedConstructorAccessor和动态代理等），但在本 次实验中操作起来比较麻烦。在下面代码清单里笔者借助了cglib直接操作字节码运行时生成了大量的动态类以产生OOM。
+我们再来看看方法区的其他部分的内容，方法区的主要职责是用于 存放类型的相关信息，如类名、访问修饰符、常量池、字段描述、方法 描述等。对于这部分区域的测试，基本的思路是运行时产生大量的类去 填满方法区，直到溢出为止。虽然直接使用Java SE API也可以动态产生 类（如反射时的GeneratedConstructorAccessor和动态代理等），但在本次实验中操作起来比较麻烦。在下面代码清单里笔者借助了cglib直接操作字节码运行时生成了大量的动态类以产生OOM。
 
 ```java
 /**
@@ -470,7 +493,7 @@ public class MetaspaceOutOfMemoryExample {
 - -XX:MaxMetaspaceSize：设置元空间最大值，默认是-1，即不限 制，或者说只受限于本地内存大小。
 - -XX:MetaspaceSize：指定元空间的初始空间大小，以字节为单 位，达到该值就会触发垃圾收集进行类型卸载，同时收集器会对该值进 行调整：如果释放了大量的空间，就适当降低该值；如果释放了很少的 空间，那么在不超过-XX：MaxMetaspaceSize（如果设置了的话）的情 况下，适当提高该值。
 - -XX:MinMetaspaceFreeRatio：作用是在垃圾收集之后控制最小的 元空间剩余容量的百分比，可减少因为元空间不足导致的垃圾收集的频 率。
-- -XX:Max-MetaspaceFreeRatio，用于控制最大的元空间 剩余容量的百分比。
+- -XX:MaxMetaspaceFreeRatio，用于控制最大的元空间 剩余容量的百分比。
 
 **建议：**
 
@@ -885,7 +908,7 @@ Parallel Scavenge收集器的特点是它的关注点与其他收集器不同，
 
 -XX:MaxGCPauseMillis参数允许的值是一个大于0的毫秒数，收集器将尽力保证内存回收花费的时间不超过用户设定值。不过大家不要 异想天开地认为如果把这个参数的值设置得更小一点就能使得系统的垃圾收集速度变得更快，垃圾收集停顿时间缩短是以牺牲吞吐量和新生代空间为代价换取的：系统把新生代调得小一些，收集300MB新生代肯定比收集500MB快，但这也直接导致垃圾收集发生得更频繁，原来10秒收集一次、每次停顿100毫秒，现在变成5秒收集一次、每次停顿70毫秒。 停顿时间的确在下降，但吞吐量也降下来了。
 
--XX：GCTimeRatio参数的值则应当是一个大于0小于100的整数，也就是垃圾收集时间占总时间的比率，相当于吞吐量的倒数。譬如把此 参数设置为19，那允许的最大垃圾收集时间就占总时间的5%（即 1/(1+19)），默认值为99，即允许最大1%（即1/(1+99)）的垃圾收集时 间。
+-XX：GCTimeRatio参数的值则应当是一个大于0小于100的整数，也就是用户代码运行时间占总时间的百分比（**也就是吞吐量**）。譬如把此参数设置为19，那允许的最大垃圾收集时间就占总时间的5%（即 1/(1+19)），默认值为99，即允许最大1%（即1/(1+99)）的垃圾收集时间。
 
 由于与吞吐量关系密切，Parallel Scavenge收集器也经常被称作“吞吐量优先收集器”。除上述两个参数之外，Parallel Scavenge收集器还**有一个参数-XX:+UseAdaptiveSizePolicy值得我们关注。这是一个开关参数，当这个参数被激活之后，就不需要人工指定新生代的大小（Xmn）、Eden与Survivor区的比例（-XX:SurvivorRatio）、晋升老年代 对象大小（-XX:PretenureSizeThreshold）等细节参数了，虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或者最大的吞吐量。这种调节方式称为垃圾收集的自适应的调节策略（GC Ergonomics）**。如果读者对于收集器运作不太了解，手工优化存在困难的话，使用Parallel Scavenge收集器配合自适应调节策略，把内存管理的调优任务交给虚拟机去完成也许是一个很不错的选择。只需要把基本的内存数据设置好（如-Xmx设置最大堆），然后使用-XX:MaxGCPauseMillis参数（更关注最大停顿时间）或-XX:GCTimeRatio（更关注吞吐量）参数给虚拟机设立一个优化目标，那具体细节参数的调节工作就由虚拟机完成了。自适应调节策略也是Parallel Scavenge收集器区别于ParNew收集器的一个重要特性。
 
@@ -927,9 +950,9 @@ CMS是一款优秀的收集器，它最主要的优点在名字上已经体现�
 
 首先，CMS收集器对处理器资源非常敏感。事实上，面向并发设计的程序都对处理器资源比较敏感。在并发阶段，它虽然不会导致用户线 程停顿，但却会因为占用了一部分线程（或者说处理器的计算能力）而导致应用程序变慢，降低总吞吐量。CMS默认启动的回收线程数是（处理器核心数量+3）/ 4，也就是说，如果处理器核心数在四个或以上，并发回收时垃圾收集线程只占用不超过25%的处理器运算资源，并且会随着处理器核心数量的增加而下降。但是当处理器核心数量不足四个时，CMS对用户程序的影响就可能变得很大。如果应用本来的处理器负载就很高，还要分出一半的运算能力去执行收集器线程，就可能导致用户程序的执行速度忽然大幅降低。为了缓解这种情况，虚拟机提供了一种称为“增量式并发收集器”（Incremental Concurrent Mark Sweep/i-CMS）的CMS收集器变种，所做的事情和以前单核处理器年代PC机操作系统靠抢占式多任务来模拟多核并行多任务的思想一样，是在并发标记、清理的时候让收集器线程、用户线程交替运行，尽量减少垃圾收集线程的独占资源的时间，这样整个垃圾收集的过程会更长，但对用户程序的影响就会显得较少一些，直观感受是速度变慢的时间更多了，但速度下降幅度就没有那么明显。实践证明增量式的CMS收集器效果很一般，从JDK 7开始，i-CMS模式已经被声明为“deprecated”，即已过时不再提倡用户使用，到JDK 9发布后i-CMS模式被完全废弃。
 
-然后，由于CMS收集器无法处理“浮动垃圾”（Floating Garbage）， 有可能出现“Concurrent Mode Failure”失败进而导致另一次完全“Stop The World”的Full GC的产生。在CMS的并发标记和并发清理阶段，用户线程是还在继续运行的，程序在运行自然就还会伴随有新的垃圾对象不断产生，但这一部分垃圾对象是出现在标记过程结束以后，CMS无法在当次收集中处理掉它们，只好留待下一次垃圾收集时再清理掉。这一部分垃圾就称为“浮动垃圾”。**同样也是由于在垃圾收集阶段用户线程还需要持续运行，那就还需要预留足够内存空间提供给用户线程使用，因此CMS收集器不能像其他收集器那样等待到老年代几乎完全被填满了再进行收集，必须预留一部分空间供并发收集时的程序运作使用。在JDK 5的默认设置下，CMS收集器当老年代使用了68%的空间后就会被激活， 这是一个偏保守的设置，如果在实际应用中老年代增长并不是太快，可以适当调高参数-XX:CMSInitiatingOccupancyFraction的值来提高CMS的触发百分比，降低内存回收频率，获取更好的性能。到了JDK 6时， CMS收集器的启动阈值就已经默认提升至92%（这个值是由MinHeapFreeRatio和CMSTriggerRatio间接计算出来的，因为默认的CMSInitiatingOccupancyFraction=-1）。但这又会更容易面临另 一种风险：要是CMS运行期间预留的内存无法满足程序分配新对象的需要，就会出现一次“并发失败”（Concurrent Mode Failure），这时候虚拟机将不得不启动后备预案：冻结用户线程的执行，临时启用Serial Old收集器来重新进行老年代的垃圾收集，但这样停顿时间就很长了。所以参数-XX:CMSInitiatingOccupancyFraction设置得太高将会很容易导致大量的并发失败产生，性能反而降低，用户应在生产环境中根据实际应用情况来权衡设置。**
+然后，由于CMS收集器无法处理“浮动垃圾”（Floating Garbage）， 有可能出现“Concurrent Mode Failure”失败进而导致另一次完全“Stop The World”的**Full GC**的产生。在CMS的并发标记和并发清理阶段，用户线程是还在继续运行的，程序在运行自然就还会伴随有新的垃圾对象不断产生，但这一部分垃圾对象是出现在标记过程结束以后，CMS无法在当次收集中处理掉它们，只好留待下一次垃圾收集时再清理掉。这一部分垃圾就称为“浮动垃圾”。**同样也是由于在垃圾收集阶段用户线程还需要持续运行，那就还需要预留足够内存空间提供给用户线程使用，因此CMS收集器不能像其他收集器那样等待到老年代几乎完全被填满了再进行收集，必须预留一部分空间供并发收集时的程序运作使用。在JDK 5的默认设置下，CMS收集器当老年代使用了68%的空间后就会被激活， 这是一个偏保守的设置，如果在实际应用中老年代增长并不是太快，可以适当调高参数-XX:CMSInitiatingOccupancyFraction的值来提高CMS的触发百分比，降低内存回收频率，获取更好的性能。到了JDK 6时， CMS收集器的启动阈值就已经默认提升至92%（这个值是由MinHeapFreeRatio和CMSTriggerRatio间接计算出来的，因为默认的CMSInitiatingOccupancyFraction=-1）。但这又会更容易面临另 一种风险：要是CMS运行期间预留的内存无法满足程序分配新对象的需要，就会出现一次“并发失败”（Concurrent Mode Failure），这时候虚拟机将不得不启动后备预案：冻结用户线程的执行，临时启用Serial Old收集器来重新进行老年代的垃圾收集，但这样停顿时间就很长了。所以参数-XX:CMSInitiatingOccupancyFraction设置得太高将会很容易导致大量的并发失败产生，性能反而降低，用户应在生产环境中根据实际应用情况来权衡设置。**
 
-还有最后一个缺点，在本节的开头曾提到，CMS是一款基于“标记清除”算法实现的收集器，如果读者对前面这部分介绍还有印象的话， 就可能想到这意味着收集结束时会有大量空间碎片产生。空间碎片过多时，将会给大对象分配带来很大麻烦，往往会出现老年代还有很多剩余空间，但就是无法找到足够大的连续空间来分配当前对象，而不得不提前触发一次Full GC的情况。为了解决这个问题，CMS收集器提供了一 个-XX：+UseCMSCompactAtFullCollection开关参数（默认是开启的， 此参数从JDK 9开始废弃），用于在CMS收集器不得不进行Full GC时开启内存碎片的合并整理过程，由于这个内存整理必须移动存活对象，（在Shenandoah和ZGC出现前）是无法并发的。这样空间碎片问题是解决了，但停顿时间又会变长，因此虚拟机设计者们还提供了另外一个参数-XX:CMSFullGCsBeforeCompaction（此参数从JDK 9开始废弃）， 这个参数的作用是要求CMS收集器在执行过若干次（数量由参数值决定）不整理空间的Full GC之后，下一次进入Full GC前会先进行碎片整理（默认值为0，表示每次进入Full GC时都进行碎片整理）。
+还有最后一个缺点，在本节的开头曾提到，CMS是一款基于“标记清除”算法实现的收集器，如果读者对前面这部分介绍还有印象的话， 就可能想到这意味着收集结束时会有大量空间碎片产生。空间碎片过多时，将会给大对象分配带来很大麻烦，往往会出现老年代还有很多剩余空间，但就是无法找到足够大的连续空间来分配当前对象，而不得不提前触发一次Full GC的情况。为了解决这个问题，CMS收集器提供了一 个-XX：+UseCMSCompactAtFullCollection开关参数（默认是开启的， 此参数从JDK 9开始废弃），用于在CMS收集器不得不进行**Full GC**时开启内存碎片的合并整理过程，由于这个内存整理必须移动存活对象，（在Shenandoah和ZGC出现前）是无法并发的。这样空间碎片问题是解决了，但停顿时间又会变长，因此虚拟机设计者们还提供了另外一个参数-XX:CMSFullGCsBeforeCompaction（此参数从JDK 9开始废弃）， 这个参数的作用是要求CMS收集器在执行过若干次（数量由参数值决定）不整理空间的Full GC之后，下一次进入Full GC前会先进行碎片整理（默认值为0，表示每次进入Full GC时都进行碎片整理）。
 
 #### Garbage First收集器
 
@@ -1282,8 +1305,8 @@ HotSpot虚拟机中的各种垃圾收集器到此全部介绍完毕，在描述�
 |     UseAdaptiveSizePolicy      |      动态调整Java堆中各个区域的大小以及进入老年代的年龄      |
 |     HandlePromotionFailure     | 是否允许分配担保失败，即老年代的剩余空间不足以应付新生代的整个Eden区和Survivor区的所有对象都存活的极端情况 |
 |       ParallelGCThreads        |               设置并行GC时进行内存回收的线程数               |
-|          GCTimeRatio           | GC时间占总时间的比例，默认为99，即允许1%的GC时间，仅在使用Parallel Scavenge收集器时才会生效 |
-|        MaxGCPauseMillis        | 设置GC的最大停顿时间，仅在使用Parallel Scavenge收集器时才会生效 |
+|          GCTimeRatio           | 设置吞吐量大小，即用户程序运行时间占总时间的比例，默认为99，即允许1%的GC时间，仅在使用Parallel Scavenge收集器时才会生效 |
+|        MaxGCPauseMillis        | 设置GC的最大停顿时间，仅在使用Parallel Scavenge/G1收集器时才会生效 |
 | CMSInitiatingOccupancyFraction | 设置CMS收集器在老年代空间达到多少时触发垃圾回收，默认为68%，仅在使用CMS收集器时才会生效 |
 | UseCMSCompactAtFullCollection  | 设置CMS收集器在完成垃圾回收之后是否要进行一次内存碎片整理，，仅在使用CMS收集器时才会生效，此参数从JDK9开始废弃 |
 |          **UseG1GC**           |        使用G1收集器，**这是JDK9后server模式的默认值**        |
@@ -1390,11 +1413,13 @@ HotSpot虚拟机中多数收集器都采用了分代收集来管理堆内存，�
 
 在发生Minor GC之前，虚拟机必须先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，如果这个条件成立，那这一次Minor GC可以确保是安全的。如果不成立，则虚拟机会先查看-XX:HandlePromotionFailure参数的设置值是否允许担保失败（Handle Promotion Failure）；如果允许，那会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，将尝试进行一次Minor GC，尽管这次Minor GC是有风险的；如果小于，或者XX:HandlePromotionFailure设置不允许冒险，那这时就要改为进行一次Full GC。
 
+**-XX:HandlePromotionFailure这个参数在JDK7之后就被废弃了，只要老年代的连续空间大于新生代对象的总大小或者历次晋升到老年代的对象的平均大小就进行`MinorGC`，否则`FullGC`**
+
 解释一下“冒险”是冒了什么风险：前面提到过，新生代使用复制收集算法，但为了内存利用率，只使用其中一个Survivor空间来作为轮换备份，因此当出现大量对象在Minor GC后仍然存活的情况——最极端的情况就是内存回收后新生代中所有对象都存活，需要老年代进行分配担保，把Survivor无法容纳的对象直接送入老年代，这与生活中贷款担保类似。老年代要进行这样的担保，前提是老年代本身还有容纳这些对象的剩余空间，但一共有多少对象会在这次回收中活下来在实际完成内存回收之前是无法明确知道的，所以只能取之前每一次回收晋升到老年代对象容量的平均大小作为经验值，与老年代的剩余空间进行比较，决定是否进行Full GC来让老年代腾出更多空间。
 
 取历史平均值来比较其实仍然是一种赌概率的解决办法，也就是说假如某次Minor GC存活后的对象突增，远远高于历史平均值的话，依然会导致担保失败。如果出现了担保失败，那就只好老老实实地重新发起一次Full GC，这样停顿时间就很长了。虽然担保失败时绕的圈子是最大的，但通常情况下都还是会将-XX:HandlePromotionFailure开关打开，避免Full GC过于频繁。
 
-在JDK 6 Update 24之后，这个测试结果就有了差异，-XX: HandlePromotionFailure参数不会再影响到虚拟机的空间分配担保策略， 观察OpenJDK中的源码变化，虽然源码中还定义了XX:HandlePromotionFailure参数，但是在实际虚拟机中已经不会再使 用它。JDK 6 Update 24之后的规则变为只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小，就会进行Minor GC，否则将进行Full GC。
+在JDK 6 Update 24之后，这个测试结果就有了差异，-XX: HandlePromotionFailure参数不会再影响到虚拟机的空间分配担保策略， 观察OpenJDK中的源码变化，虽然源码中还定义了XX:HandlePromotionFailure参数，但是在实际虚拟机中已经不会再使 用它。JDK 6 Update 24之后的规则变为**只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小，就会进行Minor GC，否则将进行Full GC**。
 
 ### 3.9　本章小结
 
@@ -1406,7 +1431,7 @@ HotSpot虚拟机中多数收集器都采用了分代收集来管理堆内存，�
 
 现在我们回过头来对比一下本章介绍的各种垃圾收集：
 
-注：并行-指的是垃圾收集器本身内部是否是多线程并发收集，并发-指的是垃圾收集线程和用户线程是否能并发运行。
+注：**并行**-指的是垃圾收集器本身内部是否是多线程并发收集，**并发**-指的是垃圾收集线程和用户线程是否能并发运行。
 
 |      GC名称       | 线程模型 | 并行 | 并发 | 适用分代 |       GC算法       | Stop The Wolrd | 起源JDK版本 | 关注点 | 摘要                                                         |
 | :---------------: | :------: | :--: | :--: | :------: | :----------------: | :------------: | :---------: | :----: | :----------------------------------------------------------- |
@@ -1415,7 +1440,7 @@ HotSpot虚拟机中多数收集器都采用了分代收集来管理堆内存，�
 | Parallel Scavenge |  多线程  |  是  |  否  |  新生代  |    标记复制算法    |     完全会     |   JDK1.4    | 吞吐量 | 使用JVM参数-XX:+UseParallelGC启用，新生代和老年代将分别使用Parallel Scavenge和Parallel Old收集器组合。该组合是JDK7~JDK8的默认首选GC收集器。它以吞吐量可控闻名，也称之为“吞吐量优先收集器”。 |
 |    Serial Old     |  单线程  |  否  |  否  |  老年代  |    标记整理算法    |     完全会     |  最为古老   |   -    | 是启用Serial收集器(-XX:UseSerialGC)后老年代的默认收集器，可配合Parallel Scavenge和ParNew组合使用，其中JDK9开始取消ParNew+Serial Old组合。适合在处理器核数很少(例如单核或双核)或者一些桌面应用程序的中使用。 |
 |   Parallel Old    |  多线程  |  是  |  否  |  老年代  |    标记整理算法    |     完全会     |    JDK6     |  延迟  | 是启用Parallel Scavenge收集器(-XX:UseParallelGC)后老年代的默认收集器，且只能与Parallel Scavenge收集器组合使用。 |
-|        CMS        |  多线程  |  是  |  是  |  老年代  |    标记清除算法    |     部分会     |    JDK5     |  延迟  | 使用JVM参数-XX:+UseConcMarkSweepGC启用，作为老年代的一款优秀收集器它配合ParNew和Serial收集器组合工作，其中JDK9开始取消了CMS+Serial的组合。由于“Concurrent Mode Failure”将会触发Full GC，或者标记清除算法将会产生内存碎片等原因，将会导致更长停顿时间。到JDK9开始被标记为不推荐的垃圾收集器而被G1取代。 |
+|        CMS        |  多线程  |  是  |  是  |  老年代  | 标记清除/整理算法  |     部分会     |    JDK5     |  延迟  | 使用JVM参数-XX:+UseConcMarkSweepGC启用，作为老年代的一款优秀收集器它配合ParNew和Serial收集器组合工作，其中JDK9开始取消了CMS+Serial的组合。由于“Concurrent Mode Failure”将会触发Full GC，将会导致更长停顿时间。到JDK9开始被标记为不推荐的垃圾收集器而被G1取代。 |
 |        G1         |  多线程  |  是  |  是  |   全代   | 标记复制和整理算法 |     部分会     |    JDK7     |  延迟  | 使用JVM参数-XX:+UseG1GC启用，新生代和老年代都将使用G1收集器。自JDK9开始，G1宣告取代Parallel Scavenge + Parallel Old的默认组合，成为server模式下的默认垃圾收集器。G1跳出传统分代的樊笼，该用Region堆内存布局实现基于"停顿时间模型"的垃圾收集器，实现了在一段JVM运行时间段内因垃圾回收导致的停顿时间可控(通过-XX:MaxGCPauseMillis设置，默认200毫秒)，使得G1收集器能通过可控的停顿时间能达到吞吐量与延迟之间的最佳平衡。G1收集器本身工作时会占用不少的堆内存，在小内存情况下表现的不会比CMS好。 |
 |    Shenandoah     |  多线程  |  是  |  是  |   全代   | 标记复制和整理算法 |     部分会     |  OpenJDK12  |  延迟  | Shenandoah是一款只有OpenJDK12开始才有的收集器，是一款对G1收集器设计思想做了继承及改进的低延迟垃圾收集器，完全废弃了分代收集理论，即Region不分新生代和老年代等。做到了回收整理阶段也可以与用户线程并发执行。优点：低延迟；缺点：高运行负担使得吞吐量下降；使用大量的读写屏障，尤其是读屏障，增大了系统的性能开销； |
 |        ZGC        |  多线程  |  是  |  是  |   全代   |    标记整理算法    |    少部分会    |    JDK11    |  延迟  | 使用JVM参数-XX:+UseZGCGC启用。ZGC收集器是一款基于动态大小Region内存布局的，（暂时）不设分代的，使用了读屏障、染色指针和内存多重映射等技术来实现可并发的标记-整理算法的，以低延迟为首要目标的一款垃圾收集器。从目前官方的测试数据看ZGC，结果是令人震惊的革命性的：延迟与其他GC收集器存在数量级上的差距，绝对能控制在几毫秒以内，同时吞吐量也不必其他GC收集器逊色。由于ZGC是面向低延迟、大内存的，延迟低的同时是整个回收过程的漫长，在这漫长的回收过程中会又会并发的产生大量的浮动垃圾，最终会造成回收速度跟不上分配速度。 |
@@ -1431,11 +1456,11 @@ HotSpot虚拟机中多数收集器都采用了分代收集来管理堆内存，�
 
 1. **-XX:MaxTenuringThreshold**
 
-   -XX:MaxTenuringThreshold只对串行回收器和ParNew有效，对ParallGC无效。存活次数在串行和ParNew方式中可通过-XX:MaxTenuringThreshold来设置，ParallelScavenge则根据运行状态来决定。
+   -XX:MaxTenuringThreshold只对SerialGC和ParNewGC有效，对ParallelGC无效。存活次数在串行和ParNew方式中可通过-XX:MaxTenuringThreshold来设置，ParallelScavenge则根据运行状态来决定。
 
 2. **-XX:PretenureSizeThreshold**
 
-   -XX:PretenureSizeThreshold，设置大对象直接进入年老代的阈值。-XX:PretenureSizeThreshold只对串行回收器和ParNew有效，对ParallGC无效。默认该值为0，即不指定最大的晋升大小，一切由运行情况决定。
+   -XX:PretenureSizeThreshold，设置大对象直接进入年老代的阈值。-XX:PretenureSizeThreshold只SerialGC和ParNewGC有效，对ParallelGC无效。默认该值为0，即不指定最大的晋升大小，一切由运行情况决定。
 
 ## 第4章　虚拟机性能监控、故障处理工具
 
@@ -1496,6 +1521,13 @@ C:\Users\Pengle>jps -l
 10436 com.penglecode.xmodule.master4j.jvm.examples.boot.JvmExampleApplication
 8888 sun.tools.jps.Jps
 16396
+
+C:\Users\Pengle>jps -lvm
+12784 com.penglecode.xmodule.master4j.jvm.chapter3.gc.GcMXBeanExample -Xmx2048m -Xms2048m -Xmn1024m -XX:+UseConcMarkSweepGC -XX:+PrintFlagsFinal -XX:+PrintCommandLineFlags -javaagent:C:\workbench\Program Files\ideaIU-2020.1.3\lib\idea_rt.jar=27645:C:\workbench\Program Files\ideaIU-2020.1.3\bin -Dfile.encoding=UTF-8
+2788 sun.tools.jps.Jps -lvm -Denv.class.path=.;C:\Program Files\Java\jdk1.8.0_241\lib -Dapplication.home=C:\Program Files\Java\jdk1.8.0_241 -Xms8m
+9956 org.jetbrains.idea.maven.server.RemoteMavenServer36 -Djava.awt.headless=true -Dmaven.defaultProjectBuilder.disableGlobalModelCache=true -Xmx768m -Didea.maven.embedder.version=3.6.3 -Dmaven.ext.class.path=C:\workbench\Program Files\ideaIU-2020.1.3\plugins\maven\lib\maven-event-listener.jar -Dfile.encoding=GBK
+24056  exit -Xms2048m -Xmx2048m -Xmn1024m -Xverify:none -XX:ReservedCodeCacheSize=240m -XX:+UseConcMarkSweepGC -XX:SoftRefLRUPolicyMSPerMB=50 -ea -XX:CICompilerCount=2 -Dsun.io.useCanonPrefixCache=false -Djdk.http.auth.tunneling.disabledSchemes="" -XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -Djdk.attach.allowAttachSelf=true -Dkotlinx.coroutines.debug=off -Djdk.module.illegalAccess.silent=true -javaagent:C:\Users\Public\.jetbrains\jetbrains-agent-v3.2.1.c46b.ed7=by https://zhile.io -Djb.vmOptionsFile=C:\Users\Pengle\AppData\Roaming\JetBrains\IntelliJIdea2020.1\idea64.exe.vmoptions -Djava.library.path=C:\workbench\Program Files\ideaIU-2020.1.3\jbr\\bin;C:\workbench\Program Files\ideaIU-2020.1.3\jbr\\bin\server -Didea.jre.check=true -Dide.native.launcher=true -Didea.paths.selector=IntelliJIdea2020.1 -XX:ErrorFile=C:\Users\Pengle\java_error_in_idea_%p.log -XX:HeapDumpPath=C:\Users\Pengle\java_error_in_idea.hprof
+18604 org.jetbrains.jps.cmdline.Launcher C:/workbench/Program Files/ideaIU-2020.1.3/lib/oro-2.0.8.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/gson-2.8.6.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/jdom.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/maven-resolver-util-1.3.3.jar;C:/workbench/Program Files/ideaIU-2020.1.3/plugins/java/lib/jps-builders.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/platform-api.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/trove4j.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/maven-resolver-spi-1.3.3.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/plexus-utils-3.2.0.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/plexus-interpolation-1.25.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/plexus-component-annotations-1.7.1.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/commons-logging-1.2.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/netty-transport-4.1.47.Final.jar;C:/workbench/Program Files/ideaIU-2020.1.3/lib/maven-model-3.6.1.jar;C:/w -Xmx700m -Djava.awt.headless=true -Djava.endorsed.dirs="" -Djdt.compiler.useSingleThread=true -Dpreload.project.path=C:/workbench/Java/IdeaProjects/projects1 -Dpreload.config.path=C:/Users/Pengle/AppData/Roaming/JetBrains/IntelliJIdea2020.1/options -Dcompile.parallel=true -Drebuild.on.dependency.change=true -Dio.netty.initialSeedUniquifier=2217845205394627448 -Dfile.encoding=GBK -Duser.language=zh -Duser.country=CN -Didea.paths.selector=IntelliJIdea2020.1 -Didea.home.path=C:\workbench\Program Files\ideaIU-2020.1.3 -Didea.config.path=C:\Users\Pengle\AppData\Roaming\JetBrains\IntelliJIdea2020.1 -Didea.plugins.path=C:\Users\Pengle\AppData\Roaming\JetBrains\IntelliJIdea2020.1\plugins -Djps.log.dir=C:/Users/Pengle/AppData/Local/JetBrains/IntelliJIdea2020.1/log/build-log -Djps.fallback.jdk.home=C:/workbench/Program Files/ideaIU-2020.1.3/jbr -Djps.fallback.jdk.version=11.0.7 -Dio.netty.noUnsafe=true -Djava.io.tmpdir=C:/Users/Pengle/AppData/Local/JetBrains/IntelliJIdea2020.1/compile-server/projects1_745d2e4d/_temp_ -
 ```
 
 2、列出JVM启动参数
@@ -2232,7 +2264,7 @@ JConsole（Java Monitoring and Management Console）是一款基于 JMX（Java M
 
 ![JConsole远程监控-线程.png](src/main/java/com/penglecode/xmodule/master4j/jvm/chapter4/JConsole远程监控-线程.png)
 
-#### VisualVM：多合-故障处理工具
+#### JVisualVM：多合-故障处理工具
 
 VisualVM（All-in-One Java Troubleshooting Tool）是功能最强大的运行监视和故障处理程序之一，曾经在很长一段时间内是Oracle官方主力发展的虚拟机故障处理工具。Oracle曾在VisualVM的软件说明中写上了“All-in-One”的字样，预示着它除了常规的运行监视、故障处理外，还将提供其他方面的能力，譬如性能分析（Profiling）。VisualVM的性能分析功能比起JProfiler、YourKit等专业且收费的Profiling工具都不遑多让。而且相比这些第三方工具，VisualVM还有一个很大的优点：不需要被监视的程序基于特殊Agent去运行，因此它的通用性很强，对应用程序实际性能的影响也较小，使得它可以直接应用在生产环境中。这个优点是JProfiler、YourKit等工具无法与之媲美的。 
 
@@ -5475,9 +5507,9 @@ Thread printThread = new Thread(new Runnable() {
 
 互斥同步（Mutual Exclusion & Synchronization）是一种最常见也是最主要的并发正确性保障手段。同步是指在多个线程并发访问共享数据时，保证共享数据在同一个时刻只被一条（或者是一些，当使用信号量的时候）线程使用。而互斥是实现同步的一种手段，临界区（Critical Section）、互斥量（Mutex）和信号量（Semaphore）都是常见的互斥实现方式。因此在“互斥同步”这四个字里面，互斥是因，同步是果；互斥是方法，同步是目的。
 
-在Java里面，最基本的互斥同步手段就是synchronized关键字，这是 一种块结构（Block Structured）的同步语法。synchronized关键字经过Javac编译之后，会在同步块的前后分别形成monitorenter和monitorexit这两个字节码指令。这两个字节码指令都需要一个reference类型的参数来指明要锁定和解锁的对象。如果Java源码中的synchronized明确指定了对象参数，那就以这个对象的引用作为reference；如果没有明确指定，那 将根据synchronized修饰的方法类型（如实例方法或类方法），来决定是取代码所在的对象实例还是取类型对应的Class对象来作为线程要持有的锁。
+在Java里面，最基本的互斥同步手段就是synchronized关键字，这是一种块结构（Block Structured）的同步语法。synchronized关键字经过Javac编译之后，会在同步块的前后分别形成monitorenter和monitorexit这两个字节码指令。这两个字节码指令都需要一个reference类型的参数来指明要锁定和解锁的对象。如果Java源码中的synchronized明确指定了对象参数，那就以这个对象的引用作为reference；如果没有明确指定，那 将根据synchronized修饰的方法类型（如实例方法或类方法），来决定是取代码所在的对象实例还是取类型对应的Class对象来作为线程要持有的锁。
 
-根据《Java虚拟机规范》的要求，在执行monitorenter指令时，首先要去尝试获取对象的锁。如果这个对象没被锁定，或者当前线程已经持有了那个对象的锁，就把锁的计数器的值增加一，而在执行monitorexit指令时会将锁计数器的值减一。一旦计数器的值为零，锁随即就被释放了。如果获取对象锁失败，那当前线程就应当被阻塞等待，直到请求锁定的对象被持有它的线程释放为止。
+**根据《Java虚拟机规范》的要求，在执行monitorenter指令时，首先要去尝试获取对象的锁。如果这个对象没被锁定，或者当前线程已经持有了那个对象的锁，就把锁的计数器的值增加一，而在执行monitorexit指令时会将锁计数器的值减一。一旦计数器的值为零，锁随即就被释放了。如果获取对象锁失败，那当前线程就应当被阻塞等待，直到请求锁定的对象被持有它的线程释放为止。**
 
 从功能上看，根据以上《Java虚拟机规范》对monitorenter和monitorexit的行为描述，我们可以得出两个关于synchronized的直接推 论，这是使用它时需特别注意的：
 
@@ -5609,7 +5641,7 @@ Java语言中，如果一个变量要被多线程访问，可以使用volatile�
 
 #### 自旋锁与自适应自旋
 
-前面我们讨论互斥同步的时候，提到了互斥同步对性能最大的影响是阻塞的实现，挂起线程和恢复线程的操作都需要转入内核态中完成， 这些操作给Java虚拟机的并发性能带来了很大的压力。同时，虚拟机的开发团队也注意到在许多应用上，共享数据的锁定状态只会持续很短的一段时间，为了这段时间去挂起和恢复线程并不值得。现在绝大多数的个人电脑和服务器都是多路（核）处理器系统，如果物理机器有一个以上的处理器或者处理器核心，能让两个或以上的线程同时并行执行，我们就可以让后面请求锁的那个线程“稍等一会”，但不放弃处理器的执行时间，看看持有锁的线程是否很快就会释放锁。为了让线程等待，我们只须让线程执行一个忙循环（自旋），这项技术就是所谓的自旋锁。
+**前面我们讨论互斥同步的时候，提到了互斥同步对性能最大的影响是阻塞的实现，挂起线程和恢复线程的操作都需要转入内核态中完成， 这些操作给Java虚拟机的并发性能带来了很大的压力**。同时，虚拟机的开发团队也注意到在许多应用上，共享数据的锁定状态只会持续很短的一段时间，为了这段时间去挂起和恢复线程并不值得。现在绝大多数的个人电脑和服务器都是多路（核）处理器系统，如果物理机器有一个以上的处理器或者处理器核心，能让两个或以上的线程同时并行执行，我们就可以让后面请求锁的那个线程“稍等一会”，但不放弃处理器的执行时间，看看持有锁的线程是否很快就会释放锁。为了让线程等待，我们只须让线程执行一个忙循环（自旋），这项技术就是所谓的自旋锁。
 
 **一句话，自旋锁就是解决线程锁等待带来的线程挂起和恢复等开销，让处于锁等待的线程执行一个忙等(自旋)**
 
@@ -5659,7 +5691,7 @@ public String concatString(String s1, String s2, String s3) {
 
 #### 轻量级锁
 
-轻量级锁是JDK 6时加入的新型锁机制，它名字中的“轻量级”是相对于使用操作系统互斥量来实现的传统锁而言的，因此传统的锁机制就 被称为“重量级”锁。不过，需要强调一点，轻量级锁并不是用来代替重量级锁的，它设计的初衷是在没有多线程竞争的前提下，减少传统的重量级锁使用操作系统互斥量产生的性能消耗。
+轻量级锁是JDK 6时加入的新型锁机制，它名字中的“轻量级”是相对于使用操作系统互斥量来实现的传统锁而言的，因此传统的锁机制就 被称为“重量级”锁。不过，需要强调一点，**轻量级锁并不是用来代替重量级锁的，它设计的初衷是在没有多线程竞争的前提下，减少传统的重量级锁使用操作系统互斥量产生的性能消耗。**
 
 要理解轻量级锁，以及后面会讲到的偏向锁的原理和运作过程，必须要对HotSpot虚拟机对象的内存布局（尤其是对象头部分）有所了解。HotSpot虚拟机的对象头（Object Header）分为两部分，第一部分用于存储对象自身的运行时数据，如哈希码（HashCode）、GC分代年龄 （Generational GC Age）等。这部分数据的长度在32位和64位的Java虚拟机中分别会占用32个或64个比特，官方称它为“Mark Word”。这部分是实现轻量级锁和偏向锁的关键。另外一部分用于存储指向方法区对象类型数据的指针，如果是数组对象，还会有一个额外的部分用于存储数组长度。这些对象内存布局的详细内容，我们已经在第2章中学习过， 在此不再赘述，只针对锁的角度做进一步细化。
 
@@ -5687,7 +5719,7 @@ public String concatString(String s1, String s2, String s3) {
 
 偏向锁也是JDK 6中引入的一项锁优化措施，它的目的是消除数据在无竞争情况下的同步原语，进一步提高程序的运行性能。如果说轻量 级锁是在无竞争的情况下使用CAS操作去消除同步使用的互斥量，那偏向锁就是在无竞争的情况下把整个同步都消除掉，连CAS操作都不去做了。
 
-偏向锁中的“偏”，就是偏心的“偏”、偏袒的“偏”。它的意思是这个锁会偏向于第一个获得它的线程，如果在接下来的执行过程中，该锁一直没有被其他的线程获取，则持有偏向锁的线程将永远不需要再进行同步。
+**偏向锁中的“偏”，就是偏心的“偏”、偏袒的“偏”。它的意思是这个锁会偏向于第一个获得它的线程，如果在接下来的执行过程中，该锁一直没有被其他的线程获取，则持有偏向锁的线程将永远不需要再进行同步。**
 
 如果读者理解了前面轻量级锁中关于对象头Mark Word与线程之间的操作过程，那偏向锁的原理就会很容易理解。假设当前虚拟机启用了 偏向锁（启用参数-XX:+UseBiasedLocking，这是自JDK 6起HotSpot虚拟机的默认值），那么当锁对象第一次被线程获取的时候，虚拟机将会把对象头中的标志位设置为“01”、把偏向模式设置为“1”，表示进入偏向模式。同时使用CAS操作把获取到这个锁的线程的ID记录在对象的 Mark Word之中。如果CAS操作成功，持有偏向锁的线程以后每次进入这个锁相关的同步块时，虚拟机都可以不再进行任何同步操作（例如加锁、解锁及对Mark Word的更新操作等）。
 
@@ -5723,13 +5755,12 @@ JVM中的获取锁的优化方法和获取锁的步骤：
 1. JVM层面：
 
    - 锁消除：即即时编译器(JIT)在运行时，对一些代码要求同步，但是对被检测到不可能存在共享数据竞争的锁进行消除。开启锁消除前提是java必须运行在server模式，同时必须开启逃逸分析：-server -XX:+DoEscapeAnalysis -XX:+EliminateLocks
-- 锁粗化：如果虚拟机探测到有这样一串零碎的操作都对同一个对象加锁，将会把加锁同步的范围扩展（粗化）到整个操作序列的外部，即取消对一连串零碎操作的细锁，这样只需要加锁一次就可以了。
+   - 锁粗化：如果虚拟机探测到有这样一串零碎的操作都对同一个对象加锁，将会把加锁同步的范围扩展（粗化）到整个操作序列的外部，即取消对一连串零碎操作的细锁，这样只需要加锁一次就可以了。
    - 适时关闭偏向锁：在系统并发(竞争)较大的情况下，关闭偏向锁(-XX:-UseBiasedLocking)可以提升性能。
-
 2. 代码编程层面：
 
    - 减少锁的粒度或持有的时间：比如尽量用synchronized(monitor)块来进行同步，而且块中把一些无需同步的操作移出去，比如在同步块中掺杂了日志记录，这些都可以挪出同步块中。
-   - 锁分离：例如读写锁ReadWriteLock，读多写少的情况，可以提高性能
+   - 锁分离：例如读写锁ReadWriteLock，读多写少的情况，可以提高性能。
 
 #### 锁升级
 

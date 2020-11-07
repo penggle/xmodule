@@ -1,6 +1,5 @@
 package com.penglecode.xmodule.master4j.netty.examples.echo2;
 
-import com.penglecode.xmodule.master4j.netty.codec.LineEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,9 +10,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.LineBasedFrameDecoder;
-import io.netty.handler.codec.base64.Base64Decoder;
-import io.netty.handler.codec.base64.Base64Encoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -36,10 +32,19 @@ public class NettyEchoServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyEchoServer.class);
 
+    /**
+     * 用于接受客户端连接的线程池
+     */
     private final EventLoopGroup bossGroup;
 
+    /**
+     * 处理I/O事件的线程池
+     */
     private final EventLoopGroup workerGroup;
 
+    /**
+     * 服务端启动类，我们需要给设置一些参数，包括bossGroup和workerGroup
+     */
     private final ServerBootstrap bootstrap;
 
     private final int port;

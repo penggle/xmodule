@@ -25,46 +25,20 @@ import org.apache.ibatis.session.RowBounds;
 @Intercepts({@Signature(type=StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor implements Interceptor {
 
-	private Dialect dialect;
+	private volatile Dialect dialect;
 	
 	public Object intercept(Invocation invocation) throws Throwable {
 		StatementHandler statementHandler = (StatementHandler)invocation.getTarget();
-		MetaObject metaStatementHandler = MetaObject.forObject(statementHandler, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
-		RowBounds rowBounds = (RowBounds)metaStatementHandler.getValue("delegate.rowBounds");
+		MetaObject statementHandlerMeta = MetaObject.forObject(statementHandler, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
+		RowBounds rowBounds = (RowBounds)statementHandlerMeta.getValue("delegate.rowBounds");
 		if(rowBounds == null || rowBounds == RowBounds.DEFAULT){
 			return invocation.proceed();
 		}
-		if(dialect == null){
-			Configuration configuration = (Configuration) metaStatementHandler.getValue("delegate.configuration");
-			Dialect.Type databaseType = null;
-			String d = configuration.getVariables().getProperty("dialect");
-			if(d == null || "".equals(d.trim())){
-				throw new IllegalStateException("No property named with 'dialect' defined in mybatis configuration xml file.");
-			}
-			try {
-				databaseType = Dialect.Type.valueOf(d);
-			} catch (Exception e) {
-				throw new IllegalStateException(String.format("No such dialect enum defined in class %s.", Dialect.Type.class));
-			}
-			
-			switch (databaseType) {
-			  	case MYSQL: // MySQL分页
-			  		dialect = new MySQLDialect();
-			  		break;
-			  	case ORACLE: // Oracle分页
-			  		dialect = new OracleDialect();
-			  		break;
-				default: // 默认为MySQL分页
-					dialect = new MySQLDialect();
-			}
-			if(dialect == null){
-				throw new IllegalStateException(String.format("No %s dialect found!", databaseType));
-			}
-		}
-		String originalSql = metaStatementHandler.getValue("delegate.boundSql.sql").toString();
-		metaStatementHandler.setValue("delegate.boundSql.sql", dialect.getLimitSql(originalSql, rowBounds.getOffset(), rowBounds.getLimit()));
-		metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-        metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
+		Dialect dialect = getDialect(statementHandlerMeta);
+		String originalSql = statementHandlerMeta.getValue("delegate.boundSql.sql").toString();
+		statementHandlerMeta.setValue("delegate.boundSql.sql", dialect.getLimitSql(originalSql, rowBounds.getOffset(), rowBounds.getLimit()));
+		statementHandlerMeta.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
+        statementHandlerMeta.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         return invocation.proceed(); 
 	}
 
@@ -73,5 +47,42 @@ public class PaginationInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties properties) {}
+	
+	protected Dialect getDialect(MetaObject meta) {
+		if(dialect == null) {
+			synchronized (this) {
+				if(dialect == null) {
+					dialect = doGetDialect(meta);
+				}
+			}
+		}
+		return dialect;
+	}
 
+	protected Dialect doGetDialect(MetaObject meta) {
+		Configuration configuration = (Configuration) meta.getValue("delegate.configuration");
+		Dialect.Type databaseType;
+		String d = configuration.getVariables().getProperty("dialect");
+		if(d == null || "".equals(d.trim())){
+			throw new IllegalStateException("No property named with 'dialect' defined in mybatis configuration xml file.");
+		}
+		try {
+			databaseType = Dialect.Type.valueOf(d);
+		} catch (Exception e) {
+			throw new IllegalStateException(String.format("No such dialect enum defined in class %s.", Dialect.Type.class));
+		}
+
+		switch (databaseType) {
+			case ORACLE: // Oracle分页
+				dialect = new OracleDialect();
+				break;
+			default: // 默认为MySQL分页
+				dialect = new MySQLDialect();
+		}
+		if(dialect == null){
+			throw new IllegalStateException(String.format("No %s dialect found!", databaseType));
+		}
+		return dialect;
+	}
+	
 }

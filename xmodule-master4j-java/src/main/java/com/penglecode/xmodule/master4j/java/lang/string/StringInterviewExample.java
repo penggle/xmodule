@@ -27,7 +27,7 @@ public class StringInterviewExample {
      *
      * 调换str1与str2的什么顺序，也是同样的结果
      */
-    public static void newString() {
+    public static void newString1() {
         //产生两个对象，池中的original，堆中str1
         String str1 = new String("abc");
         String str2 = "abc"; //池中已存在，直接返回引用
@@ -36,10 +36,23 @@ public class StringInterviewExample {
     }
 
     /**
+     * 创建字符串对象的方式之二：采用new关键字新建一个字符串对象
+     *
+     * 调换str1与str2的什么顺序，也是同样的结果
+     */
+    public static void newString2() {
+        //产生两个对象，池中的original，堆中str1
+        String str2 = "abc"; //池中已存在，直接返回引用
+        String str1 = new String("abc");
+        System.out.println(str1 == str2); //false
+        System.out.println(str1.intern() == str2); //true
+    }
+
+    /**
      * 编译时优化
      */
     public static void compileOptimize() {
-        String str1 = "a" + "b" + "c"; //声明时，产生编译优化，等价于：String str1 = "abc";
+        String str1 = "a" + "b" + "c"; //声明时，产生编译优化(变量折叠)，等价于：String str1 = "abc";
         String str2 = "abc"; //发现池中已经存在"abc"字符串对象，则直接返回其引用给str2
         System.out.println(str1 == str2); //true
     }
@@ -134,9 +147,10 @@ public class StringInterviewExample {
 
     public static void main(String[] args) {
         //literalString();
-        //newString();
+        //newString1();
+        //newString2();
         //internDifferenceAtJdks();
         //literalString1();
-        complexExample1();
+        //complexExample1();
     }
 }

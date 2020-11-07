@@ -104,11 +104,10 @@ public class EchoServer extends EchoEndpoint {
          *
          * 所以下面要使用compact()将实际上未处理的数据移进行压缩待到下一次再进行处理
          */
-        //网上说下面这句channel.read()是非阻塞的，简直扯淡，你要明白I/O的两段(1、准备数据和2、操作数据)过程中，
-        //上面select()通知到你数据已经准备好了，现在的read()就是操作数据，除非是真正的异步IO，否则第2步是铁定阻塞的
+        //如果配置clientChannel.configureBlocking(false);那么下面的read()是非阻塞的
+        //如果read是非阻塞的那么当没有数据可读时返回0，如果read是阻塞的那么当没有数据可读时返回-1
         outerLoop:
-        while(clientChannel.read(readBuffer) != -1) {
-            //System.out.println("spining"); //从此处可以看出，到底上面read()是不是阻塞的，如果是非阻塞的那么必定CPU自旋
+        while(clientChannel.read(readBuffer) > 0) {
             if(readBuffer.hasRemaining()) {
                 readBuffer.flip();
                 CharBuffer charBuffer = getCharset().decode(readBuffer);
