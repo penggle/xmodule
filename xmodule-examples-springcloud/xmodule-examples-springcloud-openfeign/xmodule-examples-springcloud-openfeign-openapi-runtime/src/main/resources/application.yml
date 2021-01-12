@@ -1,0 +1,85 @@
+#SpringBoot自动配置开启debug模式
+debug: false
+
+#应用日志配置
+logging:
+    config: classpath:logback-spring.xml
+    file: 
+        name: ${spring.application.name}
+        path: /usr/local/apps/logs
+
+#Spring上下文初始化程序
+context:
+    initializer:
+        classes: com.penglecode.samplex.common.initializer.DefaultSpringAppPreInitializer
+   
+#Servlet容器配置
+server:
+    port: 8181
+    shutdown: graceful
+
+#SpringBoot应用的名称
+spring:
+    #被排除的自动配置
+    autoconfigure:
+        exclude:
+          #- org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+          
+    application:
+        name: xmodule-examples-springcloud-openfeign-openapi-runtime
+    #配置文件激活配置
+    profiles:
+        active: dev
+
+    #Spring国际化配置
+    messages:
+        basename: config/i18n/messages
+        cache-duration: -1
+        encoding: UTF-8
+    #Hikari 连接池配置
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        hikari:
+            #连接池名字
+            pool-name: defaultHikariCP
+            #最小空闲连接数量
+            minimum-idle: 5
+            #空闲连接存活最大时间，默认600000(10分钟)
+            idle-timeout: 180000
+            #连接池最大连接数，默认是10
+            maximum-pool-size: 10
+            #池中连接的默认自动提交行为，默认值true
+            auto-commit: true
+            #池中连接的最长生命周期，0表示无限生命周期，默认1800000(30分钟)
+            max-lifetime: 1800000
+            #等待来自池的连接的最大毫秒数，默认30000(30秒)
+            connection-timeout: 30000
+            #连接测试语句
+            connection-test-query: SELECT 1
+
+#Feign客户端配置
+feign:
+    httpclient:
+        enabled: false
+    okhttp:
+        enabled: true
+    hystrix:
+        enabled: true
+    client:
+        config:
+            default:
+                connect-timeout: 6000
+                read-timeout: 60000
+                logger-level: full
+
+#Hystrix(熔断|降级)配置
+hystrix:
+    command:
+        default:
+            execution:
+                isolation:
+                    thread:
+                        #默认的熔断超时时间,默认1000毫秒,需要设大点否则很容易触发熔断
+                        timeoutInMilliseconds: 15000
+

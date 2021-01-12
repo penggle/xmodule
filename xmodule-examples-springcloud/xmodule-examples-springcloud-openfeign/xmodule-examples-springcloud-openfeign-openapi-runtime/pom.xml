@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>xmodule-examples-springcloud-openfeign</artifactId>
+        <groupId>com.penglecode</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>xmodule-examples-springcloud-openfeign-openapi-runtime</artifactId>
+    <packaging>jar</packaging>
+    <name>xmodule-examples-springcloud-openfeign-openapi-runtime</name>
+    <description>xmodule-examples-springcloud-openfeign-openapi-runtime</description>
+
+    <dependencies>
+        <!-- xmodule-common-support -->
+        <dependency>
+            <groupId>com.penglecode</groupId>
+            <artifactId>xmodule-common-support</artifactId>
+			<version>1.0.0</version>
+        </dependency>
+
+        <!-- xmodule-examples-springcloud-openfeign-openapi-sdk -->
+        <dependency>
+            <groupId>com.penglecode</groupId>
+            <artifactId>xmodule-examples-springcloud-openfeign-openapi-sdk</artifactId>
+			<version>1.0.0</version>
+        </dependency>
+
+        <!-- spring-boot-starter-logging -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
+        <!-- spring-boot-starter-web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- spring-boot-starter-validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- spring-boot-starter-aop -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- spring-boot-starter-jdbc -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <!-- spring-boot-starter-test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- spring-cloud-starter-openfeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- feign-form-spring -->
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form-spring</artifactId>
+        </dependency>
+
+        <!-- feign-okhttp -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+        </dependency>
+
+        <!-- mysql driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <!-- j2ee web spec -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>xmodule-examples-springcloud-openfeign-openapi-runtime</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.penglecode.xmodule.usercenter.mapper.GradeMapper">
+    
+    <!-- Auto-Generation Code Start -->
+
+    <insert id="insertModel" keyProperty="id" parameterType="Grade" statementType="PREPARED" useGeneratedKeys="true">
+        INSERT INTO grades(
+            id,
+            school_uuid,
+            uuid,
+            name,
+            status,
+            created_time,
+            modified_time,
+            type_uuid,
+            grade_session,
+            grade_level,
+            type
+        ) VALUES (
+            #{id, jdbcType=BIGINT},
+            #{schoolUuid, jdbcType=VARCHAR},
+            #{uuid, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR},
+            #{status, jdbcType=INTEGER},
+            #{createdTime, jdbcType=VARCHAR},
+            #{modifiedTime, jdbcType=VARCHAR},
+            #{typeUuid, jdbcType=VARCHAR},
+            #{gradeSession, jdbcType=INTEGER},
+            #{gradeLevel, jdbcType=VARCHAR},
+            #{type, jdbcType=CHAR}
+        )
+    </insert>
+    
+    <update id="updateModelById" parameterType="java.util.Map" statementType="PREPARED">
+        UPDATE grades a
+           SET a.id = a.id
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'schoolUuid')">
+               ,a.school_uuid = #{paramMap.schoolUuid, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'uuid')">
+               ,a.uuid = #{paramMap.uuid, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'name')">
+               ,a.name = #{paramMap.name, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'status')">
+               ,a.status = #{paramMap.status, jdbcType=INTEGER}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'createdTime')">
+               ,a.created_time = #{paramMap.createdTime, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'modifiedTime')">
+               ,a.modified_time = #{paramMap.modifiedTime, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'typeUuid')">
+               ,a.type_uuid = #{paramMap.typeUuid, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'gradeSession')">
+               ,a.grade_session = #{paramMap.gradeSession, jdbcType=INTEGER}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'gradeLevel')">
+               ,a.grade_level = #{paramMap.gradeLevel, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'type')">
+               ,a.type = #{paramMap.type, jdbcType=CHAR}
+            </if>
+         WHERE a.id = #{id, jdbcType=BIGINT}
+    </update>
+    
+    <delete id="deleteModelById" parameterType="java.lang.Long" statementType="PREPARED">
+        DELETE FROM grades WHERE id = #{id, jdbcType=BIGINT}
+    </delete>
+    
+    <delete id="deleteModelByIds" parameterType="java.util.List" statementType="PREPARED">
+        DELETE FROM grades WHERE id in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item, jdbcType=BIGINT}
+        </foreach>
+    </delete>
+    
+    <select id="selectModelById" parameterType="java.lang.Long" resultType="Grade" statementType="PREPARED">
+        SELECT a.id	id,
+               a.school_uuid	schoolUuid,
+               a.uuid	uuid,
+               a.name	name,
+               a.status	status,
+               DATE_FORMAT(a.created_time, '%Y-%m-%d %T')	createdTime,
+               DATE_FORMAT(a.modified_time, '%Y-%m-%d %T')	modifiedTime,
+               a.type_uuid	typeUuid,
+               a.grade_session	gradeSession,
+               a.grade_level	gradeLevel,
+               a.type	type
+          FROM grades a
+         WHERE a.id = #{id, jdbcType=BIGINT}
+    </select>
+    
+    <select id="selectModelByExample" parameterType="Grade" resultType="Grade" statementType="PREPARED">
+        SELECT a.id	id,
+               a.school_uuid	schoolUuid,
+               a.uuid	uuid,
+               a.name	name,
+               a.status	status,
+               DATE_FORMAT(a.created_time, '%Y-%m-%d %T')	createdTime,
+               DATE_FORMAT(a.modified_time, '%Y-%m-%d %T')	modifiedTime,
+               a.type_uuid	typeUuid,
+               a.grade_session	gradeSession,
+               a.grade_level	gradeLevel,
+               a.type	type
+          FROM grades a
+         WHERE 1=1
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(id)">
+           AND a.id = #{id, jdbcType=BIGINT}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(schoolUuid)">
+           AND a.school_uuid = #{schoolUuid, jdbcType=VARCHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(uuid)">
+           AND a.uuid = #{uuid, jdbcType=VARCHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(status)">
+           AND a.status = #{status, jdbcType=INTEGER}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(typeUuid)">
+           AND a.type_uuid = #{typeUuid, jdbcType=VARCHAR}
+        </if>
+    </select>
+    
+    <select id="selectModelListByIds" parameterType="java.util.List" resultType="Grade" statementType="PREPARED">
+        SELECT a.id	id,
+               a.school_uuid	schoolUuid,
+               a.uuid	uuid,
+               a.name	name,
+               a.status	status,
+               DATE_FORMAT(a.created_time, '%Y-%m-%d %T')	createdTime,
+               DATE_FORMAT(a.modified_time, '%Y-%m-%d %T')	modifiedTime,
+               a.type_uuid	typeUuid,
+               a.grade_session	gradeSession,
+               a.grade_level	gradeLevel,
+               a.type	type
+          FROM grades a
+         WHERE a.id in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item, jdbcType=BIGINT}
+        </foreach>
+         ORDER BY a.id ASC
+    </select>
+    
+    <select id="selectAllModelList" parameterType="java.util.Map" resultType="Grade" statementType="PREPARED">
+        SELECT a.id	id,
+               a.school_uuid	schoolUuid,
+               a.uuid	uuid,
+               a.name	name,
+               a.status	status,
+               DATE_FORMAT(a.created_time, '%Y-%m-%d %T')	createdTime,
+               DATE_FORMAT(a.modified_time, '%Y-%m-%d %T')	modifiedTime,
+               a.type_uuid	typeUuid,
+               a.grade_session	gradeSession,
+               a.grade_level	gradeLevel,
+               a.type	type
+          FROM grades a
+         WHERE 1=1
+         ORDER BY a.id ASC
+    </select>
+    
+    <select id="selectAllModelCount" parameterType="java.util.Map" resultType="java.lang.Integer" statementType="PREPARED">
+        SELECT count(*)
+          FROM grades a
+         WHERE 1=1
+    </select>
+    
+    <select id="selectModelListByExample" parameterType="Grade" resultType="Grade" statementType="PREPARED">
+        SELECT a.id	id,
+               a.school_uuid	schoolUuid,
+               a.uuid	uuid,
+               a.name	name,
+               a.status	status,
+               DATE_FORMAT(a.created_time, '%Y-%m-%d %T')	createdTime,
+               DATE_FORMAT(a.modified_time, '%Y-%m-%d %T')	modifiedTime,
+               a.type_uuid	typeUuid,
+               a.grade_session	gradeSession,
+               a.grade_level	gradeLevel,
+               a.type	type
+          FROM grades a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.id)">
+           AND a.id = #{example.id, jdbcType=BIGINT}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.schoolUuid)">
+           AND a.school_uuid = #{example.schoolUuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.uuid)">
+           AND a.uuid = #{example.uuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.status)">
+           AND a.status = #{example.status, jdbcType=INTEGER}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.typeUuid)">
+           AND a.type_uuid = #{example.typeUuid, jdbcType=VARCHAR}
+        </if>
+        <if test="sort != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(sort.orders)">
+         ORDER BY <foreach collection="sort.orders" index="index" item="item" open="" separator="," close="">${item.property} ${item.direction}</foreach>
+        </if>
+    </select>
+    
+    <select id="selectModelPageListByExample" parameterType="Grade" resultType="Grade" statementType="PREPARED">
+        SELECT a.id	id,
+               a.school_uuid	schoolUuid,
+               a.uuid	uuid,
+               a.name	name,
+               a.status	status,
+               DATE_FORMAT(a.created_time, '%Y-%m-%d %T')	createdTime,
+               DATE_FORMAT(a.modified_time, '%Y-%m-%d %T')	modifiedTime,
+               a.type_uuid	typeUuid,
+               a.grade_session	gradeSession,
+               a.grade_level	gradeLevel,
+               a.type	type
+          FROM grades a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.id)">
+           AND a.id = #{example.id, jdbcType=BIGINT}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.schoolUuid)">
+           AND a.school_uuid = #{example.schoolUuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.uuid)">
+           AND a.uuid = #{example.uuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.status)">
+           AND a.status = #{example.status, jdbcType=INTEGER}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.typeUuid)">
+           AND a.type_uuid = #{example.typeUuid, jdbcType=VARCHAR}
+        </if>
+        <if test="sort != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(sort.orders)">
+         ORDER BY <foreach collection="sort.orders" index="index" item="item" open="" separator="," close="">${item.property} ${item.direction}</foreach>
+        </if>
+    </select>
+    
+    <select id="selectModelPageCountByExample" parameterType="java.util.Map" resultType="java.lang.Integer" statementType="PREPARED">
+        SELECT count(*)
+          FROM grades a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.id)">
+           AND a.id = #{example.id, jdbcType=BIGINT}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.schoolUuid)">
+           AND a.school_uuid = #{example.schoolUuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.uuid)">
+           AND a.uuid = #{example.uuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.status)">
+           AND a.status = #{example.status, jdbcType=INTEGER}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.typeUuid)">
+           AND a.type_uuid = #{example.typeUuid, jdbcType=VARCHAR}
+        </if>
+    </select>
+    
+    <!-- Auto-Generation Code End -->
+
+    <!-- Customized Code Start -->
+
+    
+    
+    <!-- Customized Code End -->
+
+</mapper>

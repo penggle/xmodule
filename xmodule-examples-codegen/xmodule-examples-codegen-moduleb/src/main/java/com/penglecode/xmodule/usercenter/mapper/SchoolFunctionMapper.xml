@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.penglecode.xmodule.usercenter.mapper.SchoolFunctionMapper">
+    
+    <!-- Auto-Generation Code Start -->
+
+    <insert id="insertModel" keyProperty="id" parameterType="SchoolFunction" statementType="PREPARED" useGeneratedKeys="true">
+        INSERT INTO t_schools_function(
+            id,
+            schooluuid,
+            hik_cloud,
+            hkschooluuid,
+            yun_hen,
+            yhschoolid,
+            yun_hen_phone,
+            yi_xue_yun,
+            yxyschoolid,
+            create_date,
+            update_date,
+            create_by,
+            update_by,
+            del_flag,
+            remarks,
+            abc_school,
+            epad_type,
+            seewo_schooluid
+        ) VALUES (
+            #{id, jdbcType=BIGINT},
+            #{schooluuid, jdbcType=VARCHAR},
+            #{hikCloud, jdbcType=CHAR},
+            #{hkschooluuid, jdbcType=VARCHAR},
+            #{yunHen, jdbcType=CHAR},
+            #{yhschoolid, jdbcType=VARCHAR},
+            #{yunHenPhone, jdbcType=VARCHAR},
+            #{yiXueYun, jdbcType=CHAR},
+            #{yxyschoolid, jdbcType=VARCHAR},
+            #{createDate, jdbcType=VARCHAR},
+            #{updateDate, jdbcType=VARCHAR},
+            #{createBy, jdbcType=VARCHAR},
+            #{updateBy, jdbcType=VARCHAR},
+            #{delFlag, jdbcType=CHAR},
+            #{remarks, jdbcType=VARCHAR},
+            #{abcSchool, jdbcType=CHAR},
+            #{epadType, jdbcType=INTEGER},
+            #{seewoSchooluid, jdbcType=VARCHAR}
+        )
+    </insert>
+    
+    <update id="updateModelById" parameterType="java.util.Map" statementType="PREPARED">
+        UPDATE t_schools_function a
+           SET a.id = a.id
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'schooluuid')">
+               ,a.schooluuid = #{paramMap.schooluuid, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'hikCloud')">
+               ,a.hik_cloud = #{paramMap.hikCloud, jdbcType=CHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'hkschooluuid')">
+               ,a.hkschooluuid = #{paramMap.hkschooluuid, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'yunHen')">
+               ,a.yun_hen = #{paramMap.yunHen, jdbcType=CHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'yhschoolid')">
+               ,a.yhschoolid = #{paramMap.yhschoolid, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'yunHenPhone')">
+               ,a.yun_hen_phone = #{paramMap.yunHenPhone, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'yiXueYun')">
+               ,a.yi_xue_yun = #{paramMap.yiXueYun, jdbcType=CHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'yxyschoolid')">
+               ,a.yxyschoolid = #{paramMap.yxyschoolid, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'createDate')">
+               ,a.create_date = #{paramMap.createDate, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'updateDate')">
+               ,a.update_date = #{paramMap.updateDate, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'createBy')">
+               ,a.create_by = #{paramMap.createBy, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'updateBy')">
+               ,a.update_by = #{paramMap.updateBy, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'delFlag')">
+               ,a.del_flag = #{paramMap.delFlag, jdbcType=CHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'remarks')">
+               ,a.remarks = #{paramMap.remarks, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'abcSchool')">
+               ,a.abc_school = #{paramMap.abcSchool, jdbcType=CHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'epadType')">
+               ,a.epad_type = #{paramMap.epadType, jdbcType=INTEGER}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'seewoSchooluid')">
+               ,a.seewo_schooluid = #{paramMap.seewoSchooluid, jdbcType=VARCHAR}
+            </if>
+         WHERE a.id = #{id, jdbcType=BIGINT}
+    </update>
+    
+    <delete id="deleteModelById" parameterType="java.lang.Long" statementType="PREPARED">
+        DELETE FROM t_schools_function WHERE id = #{id, jdbcType=BIGINT}
+    </delete>
+    
+    <delete id="deleteModelByIds" parameterType="java.util.List" statementType="PREPARED">
+        DELETE FROM t_schools_function WHERE id in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item, jdbcType=BIGINT}
+        </foreach>
+    </delete>
+    
+    <select id="selectModelById" parameterType="java.lang.Long" resultType="SchoolFunction" statementType="PREPARED">
+        SELECT a.id	id,
+               a.schooluuid	schooluuid,
+               a.hik_cloud	hikCloud,
+               a.hkschooluuid	hkschooluuid,
+               a.yun_hen	yunHen,
+               a.yhschoolid	yhschoolid,
+               a.yun_hen_phone	yunHenPhone,
+               a.yi_xue_yun	yiXueYun,
+               a.yxyschoolid	yxyschoolid,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.create_by	createBy,
+               a.update_by	updateBy,
+               a.del_flag	delFlag,
+               a.remarks	remarks,
+               a.abc_school	abcSchool,
+               a.epad_type	epadType,
+               a.seewo_schooluid	seewoSchooluid
+          FROM t_schools_function a
+         WHERE a.id = #{id, jdbcType=BIGINT}
+    </select>
+    
+    <select id="selectModelByExample" parameterType="SchoolFunction" resultType="SchoolFunction" statementType="PREPARED">
+        SELECT a.id	id,
+               a.schooluuid	schooluuid,
+               a.hik_cloud	hikCloud,
+               a.hkschooluuid	hkschooluuid,
+               a.yun_hen	yunHen,
+               a.yhschoolid	yhschoolid,
+               a.yun_hen_phone	yunHenPhone,
+               a.yi_xue_yun	yiXueYun,
+               a.yxyschoolid	yxyschoolid,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.create_by	createBy,
+               a.update_by	updateBy,
+               a.del_flag	delFlag,
+               a.remarks	remarks,
+               a.abc_school	abcSchool,
+               a.epad_type	epadType,
+               a.seewo_schooluid	seewoSchooluid
+          FROM t_schools_function a
+         WHERE 1=1
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(schooluuid)">
+           AND a.schooluuid = #{schooluuid, jdbcType=VARCHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(yhschoolid)">
+           AND a.yhschoolid = #{yhschoolid, jdbcType=VARCHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(yxyschoolid)">
+           AND a.yxyschoolid = #{yxyschoolid, jdbcType=VARCHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(delFlag)">
+           AND a.del_flag = #{delFlag, jdbcType=CHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(epadType)">
+           AND a.epad_type = #{epadType, jdbcType=INTEGER}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(seewoSchooluid)">
+           AND a.seewo_schooluid = #{seewoSchooluid, jdbcType=VARCHAR}
+        </if>
+    </select>
+    
+    <select id="selectModelListByIds" parameterType="java.util.List" resultType="SchoolFunction" statementType="PREPARED">
+        SELECT a.id	id,
+               a.schooluuid	schooluuid,
+               a.hik_cloud	hikCloud,
+               a.hkschooluuid	hkschooluuid,
+               a.yun_hen	yunHen,
+               a.yhschoolid	yhschoolid,
+               a.yun_hen_phone	yunHenPhone,
+               a.yi_xue_yun	yiXueYun,
+               a.yxyschoolid	yxyschoolid,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.create_by	createBy,
+               a.update_by	updateBy,
+               a.del_flag	delFlag,
+               a.remarks	remarks,
+               a.abc_school	abcSchool,
+               a.epad_type	epadType,
+               a.seewo_schooluid	seewoSchooluid
+          FROM t_schools_function a
+         WHERE a.id in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item, jdbcType=BIGINT}
+        </foreach>
+         ORDER BY a.id ASC
+    </select>
+    
+    <select id="selectAllModelList" parameterType="java.util.Map" resultType="SchoolFunction" statementType="PREPARED">
+        SELECT a.id	id,
+               a.schooluuid	schooluuid,
+               a.hik_cloud	hikCloud,
+               a.hkschooluuid	hkschooluuid,
+               a.yun_hen	yunHen,
+               a.yhschoolid	yhschoolid,
+               a.yun_hen_phone	yunHenPhone,
+               a.yi_xue_yun	yiXueYun,
+               a.yxyschoolid	yxyschoolid,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.create_by	createBy,
+               a.update_by	updateBy,
+               a.del_flag	delFlag,
+               a.remarks	remarks,
+               a.abc_school	abcSchool,
+               a.epad_type	epadType,
+               a.seewo_schooluid	seewoSchooluid
+          FROM t_schools_function a
+         WHERE 1=1
+         ORDER BY a.id ASC
+    </select>
+    
+    <select id="selectAllModelCount" parameterType="java.util.Map" resultType="java.lang.Integer" statementType="PREPARED">
+        SELECT count(*)
+          FROM t_schools_function a
+         WHERE 1=1
+    </select>
+    
+    <select id="selectModelListByExample" parameterType="java.util.Map" resultType="SchoolFunction" statementType="PREPARED">
+        SELECT a.id	id,
+               a.schooluuid	schooluuid,
+               a.hik_cloud	hikCloud,
+               a.hkschooluuid	hkschooluuid,
+               a.yun_hen	yunHen,
+               a.yhschoolid	yhschoolid,
+               a.yun_hen_phone	yunHenPhone,
+               a.yi_xue_yun	yiXueYun,
+               a.yxyschoolid	yxyschoolid,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.create_by	createBy,
+               a.update_by	updateBy,
+               a.del_flag	delFlag,
+               a.remarks	remarks,
+               a.abc_school	abcSchool,
+               a.epad_type	epadType,
+               a.seewo_schooluid	seewoSchooluid
+          FROM t_schools_function a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.schooluuid)">
+           AND a.schooluuid = #{example.schooluuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.yhschoolid)">
+           AND a.yhschoolid = #{example.yhschoolid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.yxyschoolid)">
+           AND a.yxyschoolid = #{example.yxyschoolid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.delFlag)">
+           AND a.del_flag = #{example.delFlag, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.epadType)">
+           AND a.epad_type = #{example.epadType, jdbcType=INTEGER}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.seewoSchooluid)">
+           AND a.seewo_schooluid = #{example.seewoSchooluid, jdbcType=VARCHAR}
+        </if>
+        <if test="sort != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(sort.orders)">
+         ORDER BY <foreach collection="sort.orders" index="index" item="item" open="" separator="," close="">${item.property} ${item.direction}</foreach>
+        </if>
+    </select>
+    
+    <select id="selectModelPageListByExample" parameterType="java.util.Map" resultType="SchoolFunction" statementType="PREPARED">
+        SELECT a.id	id,
+               a.schooluuid	schooluuid,
+               a.hik_cloud	hikCloud,
+               a.hkschooluuid	hkschooluuid,
+               a.yun_hen	yunHen,
+               a.yhschoolid	yhschoolid,
+               a.yun_hen_phone	yunHenPhone,
+               a.yi_xue_yun	yiXueYun,
+               a.yxyschoolid	yxyschoolid,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.create_by	createBy,
+               a.update_by	updateBy,
+               a.del_flag	delFlag,
+               a.remarks	remarks,
+               a.abc_school	abcSchool,
+               a.epad_type	epadType,
+               a.seewo_schooluid	seewoSchooluid
+          FROM t_schools_function a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.schooluuid)">
+           AND a.schooluuid = #{example.schooluuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.yhschoolid)">
+           AND a.yhschoolid = #{example.yhschoolid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.yxyschoolid)">
+           AND a.yxyschoolid = #{example.yxyschoolid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.delFlag)">
+           AND a.del_flag = #{example.delFlag, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.epadType)">
+           AND a.epad_type = #{example.epadType, jdbcType=INTEGER}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.seewoSchooluid)">
+           AND a.seewo_schooluid = #{example.seewoSchooluid, jdbcType=VARCHAR}
+        </if>
+        <if test="sort != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(sort.orders)">
+         ORDER BY <foreach collection="sort.orders" index="index" item="item" open="" separator="," close="">${item.property} ${item.direction}</foreach>
+        </if>
+    </select>
+    
+    <select id="selectModelPageCountByExample" parameterType="java.util.Map" resultType="java.lang.Integer" statementType="PREPARED">
+        SELECT count(*)
+          FROM t_schools_function a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.schooluuid)">
+           AND a.schooluuid = #{example.schooluuid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.yhschoolid)">
+           AND a.yhschoolid = #{example.yhschoolid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.yxyschoolid)">
+           AND a.yxyschoolid = #{example.yxyschoolid, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.delFlag)">
+           AND a.del_flag = #{example.delFlag, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.epadType)">
+           AND a.epad_type = #{example.epadType, jdbcType=INTEGER}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.seewoSchooluid)">
+           AND a.seewo_schooluid = #{example.seewoSchooluid, jdbcType=VARCHAR}
+        </if>
+    </select>
+    
+    <!-- Auto-Generation Code End -->
+
+    <!-- Customized Code Start -->
+
+    
+    
+    <!-- Customized Code End -->
+
+</mapper>

@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.penglecode.xmodule.usercenter.mapper.SysOfficeMapper">
+    
+    <!-- Auto-Generation Code Start -->
+
+    <insert id="insertModel" parameterType="SysOffice" statementType="PREPARED">
+        INSERT INTO sys_office(
+            id,
+            parent_id,
+            parent_ids,
+            name,
+            sort,
+            area_id,
+            code,
+            type,
+            grade,
+            address,
+            zip_code,
+            master,
+            phone,
+            fax,
+            email,
+            useable,
+            create_by,
+            create_date,
+            update_by,
+            update_date,
+            remarks,
+            del_flag,
+            grade_level
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{parentId, jdbcType=VARCHAR},
+            #{parentIds, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR},
+            #{sort, jdbcType=DECIMAL},
+            #{areaId, jdbcType=VARCHAR},
+            #{code, jdbcType=VARCHAR},
+            #{type, jdbcType=CHAR},
+            #{grade, jdbcType=CHAR},
+            #{address, jdbcType=VARCHAR},
+            #{zipCode, jdbcType=VARCHAR},
+            #{master, jdbcType=VARCHAR},
+            #{phone, jdbcType=VARCHAR},
+            #{fax, jdbcType=VARCHAR},
+            #{email, jdbcType=VARCHAR},
+            #{useable, jdbcType=VARCHAR},
+            #{createBy, jdbcType=VARCHAR},
+            #{createDate, jdbcType=VARCHAR},
+            #{updateBy, jdbcType=VARCHAR},
+            #{updateDate, jdbcType=VARCHAR},
+            #{remarks, jdbcType=VARCHAR},
+            #{delFlag, jdbcType=CHAR},
+            #{gradeLevel, jdbcType=VARCHAR}
+        )
+    </insert>
+    
+    <update id="updateModelById" parameterType="java.util.Map" statementType="PREPARED">
+        UPDATE sys_office a
+           SET a.id = a.id
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'parentId')">
+               ,a.parent_id = #{paramMap.parentId, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'parentIds')">
+               ,a.parent_ids = #{paramMap.parentIds, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'name')">
+               ,a.name = #{paramMap.name, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'sort')">
+               ,a.sort = #{paramMap.sort, jdbcType=DECIMAL}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'areaId')">
+               ,a.area_id = #{paramMap.areaId, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'code')">
+               ,a.code = #{paramMap.code, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'type')">
+               ,a.type = #{paramMap.type, jdbcType=CHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'grade')">
+               ,a.grade = #{paramMap.grade, jdbcType=CHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'address')">
+               ,a.address = #{paramMap.address, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'zipCode')">
+               ,a.zip_code = #{paramMap.zipCode, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'master')">
+               ,a.master = #{paramMap.master, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'phone')">
+               ,a.phone = #{paramMap.phone, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'fax')">
+               ,a.fax = #{paramMap.fax, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'email')">
+               ,a.email = #{paramMap.email, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'useable')">
+               ,a.useable = #{paramMap.useable, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'primaryPerson')">
+               ,a.primary_person = #{paramMap.primaryPerson, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'deputyPerson')">
+               ,a.deputy_person = #{paramMap.deputyPerson, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'createBy')">
+               ,a.create_by = #{paramMap.createBy, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'createDate')">
+               ,a.create_date = #{paramMap.createDate, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'updateBy')">
+               ,a.update_by = #{paramMap.updateBy, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'updateDate')">
+               ,a.update_date = #{paramMap.updateDate, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'remarks')">
+               ,a.remarks = #{paramMap.remarks, jdbcType=VARCHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'delFlag')">
+               ,a.del_flag = #{paramMap.delFlag, jdbcType=CHAR}
+            </if>
+            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'gradeLevel')">
+               ,a.grade_level = #{paramMap.gradeLevel, jdbcType=VARCHAR}
+            </if>
+         WHERE a.id = #{id, jdbcType=VARCHAR}
+    </update>
+    
+    <delete id="deleteModelById" parameterType="java.lang.String" statementType="PREPARED">
+        DELETE FROM sys_office WHERE id = #{id, jdbcType=VARCHAR}
+    </delete>
+    
+    <delete id="deleteModelByIds" parameterType="java.util.List" statementType="PREPARED">
+        DELETE FROM sys_office WHERE id in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item, jdbcType=VARCHAR}
+        </foreach>
+    </delete>
+    
+    <select id="selectModelById" parameterType="java.lang.String" resultType="SysOffice" statementType="PREPARED">
+        SELECT a.id	id,
+               a.parent_id	parentId,
+               a.parent_ids	parentIds,
+               a.name	name,
+               a.sort	sort,
+               a.area_id	areaId,
+               a.code	code,
+               a.type	type,
+               a.grade	grade,
+               a.address	address,
+               a.zip_code	zipCode,
+               a.master	master,
+               a.phone	phone,
+               a.fax	fax,
+               a.email	email,
+               a.useable	useable,
+               a.primary_person	primaryPerson,
+               a.deputy_person	deputyPerson,
+               a.create_by	createBy,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               a.update_by	updateBy,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.remarks	remarks,
+               a.del_flag	delFlag,
+               a.grade_level	gradeLevel
+          FROM sys_office a
+         WHERE a.id = #{id, jdbcType=VARCHAR}
+    </select>
+    
+    <select id="selectModelByExample" parameterType="SysOffice" resultType="SysOffice" statementType="PREPARED">
+        SELECT a.id	id,
+               a.parent_id	parentId,
+               a.parent_ids	parentIds,
+               a.name	name,
+               a.sort	sort,
+               a.area_id	areaId,
+               a.code	code,
+               a.type	type,
+               a.grade	grade,
+               a.address	address,
+               a.zip_code	zipCode,
+               a.master	master,
+               a.phone	phone,
+               a.fax	fax,
+               a.email	email,
+               a.useable	useable,
+               a.primary_person	primaryPerson,
+               a.deputy_person	deputyPerson,
+               a.create_by	createBy,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               a.update_by	updateBy,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.remarks	remarks,
+               a.del_flag	delFlag,
+               a.grade_level	gradeLevel
+          FROM sys_office a
+         WHERE 1=1
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(id)">
+           AND a.id = #{id, jdbcType=VARCHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(parentId)">
+           AND a.parent_id = #{parentId, jdbcType=VARCHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(areaId)">
+           AND a.area_id = #{areaId, jdbcType=VARCHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(type)">
+           AND a.type = #{type, jdbcType=CHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(grade)">
+           AND a.grade = #{grade, jdbcType=CHAR}
+        </if>
+        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(delFlag)">
+           AND a.del_flag = #{delFlag, jdbcType=CHAR}
+        </if>
+    </select>
+    
+    <select id="selectModelListByIds" parameterType="java.util.List" resultType="SysOffice" statementType="PREPARED">
+        SELECT a.id	id,
+               a.parent_id	parentId,
+               a.parent_ids	parentIds,
+               a.name	name,
+               a.sort	sort,
+               a.area_id	areaId,
+               a.code	code,
+               a.type	type,
+               a.grade	grade,
+               a.address	address,
+               a.zip_code	zipCode,
+               a.master	master,
+               a.phone	phone,
+               a.fax	fax,
+               a.email	email,
+               a.useable	useable,
+               a.primary_person	primaryPerson,
+               a.deputy_person	deputyPerson,
+               a.create_by	createBy,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               a.update_by	updateBy,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.remarks	remarks,
+               a.del_flag	delFlag,
+               a.grade_level	gradeLevel
+          FROM sys_office a
+         WHERE a.id in 
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item, jdbcType=VARCHAR}
+        </foreach>
+         ORDER BY a.id ASC
+    </select>
+    
+    <select id="selectAllModelList" parameterType="java.util.Map" resultType="SysOffice" statementType="PREPARED">
+        SELECT a.id	id,
+               a.parent_id	parentId,
+               a.parent_ids	parentIds,
+               a.name	name,
+               a.sort	sort,
+               a.area_id	areaId,
+               a.code	code,
+               a.type	type,
+               a.grade	grade,
+               a.address	address,
+               a.zip_code	zipCode,
+               a.master	master,
+               a.phone	phone,
+               a.fax	fax,
+               a.email	email,
+               a.useable	useable,
+               a.primary_person	primaryPerson,
+               a.deputy_person	deputyPerson,
+               a.create_by	createBy,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               a.update_by	updateBy,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.remarks	remarks,
+               a.del_flag	delFlag,
+               a.grade_level	gradeLevel
+          FROM sys_office a
+         WHERE 1=1
+         ORDER BY a.id ASC
+    </select>
+    
+    <select id="selectAllModelCount" parameterType="java.util.Map" resultType="java.lang.Integer" statementType="PREPARED">
+        SELECT count(*)
+          FROM sys_office a
+         WHERE 1=1
+    </select>
+    
+    <select id="selectModelListByExample" parameterType="java.util.Map" resultType="SysOffice" statementType="PREPARED">
+        SELECT a.id	id,
+               a.parent_id	parentId,
+               a.parent_ids	parentIds,
+               a.name	name,
+               a.sort	sort,
+               a.area_id	areaId,
+               a.code	code,
+               a.type	type,
+               a.grade	grade,
+               a.address	address,
+               a.zip_code	zipCode,
+               a.master	master,
+               a.phone	phone,
+               a.fax	fax,
+               a.email	email,
+               a.useable	useable,
+               a.primary_person	primaryPerson,
+               a.deputy_person	deputyPerson,
+               a.create_by	createBy,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               a.update_by	updateBy,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.remarks	remarks,
+               a.del_flag	delFlag,
+               a.grade_level	gradeLevel
+          FROM sys_office a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.id)">
+           AND a.id = #{example.id, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.parentId)">
+           AND a.parent_id = #{example.parentId, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.areaId)">
+           AND a.area_id = #{example.areaId, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.type)">
+           AND a.type = #{example.type, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.grade)">
+           AND a.grade = #{example.grade, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.delFlag)">
+           AND a.del_flag = #{example.delFlag, jdbcType=CHAR}
+        </if>
+        <if test="sort != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(sort.orders)">
+         ORDER BY <foreach collection="sort.orders" index="index" item="item" open="" separator="," close="">${item.property} ${item.direction}</foreach>
+        </if>
+    </select>
+    
+    <select id="selectModelPageListByExample" parameterType="java.util.Map" resultType="SysOffice" statementType="PREPARED">
+        SELECT a.id	id,
+               a.parent_id	parentId,
+               a.parent_ids	parentIds,
+               a.name	name,
+               a.sort	sort,
+               a.area_id	areaId,
+               a.code	code,
+               a.type	type,
+               a.grade	grade,
+               a.address	address,
+               a.zip_code	zipCode,
+               a.master	master,
+               a.phone	phone,
+               a.fax	fax,
+               a.email	email,
+               a.useable	useable,
+               a.primary_person	primaryPerson,
+               a.deputy_person	deputyPerson,
+               a.create_by	createBy,
+               DATE_FORMAT(a.create_date, '%Y-%m-%d %T')	createDate,
+               a.update_by	updateBy,
+               DATE_FORMAT(a.update_date, '%Y-%m-%d %T')	updateDate,
+               a.remarks	remarks,
+               a.del_flag	delFlag,
+               a.grade_level	gradeLevel
+          FROM sys_office a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.id)">
+           AND a.id = #{example.id, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.parentId)">
+           AND a.parent_id = #{example.parentId, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.areaId)">
+           AND a.area_id = #{example.areaId, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.type)">
+           AND a.type = #{example.type, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.grade)">
+           AND a.grade = #{example.grade, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.delFlag)">
+           AND a.del_flag = #{example.delFlag, jdbcType=CHAR}
+        </if>
+        <if test="sort != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(sort.orders)">
+         ORDER BY <foreach collection="sort.orders" index="index" item="item" open="" separator="," close="">${item.property} ${item.direction}</foreach>
+        </if>
+    </select>
+    
+    <select id="selectModelPageCountByExample" parameterType="java.util.Map" resultType="java.lang.Integer" statementType="PREPARED">
+        SELECT count(*)
+          FROM sys_office a
+         WHERE 1=1
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.id)">
+           AND a.id = #{example.id, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.parentId)">
+           AND a.parent_id = #{example.parentId, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.areaId)">
+           AND a.area_id = #{example.areaId, jdbcType=VARCHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.type)">
+           AND a.type = #{example.type, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.grade)">
+           AND a.grade = #{example.grade, jdbcType=CHAR}
+        </if>
+        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.delFlag)">
+           AND a.del_flag = #{example.delFlag, jdbcType=CHAR}
+        </if>
+    </select>
+    
+    <!-- Auto-Generation Code End -->
+
+    <!-- Customized Code Start -->
+
+    
+    
+    <!-- Customized Code End -->
+
+</mapper>
