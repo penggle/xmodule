@@ -10,16 +10,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 增强的RequestParamMethodArgumentResolver
+ *
+ * @author 	pengpeng
+ * @date	2019年5月22日 上午9:22:04
+ */
 public class EnhancedRequestMappingHandlerAdapter extends RequestMappingHandlerAdapter {
 
 	@Override
 	public void afterPropertiesSet() {
 		super.afterPropertiesSet();
-		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>(getArgumentResolvers());
+		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>(getArgumentResolvers());
 		replaceRequestParamMethodArgumentResolvers(argumentResolvers);
 		setArgumentResolvers(argumentResolvers);
 		
-		List<HandlerMethodArgumentResolver> initBinderArgumentResolvers = new ArrayList<HandlerMethodArgumentResolver>(getInitBinderArgumentResolvers());
+		List<HandlerMethodArgumentResolver> initBinderArgumentResolvers = new ArrayList<>(getInitBinderArgumentResolvers());
 		replaceRequestParamMethodArgumentResolvers(initBinderArgumentResolvers);
 		setInitBinderArgumentResolvers(initBinderArgumentResolvers);
 	}

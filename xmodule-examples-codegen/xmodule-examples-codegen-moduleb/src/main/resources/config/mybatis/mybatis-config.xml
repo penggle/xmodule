@@ -15,6 +15,6 @@
         <setting name="defaultStatementTimeout" value="25000"/>
     </settings>
     <plugins>
-        <plugin interceptor="com.penglecode.xmodule.common.mybatis.PaginationInterceptor"/>
+        <plugin interceptor="com.penglecode.xmodule.common.PaginationInterceptor"/>
     </plugins>
 </configuration>

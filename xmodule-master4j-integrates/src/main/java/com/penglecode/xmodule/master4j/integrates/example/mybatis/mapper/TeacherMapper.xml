@@ -21,16 +21,16 @@
     <update id="updateTeacherById" parameterType="Teacher" statementType="PREPARED">
         UPDATE m_teacher a
            SET a.teacher_id = a.teacher_id
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(teacher.teacherName)">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(teacher.teacherName)">
                ,a.teacher_name = #{teacher.teacherName, jdbcType=VARCHAR}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(teacher.teacherSex)">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(teacher.teacherSex)">
                ,a.teacher_sex = #{teacher.teacherSex, jdbcType=VARCHAR}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(teacher.teacherAge)">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(teacher.teacherAge)">
                ,a.teacher_age = #{teacher.teacherAge, jdbcType=TINYINT}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(teacher.updateTime)">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(teacher.updateTime)">
                 ,a.update_time = #{teacher.updateTime, jdbcType=VARCHAR}
             </if>
          WHERE a.teacher_id = #{teacher.teacherId, jdbcType=BIGINT}
@@ -73,7 +73,7 @@
           FROM m_teacher a INNER JOIN m_student_course b
          WHERE a.student_id = b.student_id
            AND b.teacher_id = #{teacherId, jdbcType=BIGINT}
-        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(courseName)">
+        <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(courseName)">
            AND b.course_name = #{courseName, jdbcType=VARCHAR}
         </if>
          ORDER BY a.student_name ASC

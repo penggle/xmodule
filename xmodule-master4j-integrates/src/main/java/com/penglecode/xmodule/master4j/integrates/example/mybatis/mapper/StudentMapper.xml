@@ -21,16 +21,16 @@
     <update id="updateStudentById" parameterType="Student" statementType="PREPARED">
         UPDATE m_student a
            SET a.student_id = a.student_id
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(student.studentName)">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(student.studentName)">
                ,a.student_name = #{student.studentName, jdbcType=VARCHAR}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(student.studentSex)">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(student.studentSex)">
                ,a.student_sex = #{student.studentSex, jdbcType=VARCHAR}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(student.studentAge)">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(student.studentAge)">
                ,a.student_age = #{student.studentAge, jdbcType=TINYINT}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(student.updateTime)">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(student.updateTime)">
                 ,a.update_time = #{student.updateTime, jdbcType=VARCHAR}
             </if>
          WHERE a.student_id = #{student.studentId, jdbcType=BIGINT}

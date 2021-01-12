@@ -175,7 +175,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		modelPropertiesField.addJavaDocLine(" ");
 		modelPropertiesField.setVisibility(JavaVisibility.PRIVATE);
 		modelPropertiesField.setFinal(true);
-		modelPropertiesField.setInitializationString("new LinkedHashMap<String,Object>()");
+		modelPropertiesField.setInitializationString("new LinkedHashMap<>()");
 		mapBuilderClass.addField(modelPropertiesField);
 		
 		Method mapBuilderConstructor = new Method("MapBuilder");
@@ -1106,7 +1106,7 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 		
 		XmlElement element = new XmlElement("select");
 		element.addAttribute(new Attribute("id", statementId));
-		element.addAttribute(new Attribute("parameterType", "java.util.Map"));
+		element.addAttribute(new Attribute("parameterType", introspectedTable.getTableConfiguration().getDomainObjectName()));
 		element.addAttribute(new Attribute("statementType", "PREPARED"));
 		element.addAttribute(new Attribute("resultType", introspectedTable.getTableConfiguration().getDomainObjectName()));
 		
@@ -1192,7 +1192,6 @@ public class CustomGeneratorPlugin extends PluginAdapter {
 	/**
 	 * 创建<select id="selectModelPageCountByExample"/>
 	 * @param introspectedTable
-	 * @param statementId
 	 * @return
 	 */
 	protected XmlElement createSelectModelPageCountByExampleElement(IntrospectedTable introspectedTable) {

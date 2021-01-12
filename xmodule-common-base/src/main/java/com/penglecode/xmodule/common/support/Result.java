@@ -96,6 +96,7 @@ public class Result<T> implements DtoModel {
 		return new Builder(Boolean.FALSE, GlobalConstants.RESULT_CODE_FAILURE, "Internal Server Error");
 	}
 	
+	@Override
 	public String toString() {
 		return "Result [success=" + success + ", code=" + code + ", message="
 				+ message + ", data=" + data + "]";
@@ -134,7 +135,7 @@ public class Result<T> implements DtoModel {
 		
 		@SuppressWarnings("unchecked")
 		public <T> Result<T> build() {
-			return new Result<T>(success, code, message, (T) data);
+			return new Result<>(success, code, message, (T) data);
 		}
 	    
 	}

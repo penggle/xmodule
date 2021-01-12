@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @Import({MybatisCodegenConfiguration.class, ServiceCodegenConfiguration.class, ControllerCodegenConfiguration.class})
-public class CodegenExampleApplication implements ApplicationRunner {
+public class CodegenApplication implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
@@ -20,7 +20,7 @@ public class CodegenExampleApplication implements ApplicationRunner {
 	}
 	
 	public static void main(String[] args) {
-		new SpringApplicationBuilder(CodegenExampleApplication.class).web(WebApplicationType.NONE).run(args);
+		new SpringApplicationBuilder(CodegenApplication.class).web(WebApplicationType.NONE).run(args);
 	}
 
 }

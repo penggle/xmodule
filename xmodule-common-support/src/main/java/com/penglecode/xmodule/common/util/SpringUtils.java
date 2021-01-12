@@ -41,7 +41,6 @@ public class SpringUtils {
 	 * 获取Spring环境变量
 	 * @param name
 	 * @param constType
-	 * @param defaultValue
 	 * @return
 	 */
 	public static <T> T getEnvProperty(String name, Class<T> constType) {
@@ -145,7 +144,6 @@ public class SpringUtils {
 	
 	/**
 	 * 创建默认的beanName
-	 * @param applicationContext
 	 * @param beanClass
 	 * @return
 	 */
@@ -231,7 +229,6 @@ public class SpringUtils {
 	/**
 	 * 根据beanName销毁一个已存在的bean
 	 * @param <T>
-	 * @param applicationContext
 	 * @param beanName
 	 * @param beanInstance		- 如果bean是以scope=prototype形式注册的，并且在销毁时需要执行其destroy()方法，那么该参数必须指定
 	 */

@@ -40,6 +40,7 @@ public class PageResult<T> extends Result<T> {
 		return new PageBuilder(Boolean.FALSE, GlobalConstants.RESULT_CODE_FAILURE, "Internal Server Error");
 	}
 	
+	@Override
 	public String toString() {
 		return "PageResult [success=" + isSuccess() + ", code=" + getCode() + ", message="
 				+ getMessage() + ", data=" + getData() + ", totalRowCount=" + getTotalRowCount() + "]";
@@ -58,20 +59,24 @@ public class PageResult<T> extends Result<T> {
 			return this;
 		}
 		
+		@Override
 		public PageBuilder code(int code) {
 			return (PageBuilder) super.code(code);
 		}
 		
+		@Override
 		public PageBuilder message(String message) {
 			return (PageBuilder) super.message(message);
 		}
 		
+		@Override
 		public PageBuilder data(Object data) {
 			return (PageBuilder) super.data(data);
 		}
 		
+		@Override
 		public <T> PageResult<T> build() {
-			return new PageResult<T>(super.build(), totalRowCount);
+			return new PageResult<>(super.build(), totalRowCount);
 		}
 		
 	}

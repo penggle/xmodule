@@ -24,7 +24,7 @@ public class ThreadPoolUtils {
 	 * @return
 	 */
 	public static ExecutorService newSingleThreadExecutor() {
-        return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(50), new CallerRunsPolicy());
+        return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(50), new CallerRunsPolicy());
     }
 	
 	/**
@@ -33,7 +33,7 @@ public class ThreadPoolUtils {
 	 * @return
 	 */
 	public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
-        return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(50), threadFactory, new CallerRunsPolicy());
+        return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(50), threadFactory, new CallerRunsPolicy());
     }
 
 	/**
@@ -61,7 +61,7 @@ public class ThreadPoolUtils {
 	 */
 	public static ExecutorService newFixedThreadPool(int nThreads) {
 		Assert.isTrue(nThreads > 0, "Parameter 'nThreads' must be > 0");
-		return new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(DEFAULT_CONCURRENTCY_CAPACITY), new CallerRunsPolicy());
+		return new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(DEFAULT_CONCURRENTCY_CAPACITY), new CallerRunsPolicy());
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class ThreadPoolUtils {
 	 */
 	public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
 		Assert.isTrue(nThreads > 0, "Parameter 'nThreads' must be > 0");
-		return new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(DEFAULT_CONCURRENTCY_CAPACITY), threadFactory, new CallerRunsPolicy());
+		return new ThreadPoolExecutor(nThreads, nThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(DEFAULT_CONCURRENTCY_CAPACITY), threadFactory, new CallerRunsPolicy());
 	}
 	
 }

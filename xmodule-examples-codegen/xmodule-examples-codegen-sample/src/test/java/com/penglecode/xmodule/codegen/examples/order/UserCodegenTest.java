@@ -6,7 +6,6 @@ import com.penglecode.xmodule.common.codegen.controller.ControllerCodeGenerator;
 import com.penglecode.xmodule.common.codegen.mybatis.MybatisCodeGenerator;
 import com.penglecode.xmodule.common.codegen.service.ServiceCodeGenerator;
 import com.penglecode.xmodule.common.util.ClassUtils;
-import com.penglecode.xmodule.ordercenter.boot.CodegenExampleApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,11 +23,11 @@ import java.nio.file.Paths;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.NONE, classes=CodegenApplication.class)
-public class OrderCodegenTest {
+public class UserCodegenTest {
 
     @Test
     public void generateOrderMybatisCode() {
-        new MybatisCodeGenerator("order").overrideCodegenConfig(config -> {
+        new MybatisCodeGenerator("user").overrideCodegenConfig(config -> {
             //运行时指定Model.java代码输出位置
             config.getJavaModel().setTargetProject(Paths.get(config.getRuntimeProjectDir(),
                     "../xmodule-examples-codegen-modulea/src/main/java").toString());
@@ -43,9 +42,8 @@ public class OrderCodegenTest {
 
     @Test
     public void generateOrderServiceCode() {
-        new ServiceCodeGenerator("order", new Class<?>[] {
-                ClassUtils.forName("com.penglecode.xmodule.ordercenter.model.Order"),
-                ClassUtils.forName("com.penglecode.xmodule.ordercenter.model.OrderDetail")
+        new ServiceCodeGenerator("user", new Class<?>[] {
+                ClassUtils.forName("com.penglecode.xmodule.usercenter.model.School"),
         }).overrideCodegenConfig(config -> {
             //运行时指定Model.class的扫描基准包
             config.setBasePackage(BasePackage.class.getPackage().getName());
@@ -60,18 +58,16 @@ public class OrderCodegenTest {
 
     @Test
     public void generateOrderControllerCode() {
-        new ControllerCodeGenerator("order", new Class<?>[] {
-                ClassUtils.forName("com.penglecode.xmodule.ordercenter.model.Order"),
-                ClassUtils.forName("com.penglecode.xmodule.ordercenter.model.OrderDetail")
+        new ControllerCodeGenerator("user", new Class<?>[] {
+                ClassUtils.forName("com.penglecode.xmodule.usercenter.model.School"),
         }).overrideCodegenConfig(config -> {
             //运行时指定Model.class的扫描基准包
             config.setBasePackage(BasePackage.class.getPackage().getName());
             //运行时指定XxxController.java代码输出位置(比如输出到隔壁project)
             config.setTargetProject(Paths.get(config.getRuntimeProjectDir(),
                     "../xmodule-examples-codegen-moduleb/src/main/java").toString());
-            config.setPrefixOfApiUrl("/api/ordercenter"); //接口URL前缀
-            config.getDomainOfApiUrlMapping().put("com.penglecode.xmodule.ordercenter.model.Order", "order"); //接口URL的domain部分
-            config.getDomainOfApiUrlMapping().put("com.penglecode.xmodule.ordercenter.model.OrderDetail", "order/detail"); //接口URL的domain部分
+            config.setPrefixOfApiUrl("/api/usercenter"); //接口URL前缀
+            config.getDomainOfApiUrlMapping().put("com.penglecode.xmodule.usercenter.model.School", "school"); //接口URL的domain部分
         }).execute();
     }
 

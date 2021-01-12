@@ -16,6 +16,7 @@ public abstract class AbstractSpringAppContextInitializer implements Application
 	
 	private static final Object LOCK = new Object();
 	
+	@Override
 	public final void initialize(ConfigurableApplicationContext applicationContext) {
 		if(!initialized) {
 			synchronized(LOCK) {

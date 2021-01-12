@@ -29,22 +29,22 @@
     <update id="updateModelById" parameterType="java.util.Map" statementType="PREPARED">
         UPDATE cg_order_detail a
            SET a.order_id = a.order_id, a.product_id = a.product_id
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'productName')">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isContainsParameter(paramMap, 'productName')">
                ,a.product_name = #{paramMap.productName, jdbcType=VARCHAR}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'productUrl')">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isContainsParameter(paramMap, 'productUrl')">
                ,a.product_url = #{paramMap.productUrl, jdbcType=VARCHAR}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'unitPrice')">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isContainsParameter(paramMap, 'unitPrice')">
                ,a.unit_price = #{paramMap.unitPrice, jdbcType=DECIMAL}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'quantity')">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isContainsParameter(paramMap, 'quantity')">
                ,a.quantity = #{paramMap.quantity, jdbcType=INTEGER}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'freightAmount')">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isContainsParameter(paramMap, 'freightAmount')">
                ,a.freight_amount = #{paramMap.freightAmount, jdbcType=DECIMAL}
             </if>
-            <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isContainsParameter(paramMap, 'subTotalAmount')">
+            <if test="@com.penglecode.xmodule.common.MybatisUtils@isContainsParameter(paramMap, 'subTotalAmount')">
                ,a.sub_total_amount = #{paramMap.subTotalAmount, jdbcType=DECIMAL}
             </if>
          WHERE a.order_id = #{id.orderId, jdbcType=BIGINT} AND a.product_id = #{id.productId, jdbcType=BIGINT}
@@ -85,31 +85,31 @@
                a.sub_total_amount	subTotalAmount
           FROM cg_order_detail a
          WHERE 1=1
-        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(orderId)">
+        <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(orderId)">
            AND a.order_id = #{orderId, jdbcType=BIGINT}
         </if>
-        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(productId)">
+        <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(productId)">
            AND a.product_id = #{productId, jdbcType=BIGINT}
         </if>
-        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(productName)">
+        <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(productName)">
            AND a.product_name like CONCAT('%', #{productName, jdbcType=VARCHAR}, '%')
         </if>
-        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(minUnitPrice)">
+        <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(minUnitPrice)">
         <![CDATA[
            AND a.unit_price >= #{minUnitPrice, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(maxUnitPrice)">
+        <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(maxUnitPrice)">
         <![CDATA[
            AND a.unit_price <= #{maxUnitPrice, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(minSubTotalAmount)">
+        <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(minSubTotalAmount)">
         <![CDATA[
            AND a.sub_total_amount >= #{minSubTotalAmount, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="@com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(maxSubTotalAmount)">
+        <if test="@com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(maxSubTotalAmount)">
         <![CDATA[
            AND a.sub_total_amount <= #{maxSubTotalAmount, jdbcType=DECIMAL}
         ]]>
@@ -164,36 +164,36 @@
                a.sub_total_amount	subTotalAmount
           FROM cg_order_detail a
          WHERE 1=1
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.orderId)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.orderId)">
            AND a.order_id = #{example.orderId, jdbcType=BIGINT}
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.productId)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.productId)">
            AND a.product_id = #{example.productId, jdbcType=BIGINT}
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.productName)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.productName)">
            AND a.product_name like CONCAT('%', #{example.productName, jdbcType=VARCHAR}, '%')
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.minUnitPrice)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.minUnitPrice)">
         <![CDATA[
            AND a.unit_price >= #{example.minUnitPrice, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.maxUnitPrice)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.maxUnitPrice)">
         <![CDATA[
            AND a.unit_price <= #{example.maxUnitPrice, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.minSubTotalAmount)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.minSubTotalAmount)">
         <![CDATA[
            AND a.sub_total_amount >= #{example.minSubTotalAmount, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.maxSubTotalAmount)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.maxSubTotalAmount)">
         <![CDATA[
            AND a.sub_total_amount <= #{example.maxSubTotalAmount, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="sort != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(sort.orders)">
+        <if test="sort != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(sort.orders)">
          ORDER BY <foreach collection="sort.orders" index="index" item="item" open="" separator="," close="">${item.property} ${item.direction}</foreach>
         </if>
     </select>
@@ -209,36 +209,36 @@
                a.sub_total_amount	subTotalAmount
           FROM cg_order_detail a
          WHERE 1=1
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.orderId)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.orderId)">
            AND a.order_id = #{example.orderId, jdbcType=BIGINT}
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.productId)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.productId)">
            AND a.product_id = #{example.productId, jdbcType=BIGINT}
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.productName)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.productName)">
            AND a.product_name like CONCAT('%', #{example.productName, jdbcType=VARCHAR}, '%')
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.minUnitPrice)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.minUnitPrice)">
         <![CDATA[
            AND a.unit_price >= #{example.minUnitPrice, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.maxUnitPrice)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.maxUnitPrice)">
         <![CDATA[
            AND a.unit_price <= #{example.maxUnitPrice, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.minSubTotalAmount)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.minSubTotalAmount)">
         <![CDATA[
            AND a.sub_total_amount >= #{example.minSubTotalAmount, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.maxSubTotalAmount)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.maxSubTotalAmount)">
         <![CDATA[
            AND a.sub_total_amount <= #{example.maxSubTotalAmount, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="sort != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(sort.orders)">
+        <if test="sort != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(sort.orders)">
          ORDER BY <foreach collection="sort.orders" index="index" item="item" open="" separator="," close="">${item.property} ${item.direction}</foreach>
         </if>
     </select>
@@ -247,31 +247,31 @@
         SELECT count(*)
           FROM cg_order_detail a
          WHERE 1=1
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.orderId)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.orderId)">
            AND a.order_id = #{example.orderId, jdbcType=BIGINT}
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.productId)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.productId)">
            AND a.product_id = #{example.productId, jdbcType=BIGINT}
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.productName)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.productName)">
            AND a.product_name like CONCAT('%', #{example.productName, jdbcType=VARCHAR}, '%')
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.minUnitPrice)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.minUnitPrice)">
         <![CDATA[
            AND a.unit_price >= #{example.minUnitPrice, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.maxUnitPrice)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.maxUnitPrice)">
         <![CDATA[
            AND a.unit_price <= #{example.maxUnitPrice, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.minSubTotalAmount)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.minSubTotalAmount)">
         <![CDATA[
            AND a.sub_total_amount >= #{example.minSubTotalAmount, jdbcType=DECIMAL}
         ]]>
         </if>
-        <if test="example != null and @com.penglecode.xmodule.common.mybatis.MybatisUtils@isNotEmpty(example.maxSubTotalAmount)">
+        <if test="example != null and @com.penglecode.xmodule.common.MybatisUtils@isNotEmpty(example.maxSubTotalAmount)">
         <![CDATA[
            AND a.sub_total_amount <= #{example.maxSubTotalAmount, jdbcType=DECIMAL}
         ]]>

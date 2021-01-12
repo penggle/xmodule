@@ -7,6 +7,11 @@ import com.penglecode.xmodule.common.util.ObjectUtils;
 import com.penglecode.xmodule.common.util.SpringUtils;
 import com.penglecode.xmodule.common.util.StringUtils;
 
+/**
+ * @author pengpeng
+ * @date 2015年10月16日 上午11:02:27
+ * @version 1.0
+ */
 public class SpringConstantPool<T> implements ConstantPool<T> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpringConstantPool.class);

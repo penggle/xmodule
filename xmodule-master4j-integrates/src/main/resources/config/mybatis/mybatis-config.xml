@@ -14,6 +14,6 @@
         <setting name="defaultExecutorType" value="SIMPLE"/>
     </settings>
     <plugins>
-        <plugin interceptor="com.penglecode.xmodule.common.mybatis.PaginationInterceptor"/>
+        <plugin interceptor="com.penglecode.xmodule.common.PaginationInterceptor"/>
     </plugins>
 </configuration>

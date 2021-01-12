@@ -35,6 +35,7 @@ public abstract class Constant<T> implements Supplier<T> {
 	 * 返回常量值
 	 * @return
 	 */
+	@Override
 	public T get() {
 		return (T) constantPool.get((Constant<Object>) this);
 	}

@@ -13,5 +13,6 @@
 	<description>SpringCloud示例</description>
 	<modules>
 		<module>xmodule-examples-springcloud-consul</module>
-	</modules>
+        <module>xmodule-examples-springcloud-openfeign</module>
+    </modules>
 </project>

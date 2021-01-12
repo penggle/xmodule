@@ -33,6 +33,7 @@ public class DefaultSpringAppPreInitializer extends AbstractSpringAppContextInit
 		System.setProperty(NACOS_LOGGING_DEFAULT_CONFIG_ENABLED_PROPERTY, Boolean.FALSE.toString());
 	}
 
+	@Override
 	public void doInitialize(ConfigurableApplicationContext applicationContext) {
 		LOGGER.info(">>> Spring 应用启动前置初始化程序! applicationContext = {}", applicationContext);
 		SpringUtils.setApplicationContext(applicationContext);

@@ -24,7 +24,7 @@ spring:
           - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
     
     profiles:
-        active: dev
+        active: user
 
     #Hikari 连接池配置
     datasource:

@@ -193,5 +193,6 @@
 		<module>xmodule-master4j-spring</module>
 		<module>xmodule-master4j-springboot</module>
 		<module>xmodule-master4j-integrates</module>
+        <module>xmodule-master4j-elasticsearch</module>
     </modules>
 </project>

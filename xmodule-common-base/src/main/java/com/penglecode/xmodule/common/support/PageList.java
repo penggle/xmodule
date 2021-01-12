@@ -2,6 +2,13 @@ package com.penglecode.xmodule.common.support;
 
 import java.util.List;
 
+/**
+ * 分页数据模型
+ *
+ * @author 	pengpeng
+ * @date   		2017年6月6日 下午5:17:39
+ * @version 	1.0
+ */
 public class PageList<T> implements DtoModel {
 
 	private static final long serialVersionUID = 1L;
@@ -38,6 +45,7 @@ public class PageList<T> implements DtoModel {
 		this.dataList = dataList;
 	}
 
+	@Override
 	public String toString() {
 		return "PageList [totalRowCount=" + totalRowCount + ", dataList=" + dataList + "]";
 	}

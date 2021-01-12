@@ -1,25 +1,19 @@
 package com.penglecode.xmodule.common.web.springmvc.support;
 
+import com.penglecode.xmodule.common.util.ArrayUtils;
+import com.penglecode.xmodule.common.util.CollectionUtils;
+import com.penglecode.xmodule.common.util.SpringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.core.MethodParameter;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
+
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.core.MethodParameter;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
-import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
-
-import com.penglecode.xmodule.common.util.ArrayUtils;
-import com.penglecode.xmodule.common.util.CollectionUtils;
-import com.penglecode.xmodule.common.util.SpringUtils;
 
 /**
  * 增强的RequestParamMethodArgumentResolver，解决@RequestParam注解显示地用于用户自定义POJO对象时的参数解析问题
@@ -45,10 +39,6 @@ public class EnhancedRequestParamMethodArgumentResolver extends RequestParamMeth
 	 */
 	private List<Class<?>> resolvableParameterTypes;
 	
-	private volatile ConversionService conversionService;
-	
-	private BeanFactory beanFactory;
-	
 	public EnhancedRequestParamMethodArgumentResolver(boolean useDefaultResolution) {
 		super(useDefaultResolution);
 	}
@@ -56,7 +46,6 @@ public class EnhancedRequestParamMethodArgumentResolver extends RequestParamMeth
 	public EnhancedRequestParamMethodArgumentResolver(ConfigurableBeanFactory beanFactory,
 			boolean useDefaultResolution) {
 		super(beanFactory, useDefaultResolution);
-		this.beanFactory = beanFactory;
 	}
 
 	@Override
@@ -67,7 +56,7 @@ public class EnhancedRequestParamMethodArgumentResolver extends RequestParamMeth
 				HttpServletRequest servletRequest = request.getNativeRequest(HttpServletRequest.class);
 				Map<String,Object> parameterMap = getRequestParameters(servletRequest);
 				arg = instantiateParameter(parameter);
-				SpringUtils.setBeanProperty(arg, parameterMap, getConversionService());
+				SpringUtils.setBeanProperty(arg, parameterMap);
 			}
 		}
 		return arg;
@@ -113,27 +102,12 @@ public class EnhancedRequestParamMethodArgumentResolver extends RequestParamMeth
 	}
 	
 	protected Map<String,Object> getRequestParameters(HttpServletRequest request) {
-		Map<String,Object> parameters = new HashMap<String,Object>();
+		Map<String,Object> parameters = new HashMap<>();
 		Map<String,String[]> paramMap = request.getParameterMap();
 		if(!CollectionUtils.isEmpty(paramMap)) {
 			paramMap.forEach((key, values) -> parameters.put(key, ArrayUtils.isEmpty(values) ? null : (values.length == 1 ? values[0] : values)));
 		}
 		return parameters;
-	}
-
-	protected ConversionService getConversionService() {
-		if(conversionService == null) {
-			synchronized (this) {
-				if(conversionService == null) {
-					try {
-						conversionService = (ConversionService) beanFactory.getBean("mvcConversionService"); //lazy init mvcConversionService, create by WebMvcAutoConfiguration
-					} catch (BeansException e) {
-						conversionService = new DefaultConversionService();
-					}
-				}
-			}
-		}
-		return conversionService;
 	}
 
 	public List<Class<?>> getResolvableParameterTypes() {

@@ -23,6 +23,8 @@
 		</commentGenerator>
 		<!-- 数据库连接 -->
 		<jdbcConnection driverClass="${jdbcDriverClass}" connectionURL="${jdbcUrl}" userId="${jdbcUsername}" password="${jdbcPassword}">
+			<!--解决不同库表同名问题-->
+			<property name="nullCatalogMeansCurrent" value="true"/>
 		</jdbcConnection>
 		<!-- 指定生成的类型为java类型，避免数据库中number等类型字段 -->
 		<javaTypeResolver type="com.penglecode.xmodule.common.codegen.mybatis.CustomJavaTypeResolver">

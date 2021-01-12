@@ -26,7 +26,6 @@ import com.penglecode.xmodule.common.support.Result;
 public class ResultEntityResponseServletConfiguration extends AbstractSpringConfiguration implements WebMvcConfigurer {
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 		for(int i = 0, len = converters.size(); i < len; i++) {
 			HttpMessageConverter<?> converter = converters.get(i);
