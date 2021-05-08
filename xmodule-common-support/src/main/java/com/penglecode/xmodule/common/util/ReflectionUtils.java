@@ -1,14 +1,12 @@
 package com.penglecode.xmodule.common.util;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
-
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * 反射工具类
@@ -17,14 +15,15 @@ import org.springframework.util.Assert;
  * @date	  	2014年7月19日 下午7:12:07
  * @version  	1.0
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
-	
+
+	private ReflectionUtils() {}
+
 	/** 
      * 获得超类的参数类型，取第一个参数类型 
-     * @param <T> 类型参数 
-     * @param clazz 超类类型 
+     * @param clazz 超类类型
      */  
-    @SuppressWarnings("rawtypes")  
     public static Class<?> getClassGenricType(final Class clazz) {
         return getClassGenricType(clazz, 0);
     }
@@ -34,7 +33,6 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
      * @param clazz 超类类型 
      * @param index 索引 
      */  
-    @SuppressWarnings("rawtypes")  
     public static Class getClassGenricType(final Class clazz, final int index) {
     	Assert.notNull(clazz, "Parameter 'clazz' must be not null!");
     	Assert.state(index > -1, "Parameter 'index' must be > -1!");
@@ -43,7 +41,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
             return Object.class;  
         }  
         Type[] params = ((ParameterizedType)genType).getActualTypeArguments();  
-        if (index >= params.length || index < 0) {  
+        if (index >= params.length) {
             return Object.class;  
         }  
         if (!(params[index] instanceof Class)) {  
@@ -158,6 +156,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @param value
 	 */
 	public static void setFinalFieldValue(Object target, Field field, Object value) {
+		Assert.notNull(field, "Parameter 'field' can not be null!");
     	try {
 			field.setAccessible(true);
 			final Field modifiersField = Field.class.getDeclaredField("modifiers");
@@ -181,6 +180,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return
 	 */
 	public static <T> T getFieldValue(Field field, Object target) {
+		Assert.notNull(field, "Parameter 'field' can not be null!");
 		try {
 			field.setAccessible(true);
 			return (T) field.get(target);
@@ -197,7 +197,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return
 	 */
 	public static <T> T getFieldValue(Object target, String fieldName) {
-		Field field = ReflectionUtils.findField(target.getClass(), fieldName);
+		Field field = findField(target.getClass(), fieldName);
 		return getFieldValue(field, target);
 	}
 	
@@ -234,12 +234,12 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	 * @return
 	 */
 	public static Method findMethod(Class<?> targetClass, String methodName) {
-		return findMethod(targetClass, methodName, new Class[0]);
+		return findMethod(targetClass, methodName, new Class<?>[0]);
 	}
 	
 	/**
 	 * Determine whether the given method is a "getClass" method.
-	 * @see java.lang.Object#getClass()
+	 * @see Object#getClass()
 	 * @param method
 	 * @return 
 	 */
@@ -249,7 +249,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	
 	/**
 	 * Determine whether the given method is a "clone" method.
-	 * @see java.lang.Object#clone()
+	 * @see Object#clone()
 	 * @param method
 	 * @return 
 	 */
@@ -259,7 +259,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	
 	/**
 	 * Determine whether the given method is a "notify" method.
-	 * @see java.lang.Object#notify()
+	 * @see Object#notify()
 	 * @param method
 	 * @return 
 	 */
@@ -269,7 +269,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	
 	/**
 	 * Determine whether the given method is a "notifyAll" method.
-	 * @see java.lang.Object#notify()
+	 * @see Object#notify()
 	 * @param method
 	 * @return 
 	 */
@@ -279,7 +279,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	
 	/**
 	 * Determine whether the given method is a "wait" method.
-	 * @see java.lang.Object#wait(...)
+	 * @see Object#wait()
 	 * @param method
 	 * @return 
 	 */
@@ -289,7 +289,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
 	
 	/**
 	 * Determine whether the given method is a "finalize" method.
-	 * @see java.lang.Object#finalize()
+	 * @see Object#finalize()
 	 * @param method
 	 * @return 
 	 */
