@@ -175,7 +175,7 @@ http://www.52im.net/thread-258-1-1.html
 
   DirectByteBuffer可减少一次系统空间到用户空间的拷贝。但Buffer创建和销毁的成本更高，不可控，通常会用内存池来提高性能。**应用场景：直接缓冲区主要分配给那些易受基础系统的本机I/O 操作影响的大型、持久的缓冲区。如果数据量比较小的中小应用情况下，可以考虑使用heapBuffer，由JVM进行管理。**
 
-  HeapByteBuffer底层的数据其实是维护在操作系统的内存中，而不是jvm里，DirectByteBuffer里维护了一个引用address指向了数据，从而操作数据。可以通过DirectBuffer#clean()方法来释放其所持的堆外直接内存。
+  DirectByteBuffer底层的数据其实是维护在操作系统的内存中，而不是jvm里，DirectByteBuffer里维护了一个引用address指向了数据，从而操作数据。可以通过DirectBuffer#clean()方法来释放其所持的堆外直接内存。
   
   DirectByteBuffer优点：跟外设（IO设备）打交道时会快很多，因为外设读取jvm堆里的数据时，不是直接读取的，而是把jvm里的数据读到一个内存块里，再在这个块里读取的，如果使用DirectByteBuffer，则可以省去这一步，实现zero copy（零拷贝）。
 
@@ -1283,7 +1283,7 @@ public class NettyTimeClient {
 
   ![单Acceptor线程的Reactor线程模型.png](src/main/java/com/penglecode/xmodule/master4j/netty/examples/单Acceptor线程的Reactor线程模型.png)
 
-  特别的，如果我们在任务处理的过程中，不划分为多个阶段进行处理的话，那么单线程reactor线程模型就退化成了并行工作和模型。**事实上，可以认为并行工作者模型，就是单Acceptor线程的reactor线程模型的最简化版本。**
+  特别的，如果我们在任务处理的过程中，不划分为多个阶段进行处理的话，那么单线程reactor线程模型就退化成了并行工作者模型。**事实上，可以认为并行工作者模型，就是单Acceptor线程的reactor线程模型的最简化版本。**
 
   
 
@@ -1533,7 +1533,7 @@ ServerBootstrap b = new ServerBootstrap();
 
 ## 19、TCP连接中启用和禁用TCP_NODELAY有什么影响？
 
-TCP/IP协议中针对TCP默认开启了[Nagle](https://link.zhihu.com/?target=https%3A//en.wikipedia.org/wiki/Nagle%27s_algorithm)算法。Nagle算法通过减少需要传输数据包的数量，来优化网络。在内核实现中，数据包的发送和接受会先做缓存，分别对应于写缓存和读缓存。
+TCP/IP协议中针对TCP默认开启了[Nagle](https://link.zhihu.com/?target=https%3A//en.wikipedia.org/wiki/Nagle%27s_algorithm)算法。Nagle算法通过减少需要传输数据包的数量，来优化网络。在内核实现中，数据包的发送和接收会先做缓存，分别对应于写缓存和读缓存。
 
 启动TCP_NODELAY，就意味着禁用了Nagle算法，允许小包的发送。对于延时敏感型，同时数据传输量比较小的应用，开启TCP_NODELAY选项无疑是一个正确的选择。比如，对于SSH会话，用户在远程敲击键盘发出指令的速度相对于网络带宽能力来说，绝对不是在一个量级上的，所以数据传输非常少；而又要求用户的输入能够及时获得返回，有较低的延时。如果开启了Nagle算法，就很可能出现频繁的延时，导致用户体验极差。当然，你也可以选择在应用层进行buffer，比如使用java中的buffered stream，尽可能地将大包写入到内核的写缓存进行发送；vectored I/O（writev接口）也是个不错的选择。
 
@@ -1598,7 +1598,7 @@ Nagle算法的基本定义是***\*任意时刻，最多只能有一个未被确�
 
      每次发送数据后，发送方将自己维护的对方的window size减小，表示对方的SO_RCVBUF可用空间变小。
 
-     当接收方处理开始处理SO_RCVBUF 中的数据时，会将数据从socket 在内核中的接受缓冲区读出，此时接收方的SO_RCVBUF可用空间变大，即window size变大，接受方会以ack消息的方式将自己最新的window size返回给发送方，此时发送方将自己的维护的接受的方的window size设置为ack消息返回的window size。
+     当接收方开始处理SO_RCVBUF 中的数据时，会将数据从socket 在内核中的接受缓冲区读出，此时接收方的SO_RCVBUF可用空间变大，即window size变大，接受方会以ack消息的方式将自己最新的window size返回给发送方，此时发送方将自己的维护的接受的方的window size设置为ack消息返回的window size。
 
      此外，发送方可以连续的给接受方发送消息，只要保证对方的SO_RCVBUF空间可以缓存数据即可，即window size>0。当接收方的SO_RCVBUF被填充满时，此时window size=0，发送方不能再继续发送数据，要等待接收方ack消息，以获得最新可用的window size。
 

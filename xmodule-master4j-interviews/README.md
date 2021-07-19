@@ -853,11 +853,11 @@ Java内存模型把Java虚拟机内部划分为`线程栈`和`堆`，如下图�
      JMM为实现volatile有序性的语义会限制编译器和处理器的重排序，并制定了volatile重排序规则表：
 
      | 是否能重排序 | 第二个操作 |            |            |
-| ------------ | ---------- | ---------- | ---------- |
-| 第一个操作   | 普通读/写  | volatile读 | volatile写 |
-| 普通读/写    |            |            | NO         |
-| volatile读   | NO         | NO         | NO         |
-| volatile写   |            | NO         | NO         |
+     | ------------ | ---------- | ---------- | ---------- |
+     | 第一个操作   | 普通读/写  | volatile读 | volatile写 |
+     | 普通读/写    |            |            | NO         |
+     | volatile读   | NO         | NO         | NO         |
+     | volatile写   |            | NO         | NO         |
 
      - 当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。
      - 当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。
@@ -5435,7 +5435,7 @@ https://zhuanlan.zhihu.com/p/166131311
    - **-XX:+UseParallelGC**：Parallel收集器并行回收+Serial Old收集器串行回收
    - **-XX:+UseParallelOldGC**：Parallel收集器并行回收+Parallel Old收集器并行回收
    - **-XX:+UseConcMarkSweepGC**：Serial收集器串行回收+CMS收集器并发回收(备用Serial Old收集器)
-   - **-XX:+UseConcMarkSweepGC -XX:-UseParNewGC**：ParNew收集器并行回收+CMS收集器并发回收(备用Serial Old收集器)
+   - **-XX:+UseConcMarkSweepGC -XX:+UseParNewGC**：ParNew收集器并行回收+CMS收集器并发回收(备用Serial Old收集器)
    - **-XX:+UseG1GC**：G1收集器并发、并行执行内存回收
 
    当前垃圾收集器为：
@@ -5467,7 +5467,7 @@ https://zhuanlan.zhihu.com/p/166131311
      - 能在Minor GC解决的，不要留到Full GC阶段，新生代内存一般比老年代内存要小，因为对象存活率低，复制算法较快，因此新生代一般是占堆内存总大小的1/2 ~ 1/4之间为宜。
      - 堆内存的初始大小与总大小设置为一样的值，即-Xms和-Xmx设置同样大小值，避免内存调整。
      - -Xmn和SurvivorRatio，调整Eden和Survivor的大小，合适即可。通过工具多分析对象存活率和存活大小。
-     - GC收集器调整，现在多核CPU时代，尽量使用并行垃圾收集器。jre8 server模式默认Parallel Scavenge + Paralle Old，可以调整为ParNew + CMS，降低停顿时间，如果效果还不尽人意，可以试试G1。
+     - GC收集器调整，现在多核CPU时代，尽量使用并行垃圾收集器。jre8 server模式默认Parallel Scavenge + Parallel Old，可以调整为ParNew + CMS，降低停顿时间，如果效果还不尽人意，可以试试G1。
 
 
 
