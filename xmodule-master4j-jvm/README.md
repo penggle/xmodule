@@ -1437,9 +1437,9 @@ HotSpot虚拟机中多数收集器都采用了分代收集来管理堆内存，�
 | :---------------: | :------: | :--: | :--: | :------: | :----------------: | :------------: | :---------: | :----: | :----------------------------------------------------------- |
 |      Serial       |  单线程  |  否  |  否  |  新生代  |    标记复制算法    |     完全会     |  最为古老   |   -    | 使用JVM参数-XX:+UseSerialGC启用，新生代和老年代将分别使用Serial和Serial Old收集器组合。HotSpot虚拟机Client模式下的默认新生代收集器，适合在处理器核数很少(例如单核或双核)或者一些桌面应用程序的中使用。 |
 |      ParNew       |  多线程  |  是  |  否  |  新生代  |    标记复制算法    |     完全会     |   JDK1.3    |  延迟  | 使用JVM参数-XX:+UseParNewGC启用，新生代和老年代将分别使用ParNew和Serial Old收集器组合。如果启用CMS收集器-XX:+UseConcMarkSweepGC那么新生代将默认启用ParNew收集器。ParNew是JDK7之前许多运行在Server模式下的虚拟机中首选的新生代收集器。JDK9开始取消ParNew+Serial Old组合，即取消了-XX:UseParNewGC参数，此时ParNew只能与CMS搭配使用，启用CMS收集器将默认启用ParNew。 |
-| Parallel Scavenge |  多线程  |  是  |  否  |  新生代  |    标记复制算法    |     完全会     |   JDK1.4    | 吞吐量 | 使用JVM参数-XX:+UseParallelGC启用，新生代和老年代将分别使用Parallel Scavenge和Parallel Old收集器组合。该组合是JDK7~JDK8的默认首选GC收集器。它以吞吐量可控闻名，也称之为“吞吐量优先收集器”。 |
+| Parallel Scavenge |  多线程  |  是  |  否  |  新生代  |    标记复制算法    |     完全会     |   JDK1.4    | 吞吐量 | 使用JVM参数-XX:+UseParallelGC及-XX:+UseParallelOldGC启用，新生代和老年代将分别使用Parallel Scavenge和Parallel Old收集器组合。该组合是JDK7~JDK8的默认首选GC收集器。它以吞吐量可控闻名，也称之为“吞吐量优先收集器”。 |
 |    Serial Old     |  单线程  |  否  |  否  |  老年代  |    标记整理算法    |     完全会     |  最为古老   |   -    | 是启用Serial收集器(-XX:UseSerialGC)后老年代的默认收集器，可配合Parallel Scavenge和ParNew组合使用，其中JDK9开始取消ParNew+Serial Old组合。适合在处理器核数很少(例如单核或双核)或者一些桌面应用程序的中使用。 |
-|   Parallel Old    |  多线程  |  是  |  否  |  老年代  |    标记整理算法    |     完全会     |    JDK6     |  延迟  | 是启用Parallel Scavenge收集器(-XX:UseParallelGC)后老年代的默认收集器，且只能与Parallel Scavenge收集器组合使用。 |
+|   Parallel Old    |  多线程  |  是  |  否  |  老年代  |    标记整理算法    |     完全会     |    JDK6     |  延迟  | 是启用Parallel Scavenge收集器后老年代的默认收集器(即激活-XX:UseParallelGC后或默认激活-XX:UseParallelOldGC参数)，且只能与Parallel Scavenge收集器组合使用。 |
 |        CMS        |  多线程  |  是  |  是  |  老年代  | 标记清除/整理算法  |     部分会     |    JDK5     |  延迟  | 使用JVM参数-XX:+UseConcMarkSweepGC启用，作为老年代的一款优秀收集器它配合ParNew和Serial收集器组合工作，其中JDK9开始取消了CMS+Serial的组合。由于“Concurrent Mode Failure”将会触发Full GC，将会导致更长停顿时间。到JDK9开始被标记为不推荐的垃圾收集器而被G1取代。 |
 |        G1         |  多线程  |  是  |  是  |   全代   | 标记复制和整理算法 |     部分会     |    JDK7     |  延迟  | 使用JVM参数-XX:+UseG1GC启用，新生代和老年代都将使用G1收集器。自JDK9开始，G1宣告取代Parallel Scavenge + Parallel Old的默认组合，成为server模式下的默认垃圾收集器。G1跳出传统分代的樊笼，该用Region堆内存布局实现基于"停顿时间模型"的垃圾收集器，实现了在一段JVM运行时间段内因垃圾回收导致的停顿时间可控(通过-XX:MaxGCPauseMillis设置，默认200毫秒)，使得G1收集器能通过可控的停顿时间能达到吞吐量与延迟之间的最佳平衡。G1收集器本身工作时会占用不少的堆内存，在小内存情况下表现的不会比CMS好。 |
 |    Shenandoah     |  多线程  |  是  |  是  |   全代   | 标记复制和整理算法 |     部分会     |  OpenJDK12  |  延迟  | Shenandoah是一款只有OpenJDK12开始才有的收集器，是一款对G1收集器设计思想做了继承及改进的低延迟垃圾收集器，完全废弃了分代收集理论，即Region不分新生代和老年代等。做到了回收整理阶段也可以与用户线程并发执行。优点：低延迟；缺点：高运行负担使得吞吐量下降；使用大量的读写屏障，尤其是读屏障，增大了系统的性能开销； |
@@ -1461,6 +1461,24 @@ HotSpot虚拟机中多数收集器都采用了分代收集来管理堆内存，�
 2. **-XX:PretenureSizeThreshold**
 
    -XX:PretenureSizeThreshold，设置大对象直接进入年老代的阈值。-XX:PretenureSizeThreshold只SerialGC和ParNewGC有效，对ParallelGC无效。默认该值为0，即不指定最大的晋升大小，一切由运行情况决定。
+
+#### 频繁Full GC的常见原因
+
+Full GC触发条件是老年代空间不足， 所以追因的方向就是导致老年代空间不足的原因：大量对象频繁进入老年代且老年代空间释放不掉。具体有以下几种情况：
+
+1. 系统并发高、执行耗时过长，或者数据量过大，导致MinorGC频繁，且gc后存活对象太多，但是survivor区存放不下（太小 或 动态年龄判断） 导致对象快速进入老年代，老年代迅速堆满
+
+2. 系统一次性加载过多数据进内存，搞出来很多大对象，导致频繁有大对象进入老年带，必然频繁触发Full GC
+3. 系统发生了内存泄漏，莫名其妙创建大量的对象，始终无法回收，一直占用在老年代里，必然频繁触发Full GC
+4. Metaspace（元空间）因为加载类过多触发Full GC
+5. 误调用System.gc()触发Full GC
+
+**解决方法**：
+
+- 原因1的解决方法是合理分配内存，调大Survivor区；
+
+- 原因2、3，dump出内存快照，用MAT工具进行分析；
+- 上述原因都不是，必然是第4、5种原因；
 
 ## 第4章　虚拟机性能监控、故障处理工具
 

@@ -188,7 +188,7 @@ wait()和join()分别和wait(0)和join(0)等价，他们都代表了无限期的
 ### 3.9、Thread类的interrupt()、interrupted()、isInterrupted()三个方法的区别
 
 - interrupt()：将调用者线程的中断状态设为true，仅此而已，线程实际正常运行。
-- interrupted()：只能通过Thread.interrupted()调用。 它会做两步操作：返回当前线程的中断状态；将当前线程的中断状态设为false。
+- interrupted()：只能通过Thread.interrupted()调用，其内部是调用了currentThread().isInterrupted(true)。 它会做两步操作：返回当前线程的中断状态；将当前线程的中断状态设为false。
 - isInterrupted()：判断调用者线程的中断状态。
 
 
@@ -229,7 +229,7 @@ void ObjectMonitor::wait(jlong millis, bool interruptible, TRAPS) {
 
 Consumer线程释放对象锁的目的是使得Producer线程能够进入同步块调用notifyAll()方法唤醒所有Consumer（试想如果调用wait()方法的线程不释放对象锁会怎么样？它持有锁，并且还睡着了，其他人(指准备调用wait和notify的线程)都在等待获取锁，结果就只有一个结局：死锁），因此释放锁以后，Producer肯定是修改了共享区的数据了，此时Consumer醒来(**记住wait()方法结束后会重新获得锁**)肯定要回头再来检查下共享区的最新数据情况才能正确地做下一步的操作，而这一点if是做不到(你都已经在if块里面了，wait醒来后if就结束了，无法回头再来检测条件)。
 
-
+ssssssssssssssssssssss
 
 ### 3.14、wait()方法为什么要暂时释放对象锁？
 
@@ -247,7 +247,7 @@ void ObjectMonitor::wait(jlong millis, bool interruptible, TRAPS) {
 }
 ```
 
-试想如果调用wait()方法的线程不释放对象锁会怎么样？它持有锁，并且还睡着了，其他人(指准备调用wait和notify的线程)都在等待获取锁，结果就只有一个结局：死锁
+试想如果调用wait()方法的线程不释放对象锁会怎么样？它持有锁，并且还睡着了，其他人(指准备调用wait和notify的线程)都在等待获取锁，结果就只有一个结局：死锁 	`zn	jhhg
 
 
 
@@ -753,13 +753,13 @@ public class ProducerConsumerExample {
 
 ### 3.21、ThreadLocal与内存泄露
 
-内存溢出：没有足够的内存供申请者提供
+内存溢出：没有足够的内存供申请者使用。
 
-内存泄漏：程序中已动态分配的堆内存由于某种原因程序未释放或无法释放，造成系统内存的浪费，导致程序运行速度减慢甚至系统崩溃等验证后沟。内存泄漏的堆积会导致内存溢出。
+内存泄漏：程序中已动态分配的堆内存由于某种原因程序未释放或无法释放，造成系统内存的浪费，导致程序运行速度减慢甚至系统崩溃等严重后果。内存泄漏的堆积会导致内存溢出。
 
 弱引用：垃圾回收器一旦发现了弱引用的对象，不管内存是否足够，都会回收它的内存。
 
-**ThreadLocalMap中使用的key为ThreadLocal的弱引用，value是强引用。如果ThreadLocal没有被外部强引用的话，在垃圾回收的时候，key会被清理，value不会。这样ThreadLocalMap就出现了为null的Entry。如果不做任何措施，value永远不会被GC回收，就会产生内存泄漏。**
+**ThreadLocalMap中使用的key为ThreadLocal的弱引用，value是强引用。如果ThreadLocal没有被外部强引用的话，在垃圾回收的时候，key会被清理，value不会。这样ThreadLocalMap就出现了key为null的Entry。如果不做任何措施，value永远不会被GC回收，就会产生内存泄漏。**
 
 ThreadLocalMap中考虑到这个情况，在set、get、remove操作后，会清理掉key为null的记录（**将value也置为null**）。使用完ThreadLocal后最后手动调用remove方法（删除Entry）。
 
@@ -1324,7 +1324,7 @@ public class LockSupport {
    
      3. 线程释放锁的时候，修改后继者（nextNode）的locked属性，通知后继者结束自旋。
    
-   - **CLH锁代码实现：**
+   - **MCS锁代码实现：**
    
      暂无
 
