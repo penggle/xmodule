@@ -30,7 +30,7 @@
 		<thumbnailator.version>0.4.12</thumbnailator.version>
 		<guava.version>29.0-jre</guava.version>
 		<commons-net.version>3.6</commons-net.version>
-		<json.version>20190722</json.version>
+		<json.version>20230227</json.version>
 		<jwt.version>8.4</jwt.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
 		<mysql.version>8.0.20</mysql.version>
